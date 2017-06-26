@@ -1,4 +1,6 @@
 /vendor/
 /logs/*
 !/logs/README.md
+/local/
+!/local/.gitkeep
 /composer.lock

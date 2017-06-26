@@ -14,6 +14,7 @@
     "require": {
         "php": "^7",
         "paragonie/blakechain": "^0|^1",
+        "paragonie/easydb": "^2",
         "paragonie/sapient": "^1",
         "slim/slim": "^3.8",
         "slim/php-view": "^2.0",
