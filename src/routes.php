@@ -22,7 +22,7 @@ $app->group('/chronicle', function () use ($app) {
         ->add(new CheckClientSignature());
     $app->get('/lasthash', new Lookup('lasthash'));
     $app->get('/lookup/[{hash}]', new Lookup('hash'));
-    $app->get('/since/[{hash}]', new Lookup('hash'));
+    $app->get('/since/[{hash}]', new Lookup('since'));
     $app->get('/export', new Lookup('export'));
 
 });

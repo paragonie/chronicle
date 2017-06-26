@@ -28,15 +28,18 @@ class Chronicle
     /**
      * @param ResponseInterface $response
      * @param string $errorMessage
+     * @param int $errorCode
      * @return ResponseInterface
      */
     public static function errorResponse(
         ResponseInterface $response,
-        string $errorMessage
+        string $errorMessage,
+        int $errorCode = 400
     ): ResponseInterface {
         return static::getSapient()->createSignedJsonResponse(
-            403,
+            $errorCode,
             [
+                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'ERROR',
                 'message' => $errorMessage
             ],
@@ -66,7 +69,7 @@ class Chronicle
      * @return SigningSecretKey
      * @throws \Error
      */
-    protected static function getSigningKey(): SigningSecretKey
+    public static function getSigningKey(): SigningSecretKey
     {
         if (self::$signingKey) {
             return self::$signingKey;

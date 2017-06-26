@@ -34,7 +34,7 @@ class CheckClientSignature implements MiddlewareInterface
     ): ResponseInterface {
         $header = $request->getHeader(Chronicle::CLIENT_IDENTIFIER_HEADER);
         if (!$header) {
-            return Chronicle::errorResponse($response, 'No client header provided');
+            return Chronicle::errorResponse($response, 'No client header provided', 403);
         }
         foreach ($header as $clientId) {
             try {
@@ -44,12 +44,12 @@ class CheckClientSignature implements MiddlewareInterface
             }
         }
         if (!isset($publicKey)) {
-            return Chronicle::errorResponse($response, 'Invalid client');
+            return Chronicle::errorResponse($response, 'Invalid client', 403);
         }
         try {
             $request = Chronicle::getSapient()->verifySignedRequest($request, $publicKey);
         } catch (\Throwable $ex) {
-            return Chronicle::errorResponse($response, $ex->getMessage());
+            return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
         return $next($request, $request);
