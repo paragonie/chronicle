@@ -1,0 +1,19 @@
+language: php
+sudo: false
+
+matrix:
+  fast_finish: true
+  include:
+    - php: "7.0"
+    - php: "7.1"
+    - php: "nightly"
+  allow_failures:
+    - php: "nightly"
+
+install:
+    - composer self-update
+    - composer update
+
+script:
+    - composer test
+    - composer static-analysis

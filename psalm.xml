@@ -4,6 +4,11 @@
     useDocblockTypes="true"
 >
     <projectFiles>
-        <directory name="src/Chronicle" />
+        <directory name="src" />
     </projectFiles>
+    <issueHandlers>
+        <InvalidScope errorLevel="suppress" />
+        <MissingClosureReturnType errorLevel="suppress" />
+        <UndefinedConstant errorLevel="suppress" />
+    </issueHandlers>
 </psalm>

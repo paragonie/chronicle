@@ -1,14 +1,14 @@
 {
-    "name": "slim/slim-skeleton",
-    "description": "A Slim Framework skeleton application for rapid development",
-    "keywords": ["microframework", "rest", "router", "psr7"],
+    "name": "paragonie/chronicle",
+    "description": "Public hash chain powered by Slim Framework, Sapient, and Blakechain",
+    "keywords": ["microframework", "rest", "router", "psr7", "sapient", "blakechain", "hash-chain"],
     "homepage": "http://github.com/slimphp/Slim-Skeleton",
     "license": "MIT",
     "authors": [
         {
-            "name": "Josh Lockhart",
-            "email": "info@joshlockhart.com",
-            "homepage": "http://www.joshlockhart.com/"
+            "name": "Paragon Initiative Enterprises",
+            "email": "security@paragonie.com",
+            "homepage": "https://paragonie.com"
         }
     ],
     "require": {
@@ -16,8 +16,10 @@
         "paragonie/blakechain": "^0|^1",
         "paragonie/easydb": "^2",
         "paragonie/sapient": "^1",
+        "paragonie/slim-sapient": "^1",
         "slim/slim": "^3.8",
         "slim/php-view": "^2.0",
+        "tflori/getopt-php": "^2",
         "monolog/monolog": "^1.17"
     },
     "require-dev": {
@@ -32,7 +34,7 @@
     },
 	"scripts": {
         "start": "php -S 0.0.0.0:8080 -t public public/index.php",
+        "static-analysis": "psalm",
         "test": "phpunit"
 	}
-
 }
