@@ -52,27 +52,27 @@ $app->get('/', function ($request, $response, $args): ResponseInterface {
     return $this->renderer->render($response, 'index.phtml', $args);
 });
 
-$container[CheckAdminSignature::class] = function ($c) {
+$container[CheckAdminSignature::class] = function () {
     return new CheckAdminSignature();
 };
-$container[Register::class] = function ($c) {
+$container[Register::class] = function () {
     return new Register();
 };
-$container[Revoke::class] = function ($c) {
+$container[Revoke::class] = function () {
     return new Revoke();
 };
-$container[Publish::class] = function ($c) {
+$container[Publish::class] = function () {
     return new Publish();
 };
-$container['lookup.lasthash'] = function ($c) {
+$container['lookup.lasthash'] = function () {
     return new Lookup('lasthash');
 };
-$container['lookup.hash'] = function ($c) {
+$container['lookup.hash'] = function () {
     return new Lookup('hash');
 };
-$container['lookup.since'] = function ($c) {
+$container['lookup.since'] = function () {
     return new Lookup('since');
 };
-$container['lookup.export'] = function ($c) {
+$container['lookup.export'] = function () {
     return new Lookup('export');
 };
