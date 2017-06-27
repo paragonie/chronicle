@@ -15,7 +15,7 @@ similar to [Certificate Transparency](https://www.certificate-transparency.org/)
 Chronicle allows trusted clients to send data to be included in an immutable,
 auditable, cryptographic permanent record.
 
-## What problem does Chronicle solve?
+## What problems do Chronicle solve?
 
 ### Chain of Custody
 
@@ -34,3 +34,21 @@ update server).
 
 For best results, combine with cryptographic signatures (which may also be
 registered in the Chronicle) and reproducible builds.
+
+## How does it work?
+
+All communications are secured with [Sapient](https://github.com/paragonie/sapient).
+All messages are committed to a hash chain data structure backed by BLAKE2b, which
+we call [Blakechain](https://github.com/paragonie/blakechain) for short.
+
+There are two hashes for each message:
+
+1. The hash of the current message, whose BLAKE2b key is the previous message's
+   block. This is just called `currhash` internally.
+2. The summary hash, which is a BLAKE2b hash of all message hashes to date,
+   concatenated together in order. This is called `summaryhash` internally.
+
+The rationale for using the previous message's hash was to add a degree of domain
+separation in the event that a BLAKE2b collision attack is ever discovered. The
+keying should reduce the likelihood of any practical attacks, especially if the
+chain is updated rapdily.
