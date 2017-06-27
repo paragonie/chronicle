@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\Middleware;
 
 use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\Chronicle\MiddlewareInterface;
 use Psr\Http\Message\{
     RequestInterface,
@@ -27,6 +26,7 @@ class CheckClientSignature implements MiddlewareInterface
      * @param ResponseInterface $response
      * @param callable $next
      * @return ResponseInterface
+     * @throws \Error
      */
     public function __invoke(
         RequestInterface $request,
