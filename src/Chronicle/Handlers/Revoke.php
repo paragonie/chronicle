@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 
 /**
- * Class Publish
+ * Class Revoke
  * @package ParagonIE\Chronicle\Handlers
  */
 class Revoke implements HandlerInterface

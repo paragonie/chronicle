@@ -40,7 +40,11 @@ class Publish implements HandlerInterface
 
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
-            $result,
+            [
+                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+                'status' => 'OK',
+                'results' => $result
+            ],
             Chronicle::getSigningKey(),
             $response->getHeaders(),
             $response->getProtocolVersion()
