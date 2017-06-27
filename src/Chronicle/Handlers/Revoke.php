@@ -37,11 +37,47 @@ class Revoke implements HandlerInterface
             throw new \TypeError('Something unexpected happen when attempting to publish.');
         }
 
-        $result = [];
+        $post = $request->getParsedBody();
+        if (empty($post['clientid'])) {
+            throw new \Error('Error: Cliend ID expected');
+        }
+        if (empty($post['publickey'])) {
+            throw new \Error('Error: Public key expected');
+        }
+
+        $db = Chronicle::getDatabase();
+        $db->beginTransaction();
+        $db->delete(
+            'chronicle_clients',
+            [
+                'publicid' => $post['clientid'],
+                'publickey' => $post['publickey'],
+                'isAdmin' => false
+            ]
+        );
+        if ($db->commit()) {
+            // Confirm deletion.
+
+            $result = [
+                'deleted' => $db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $post['clientid'])
+            ];
+            if (!$result['deleted']) {
+                $result['reason'] = !empty($db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']))
+                        ? 'You cannot delete administrators from this API'
+                        : 'Unknown';
+            }
+        } else {
+            $db->rollBack();
+            throw new \Error($db->errorInfo()[0]);
+        }
 
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
-            $result,
+            [
+                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+                'status' => 'OK',
+                'results' => $result
+            ],
             Chronicle::getSigningKey(),
             $response->getHeaders(),
             $response->getProtocolVersion()
