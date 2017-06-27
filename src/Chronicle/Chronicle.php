@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
+use ParagonIE\Blakechain\Blakechain;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Slim;
@@ -24,6 +25,51 @@ class Chronicle
     /* This constant is the name of the header used to find the
        corresponding public key: */
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
+
+    /**
+     * @param string $body
+     * @return array<string, string>
+     * @throws \Error
+     */
+    public static function extendBlakechain(string $body): array
+    {
+        $db = self::$easyDb;
+        $db->beginTransaction();
+        $lasthash = $db->row(
+            'SELECT currhash, hashstate FROM chronicle_chain ORDER BY id DESC LIMIT 1'
+        );
+
+        $blakechain = new Blakechain();
+        if (empty($lasthash)) {
+            $prevhash = '';
+        } else {
+            $prevhash = $lasthash['currhash'];
+            $blakechain->setFirstPrevHash(
+                Base64UrlSafe::decode($lasthash['currhash'])
+            );
+            $hashstate = Base64UrlSafe::decode($lasthash['hashstate']);
+            $blakechain->setSummaryHashState($hashstate);
+        }
+        $blakechain->appendData($body);
+        $fields = [
+            'data' => $body,
+            'prevhash' => $prevhash,
+            'currhash' => $blakechain->getLastHash(),
+            'hashstate' => $blakechain->getSummaryHashState(),
+            'summaryhash' => $blakechain->getSummaryHash(),
+            'created' => (new \DateTime())->format(\DateTime::ATOM)
+        ];
+        $db->insert('chronicle_chain', $fields);
+        if (!$db->commit()) {
+            $db->rollBack();
+            throw new \Error('Could not commit new hash to database');
+        }
+        return [
+            'currhash' => $fields['currhash'],
+            'summaryhash' => $fields['summaryhash'],
+            'created' => $fields['created']
+        ];
+    }
 
     /**
      * @param ResponseInterface $response

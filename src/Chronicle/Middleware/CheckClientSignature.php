@@ -11,6 +11,7 @@ use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
 };
+use Slim\Http\Request;
 
 /**
  * Class CheckClientSignature
@@ -48,11 +49,15 @@ class CheckClientSignature implements MiddlewareInterface
         }
         try {
             $request = Chronicle::getSapient()->verifySignedRequest($request, $publicKey);
+            if ($request instanceof Request) {
+                // Cache authenticated status
+                $request = $request->withAttribute('authenticated', true);
+            }
         } catch (\Throwable $ex) {
             return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
-        return $next($request, $request);
+        return $next($request, $response);
     }
 
     /**

@@ -2,6 +2,7 @@ CREATE TABLE chronicle_clients (
   id INT(11) PRIMARY KEY,
   publicid TEXT,
   publickey TEXT,
+  isAdmin BOOLEAN DEFAULT FALSE,
   comment TEXT,
   created DATETIME,
   modified DATETIME

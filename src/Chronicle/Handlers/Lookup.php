@@ -5,6 +5,7 @@ use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\HandlerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Slim\App;
 
 /**
  * Class Lookup
@@ -12,14 +13,19 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Lookup implements HandlerInterface
 {
+    /** @var App */
+    protected $app;
+
+    /** @var string */
     protected $method = 'index';
 
     /**
      * Lookup constructor.
      * @param string $method
      */
-    public function __construct(string $method = 'index')
+    public function __construct(App $app, string $method = 'index')
     {
+        $this->app = $app;
         $this->method = $method;
     }
 

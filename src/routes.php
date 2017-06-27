@@ -1,9 +1,14 @@
 <?php
 use ParagonIE\Chronicle\Handlers\{
     Lookup,
-    Publish
+    Publish,
+    Register,
+    Revoke
 };
-use ParagonIE\Chronicle\Middleware\CheckClientSignature;
+use ParagonIE\Chronicle\Middleware\{
+    CheckAdminSignature,
+    CheckClientSignature
+};
 use Psr\Http\Message\{
     ResponseInterface
 };
@@ -18,12 +23,16 @@ if (!($app instanceof \Slim\App)) {
 }
 
 $app->group('/chronicle', function () use ($app) {
-    $app->post('/publish', new Publish())
+    $app->post('/publish', new Register($app))
+        ->add(new CheckAdminSignature());
+    $app->post('/publish', new Revoke($app))
+        ->add(new CheckAdminSignature());
+    $app->post('/publish', new Publish($app))
         ->add(new CheckClientSignature());
-    $app->get('/lasthash', new Lookup('lasthash'));
-    $app->get('/lookup/[{hash}]', new Lookup('hash'));
-    $app->get('/since/[{hash}]', new Lookup('since'));
-    $app->get('/export', new Lookup('export'));
+    $app->get('/lasthash', new Lookup($app, 'lasthash'));
+    $app->get('/lookup/[{hash}]', new Lookup($app, 'hash'));
+    $app->get('/since/[{hash}]', new Lookup($app, 'since'));
+    $app->get('/export', new Lookup($app, 'export'));
 
 });
 
