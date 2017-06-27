@@ -78,30 +78,12 @@ class Publish implements HandlerInterface
             throw new \Error('No signature provided');
         }
 
-        /* Typical case: Only one. */
         if (\count($signatureHeader) === 1 && count($clientHeader) === 1) {
             return [
                 Chronicle::getClientsPublicKey(\array_shift($clientHeader)),
                 \array_shift($signatureHeader)
             ];
         }
-
-        /*
-        $body = (string) $request->getBody();
-        foreach ($clientHeader as $clientId) {
-            try {
-                $publicKey = Chronicle::getClientsPublicKey($clientId);
-            } catch (ClientNotFound $ex) {
-                continue;
-            }
-            foreach ($signatureHeader as $signature) {
-                $sig = Base64UrlSafe::decode($signature);
-                if (\ParagonIE_Sodium_Compat::crypto_sign_verify_detached($sig, $body, $publicKey->getString(true))) {
-                    return [$publicKey, $signature];
-                }
-            }
-        }
-        */
         throw new ClientNotFound('Could not find the correct client');
     }
 }
