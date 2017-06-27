@@ -13,6 +13,8 @@ use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
  */
 class CheckAdminSignature extends CheckClientSignature
 {
+    const PROPERTIES_TO_SET = ['authenticated', 'administrator'];
+
     /**
      * @param string $clientId
      * @return SigningPublicKey

@@ -22,6 +22,8 @@ use Slim\Http\Request;
  */
 class CheckClientSignature implements MiddlewareInterface
 {
+    const PROPERTIES_TO_SET = ['authenticated'];
+
     /**
      * @param RequestInterface $request
      * @param ResponseInterface $response
@@ -51,7 +53,9 @@ class CheckClientSignature implements MiddlewareInterface
             $request = Chronicle::getSapient()->verifySignedRequest($request, $publicKey);
             if ($request instanceof Request) {
                 // Cache authenticated status
-                $request = $request->withAttribute('authenticated', true);
+                foreach (static::PROPERTIES_TO_SET as $prop) {
+                    $request = $request->withAttribute($prop, true);
+                }
             }
         } catch (\Throwable $ex) {
             return Chronicle::errorResponse($response, $ex->getMessage(), 403);

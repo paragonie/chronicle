@@ -11,7 +11,7 @@ use Slim\Http\Request;
  * Class Publish
  * @package ParagonIE\Chronicle\Handlers
  */
-class Publish implements HandlerInterface
+class Register implements HandlerInterface
 {
     /**
      * @param RequestInterface $request
@@ -30,13 +30,14 @@ class Publish implements HandlerInterface
             if (!$request->getAttribute('authenticated')) {
                 throw new \Error('Unauthenticated request');
             }
+            if (!$request->getAttribute('administrator')) {
+                throw new \Error('Unprivileged request');
+            }
         } else {
             throw new \TypeError('Something unexpected happen when attempting to publish.');
         }
 
-        $result = Chronicle::extendBlakechain(
-            (string) $request->getBody()
-        );
+        $result = [];
 
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,

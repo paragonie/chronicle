@@ -13,9 +13,6 @@ use Slim\App;
  */
 class Lookup implements HandlerInterface
 {
-    /** @var App */
-    protected $app;
-
     /** @var string */
     protected $method = 'index';
 
@@ -23,9 +20,8 @@ class Lookup implements HandlerInterface
      * Lookup constructor.
      * @param string $method
      */
-    public function __construct(App $app, string $method = 'index')
+    public function __construct(string $method = 'index')
     {
-        $this->app = $app;
         $this->method = $method;
     }
 
