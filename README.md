@@ -1,6 +1,6 @@
 # Chronicle
 
-Chronicle is a superior solution than "blockchains" for most real-world
+Chronicle is superior to "blockchain" solutions for most real-world
 technical problems that don't involve proofs-of-work or Byzantine fault
 tolerance.
 
