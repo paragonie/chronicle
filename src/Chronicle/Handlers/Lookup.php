@@ -1,11 +1,14 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\HandlerInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Slim\App;
+use ParagonIE\Chronicle\{
+    Chronicle,
+    HandlerInterface
+};
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
 
 /**
  * Class Lookup
@@ -37,6 +40,7 @@ class Lookup implements HandlerInterface
         array $args = []
     ): ResponseInterface {
         try {
+            // Whitelist of acceptable methods:
             switch ($this->method) {
                 case 'export':
                     return $this->exportChain();
@@ -60,23 +64,26 @@ class Lookup implements HandlerInterface
     }
 
     /**
+     * Gets the entire Blakechain.
+     *
      * @return ResponseInterface
      */
     public function exportChain(): ResponseInterface
     {
-        $chain = $this->getFullChain();
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
-                'results' => $chain
+                'results' => $this->getFullChain()
             ],
             Chronicle::getSigningKey()
         );
     }
 
     /**
+     * Get information about a particular entry, given its hash.
+     *
      * @param array $args
      * @return ResponseInterface
      * @throws \Error

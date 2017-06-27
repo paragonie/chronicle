@@ -27,6 +27,15 @@ $db = Factory::create(
     $settings['database']['options'] ?? []
 );
 
+/**
+ * @var Getopt
+ *
+ * This defines the Command Line options.
+ *
+ * These two are equivalent:
+ *     php create-client.php -p foo
+ *     php create-client php --public=key=foo
+ */
 $getopt = new Getopt([
     new Option('p', 'publickey', Getopt::REQUIRED_ARGUMENT),
     new Option('c', 'comment', Getopt::OPTIONAL_ARGUMENT),
@@ -38,6 +47,7 @@ $publicKey = $getopt->getOption('publickey');
 $comment = $getopt->getOption('comment') ?? '';
 $admin = $getopt->getOption('administrator') ?? false;
 
+// Make sure it's a valid public key:
 try {
     $publicKeyObj = new SigningPublicKey(
         Base64UrlSafe::decode($publicKey)
@@ -47,6 +57,7 @@ try {
     exit(1);
 }
 
+// Generate a unique ID for the user:
 $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
 $db->beginTransaction();
@@ -59,7 +70,12 @@ $db->insert(
     ]
 );
 if ($db->commit()) {
-    echo "\t" . 'Client (' . $newPublicId . ') created successfully!', PHP_EOL;
+    // Success.
+    if (!empty($isAdmin)) {
+        echo "\t" . 'Client (' . $newPublicId . ') created successfully with administrative privileges!', PHP_EOL;
+    } else {
+        echo "\t" . 'Client (' . $newPublicId . ') created successfully!', PHP_EOL;
+    }
 } else {
     $db->rollBack();
     echo $db->errorInfo()[0], PHP_EOL;

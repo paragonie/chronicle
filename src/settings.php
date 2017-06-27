@@ -10,6 +10,7 @@ if (\is_readable(\dirname(__DIR__) . '/local/settings.json')) {
     }
 }
 
+/* These are the defaults. You can override them locally by updating ../local/settings.json: */
 $settings = [
     'displayErrorDetails' => false, // set to false in production
     'addContentLengthHeader' => false, // Allow the web server to send the content-length header

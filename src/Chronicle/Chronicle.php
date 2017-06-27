@@ -29,6 +29,9 @@ class Chronicle
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
     /**
+     * This extends the Blakechain with an arbitrary message, signature, and
+     * public key.
+     *
      * @param string $body
      * @param string $signature
      * @param SigningPublickey $publicKey
@@ -83,6 +86,9 @@ class Chronicle
     }
 
     /**
+     * Return a generic error response, timestamped and then signed by the
+     * Chronicle server's public key.
+     *
      * @param ResponseInterface $response
      * @param string $errorMessage
      * @param int $errorCode
@@ -107,6 +113,8 @@ class Chronicle
     }
 
     /**
+     * Given a clients Public ID, retrieve their Ed25519 public key.
+     *
      * @param string $clientId
      * @return SigningPublicKey
      * @throws ClientNotFound
@@ -127,6 +135,8 @@ class Chronicle
 
 
     /**
+     * Get the EasyDB object (used for database queries)
+     *
      * @return EasyDB
      */
     public static function getDatabase(): EasyDB
@@ -135,6 +145,8 @@ class Chronicle
     }
 
     /**
+     * Return a Sapient object, with the Slim Framework adapter included.
+     *
      * @return Sapient
      */
     public static function getSapient(): Sapient
@@ -143,6 +155,10 @@ class Chronicle
     }
 
     /**
+     * This gets the server's signing key.
+     *
+     * We should audit all calls to this method.
+     *
      * @return SigningSecretKey
      * @throws \Error
      */
@@ -161,6 +177,8 @@ class Chronicle
     }
 
     /**
+     * Store the database object in the Chronicle class.
+     *
      * @param EasyDB $db
      * @return EasyDB
      */

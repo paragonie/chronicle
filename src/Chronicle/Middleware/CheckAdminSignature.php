@@ -16,6 +16,8 @@ class CheckAdminSignature extends CheckClientSignature
     const PROPERTIES_TO_SET = ['authenticated', 'administrator'];
 
     /**
+     * Only selects a valid result if the client has isAdmin set to TRUE.
+     *
      * @param string $clientId
      * @return SigningPublicKey
      * @throws ClientNotFound
@@ -27,7 +29,7 @@ class CheckAdminSignature extends CheckClientSignature
             $clientId
         );
         if (empty($sqlResult)) {
-            throw new ClientNotFound('Client not found');
+            throw new ClientNotFound('Client not found or is not an administrator.');
         }
         return new SigningPublicKey(
             Base64UrlSafe::decode($sqlResult['publickey'])

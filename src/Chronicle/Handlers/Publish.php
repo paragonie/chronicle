@@ -4,7 +4,6 @@ namespace ParagonIE\Chronicle\Handlers;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\Chronicle\HandlerInterface;
-use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\Sapient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

@@ -2,13 +2,16 @@
 $root = \dirname(__DIR__);
 require_once $root . '/vendor/autoload.php';
 
+// Generate a signing key.
 $signingKey = \ParagonIE\Sapient\CryptographyKeys\SigningSecretKey::generate();
 
+// Store the signing key:
 \file_put_contents(
     $root . '/local/signing-secret.key',
     $signingKey->getString()
 );
 
+// Write the default settings to the local settings file.
 $localSettings = [
     'database' => [
         'dsn' => $root . '/local/chronicle.sql'

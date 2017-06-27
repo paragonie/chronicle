@@ -1,8 +1,8 @@
 {
     "name": "paragonie/chronicle",
     "description": "Public hash chain powered by Slim Framework, Sapient, and Blakechain",
-    "keywords": ["microframework", "rest", "router", "psr7", "sapient", "blakechain", "hash-chain"],
-    "homepage": "http://github.com/slimphp/Slim-Skeleton",
+    "keywords": ["sapient", "blakechain", "hash-chain", "security", "hash", "BLAKE2", "BLAKE2b"],
+    "homepage": "http://github.com/paragonie/chronicle",
     "license": "MIT",
     "authors": [
         {
@@ -13,6 +13,7 @@
     ],
     "require": {
         "php": "^7",
+        "ext-pdo": "*",
         "paragonie/blakechain": "^0|^1",
         "paragonie/easydb": "^2",
         "paragonie/sapient": "^1",

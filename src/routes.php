@@ -13,8 +13,6 @@ use Psr\Http\Message\{
     ResponseInterface
 };
 
-// Routes
-
 if (!isset($app)) {
     throw new Error('Variable $app is not defined');
 }
@@ -28,6 +26,7 @@ if (!($container instanceof \Slim\Container)) {
     throw new Error('Variable $app is not a Container');
 }
 
+// Routes
 $app->group('/chronicle', function () {
 
     // Admin only:
@@ -52,6 +51,9 @@ $app->get('/', function ($request, $response, $args): ResponseInterface {
     return $this->renderer->render($response, 'index.phtml', $args);
 });
 
+$container[CheckClientSignature::class] = function () {
+    return new CheckClientSignature();
+};
 $container[CheckAdminSignature::class] = function () {
     return new CheckAdminSignature();
 };

@@ -1,10 +1,14 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\HandlerInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use ParagonIE\Chronicle\{
+    Chronicle,
+    HandlerInterface
+};
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
 use Slim\Http\Request;
 
 /**
@@ -18,6 +22,7 @@ class Revoke implements HandlerInterface
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     *
      * @throws \Error
      * @throws \TypeError
      */
@@ -26,6 +31,7 @@ class Revoke implements HandlerInterface
         ResponseInterface $response,
         array $args = []
     ): ResponseInterface {
+        // Sanity checks:
         if ($request instanceof Request) {
             if (!$request->getAttribute('authenticated')) {
                 throw new \Error('Unauthenticated request');
@@ -37,6 +43,7 @@ class Revoke implements HandlerInterface
             throw new \TypeError('Something unexpected happen when attempting to publish.');
         }
 
+        // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
             throw new \Error('Empty post body');
@@ -59,11 +66,11 @@ class Revoke implements HandlerInterface
             ]
         );
         if ($db->commit()) {
-            // Confirm deletion.
-
+            // Confirm deletion:
             $result = [
                 'deleted' => $db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $post['clientid'])
             ];
+
             if (!$result['deleted']) {
                 $isAdmin = $db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']);
                 $result['reason'] = !empty($isAdmin)

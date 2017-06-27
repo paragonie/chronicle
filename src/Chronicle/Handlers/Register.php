@@ -1,12 +1,16 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\HandlerInterface;
+use ParagonIE\Chronicle\{
+    Chronicle,
+    HandlerInterface
+};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
 use Slim\Http\Request;
 
 /**
@@ -20,6 +24,7 @@ class Register implements HandlerInterface
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     *
      * @throws \Error
      * @throws \TypeError
      */
@@ -28,6 +33,7 @@ class Register implements HandlerInterface
         ResponseInterface $response,
         array $args = []
     ): ResponseInterface {
+        // Sanity checks:
         if ($request instanceof Request) {
             if (!$request->getAttribute('authenticated')) {
                 throw new \Error('Unauthenticated request');
@@ -38,23 +44,21 @@ class Register implements HandlerInterface
         } else {
             throw new \TypeError('Something unexpected happen when attempting to publish.');
         }
+
+        // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
-            throw new \Error('Empty post body');
+            throw new \TypeError('POST body empty or invalid');
         }
         if (empty($post['publickey'])) {
             throw new \Error('Error: Public key expected');
         }
 
         // If this is not a valid public key, let the exception be uncaught:
-        $publicKeyObj = new SigningPublicKey(
-            Base64UrlSafe::decode($post['publickey'])
-        );
-
-        $clientId = $this->createClient($post);
+        new SigningPublicKey(Base64UrlSafe::decode($post['publickey']));
 
         $result = [
-            'client-id' => $clientId
+            'client-id' => $this->createClient($post)
         ];
 
         return Chronicle::getSapient()->createSignedJsonResponse(
@@ -71,6 +75,8 @@ class Register implements HandlerInterface
     }
 
     /**
+     * Registers a new, non-administrator client that can commit messages.
+     *
      * @param array $post
      * @return string
      * @throws \Error
