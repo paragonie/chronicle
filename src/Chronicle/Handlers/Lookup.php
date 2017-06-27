@@ -88,7 +88,9 @@ class Lookup implements HandlerInterface
                  data AS contents,
                  prevhash,
                  currhash,
-                 summaryhash
+                 summaryhash,
+                 publickey,
+                 signature
              FROM
                  chronicle_chain
              WHERE
@@ -164,7 +166,9 @@ class Lookup implements HandlerInterface
                  data AS contents,
                  prevhash,
                  currhash,
-                 summaryhash
+                 summaryhash,
+                 publickey,
+                 signature
              FROM
                  chronicle_chain
              WHERE
@@ -196,7 +200,9 @@ class Lookup implements HandlerInterface
                 'contents' => $row['data'],
                 'prev' => $row['prevhash'],
                 'hash' => $row['currhash'],
-                'summary' => $row['summaryhash']
+                'summary' => $row['summaryhash'],
+                'publickey' => $row['publickey'],
+                'signature' => $row['signature']
             ];
         }
         return $chain;

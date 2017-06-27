@@ -82,7 +82,7 @@ class Register implements HandlerInterface
 
         do {
             $clientId = Base64UrlSafe::encode(\random_bytes(24));
-        } while ($db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $clientId));
+        } while ($db->cell('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $clientId) > 0);
 
         $db->beginTransaction();
         $db->insert(

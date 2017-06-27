@@ -17,6 +17,8 @@ CREATE TABLE chronicle_chain (
   currhash TEXT,
   hashstate TEXT,
   summaryhash TEXT,
+  publickey TEXT,
+  signature TEXT,
   created TEXT
 );
 

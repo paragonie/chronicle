@@ -5,8 +5,6 @@ namespace ParagonIE\Chronicle\Middleware;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\Chronicle\MiddlewareInterface;
-use ParagonIE\ConstantTime\Base64UrlSafe;
-use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -39,16 +37,15 @@ class CheckClientSignature implements MiddlewareInterface
         if (!$header) {
             return Chronicle::errorResponse($response, 'No client header provided', 403);
         }
-        foreach ($header as $clientId) {
-            try {
-                $publicKey = $this->getPublicKey($clientId);
-            } catch (ClientNotFound $ex) {
-                continue;
-            }
+        if (\count($header) !== 1) {
+            throw new \Error('Only one client header may be provided');
         }
+        $clientId = (string) \array_shift($header);
+        $publicKey = Chronicle::getClientsPublicKey($clientId);
         if (!isset($publicKey)) {
             return Chronicle::errorResponse($response, 'Invalid client', 403);
         }
+
         try {
             $request = Chronicle::getSapient()->verifySignedRequest($request, $publicKey);
             if ($request instanceof Request) {
@@ -56,30 +53,12 @@ class CheckClientSignature implements MiddlewareInterface
                 foreach (static::PROPERTIES_TO_SET as $prop) {
                     $request = $request->withAttribute($prop, true);
                 }
+                $request = $request->withAttribute('publicKey', $publicKey);
             }
         } catch (\Throwable $ex) {
             return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
         return $next($request, $response);
-    }
-
-    /**
-     * @param string $clientId
-     * @return SigningPublicKey
-     * @throws ClientNotFound
-     */
-    public function getPublicKey(string $clientId): SigningPublicKey
-    {
-        $sqlResult = Chronicle::getDatabase()->row(
-            "SELECT * FROM chronicle_clients WHERE publicid = ?",
-            $clientId
-        );
-        if (empty($sqlResult)) {
-            throw new ClientNotFound('Client not found');
-        }
-        return new SigningPublicKey(
-            Base64UrlSafe::decode($sqlResult['publickey'])
-        );
     }
 }

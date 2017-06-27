@@ -3,9 +3,11 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
 use ParagonIE\Blakechain\Blakechain;
+use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Slim;
+use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 use ParagonIE\Sapient\Sapient;
 use Psr\Http\Message\ResponseInterface;
@@ -28,11 +30,16 @@ class Chronicle
 
     /**
      * @param string $body
+     * @param string $signature
+     * @param SigningPublickey $publicKey
      * @return array<string, string>
      * @throws \Error
      */
-    public static function extendBlakechain(string $body): array
-    {
+    public static function extendBlakechain(
+        string $body,
+        string $signature = '',
+        SigningPublicKey $publicKey = null
+    ): array {
         $db = self::$easyDb;
         $db->beginTransaction();
         $lasthash = $db->row(
@@ -59,6 +66,10 @@ class Chronicle
             'summaryhash' => $blakechain->getSummaryHash(),
             'created' => (new \DateTime())->format(\DateTime::ATOM)
         ];
+        if ($signature && $publicKey) {
+            $fields['publickey'] = $publicKey->getString();
+            $fields['signature'] = $signature;
+        }
         $db->insert('chronicle_chain', $fields);
         if (!$db->commit()) {
             $db->rollBack();
@@ -94,6 +105,26 @@ class Chronicle
             $response->getProtocolVersion()
         );
     }
+
+    /**
+     * @param string $clientId
+     * @return SigningPublicKey
+     * @throws ClientNotFound
+     */
+    public static function getClientsPublicKey(string $clientId): SigningPublicKey
+    {
+        $sqlResult = static::$easyDb->row(
+            "SELECT * FROM chronicle_clients WHERE publicid = ?",
+            $clientId
+        );
+        if (empty($sqlResult)) {
+            throw new ClientNotFound('Client not found');
+        }
+        return new SigningPublicKey(
+            Base64UrlSafe::decode($sqlResult['publickey'])
+        );
+    }
+
 
     /**
      * @return EasyDB
