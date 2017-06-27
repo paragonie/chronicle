@@ -30,11 +30,13 @@ $db = Factory::create(
 $getopt = new Getopt([
     new Option('p', 'publickey', Getopt::REQUIRED_ARGUMENT),
     new Option('c', 'comment', Getopt::OPTIONAL_ARGUMENT),
+    new Option(null, 'administrator', Getopt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->parse();
 
 $publicKey = $getopt->getOption('publickey');
 $comment = $getopt->getOption('comment') ?? '';
+$admin = $getopt->getOption('administrator') ?? false;
 
 try {
     $publicKeyObj = new SigningPublicKey(
@@ -51,6 +53,7 @@ $db->beginTransaction();
 $db->insert(
     'chronicle_clients',
     [
+        'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,
         'publicKey' => $publicKey
     ]
