@@ -39,6 +39,9 @@ class Register implements HandlerInterface
             throw new \TypeError('Something unexpected happen when attempting to publish.');
         }
         $post = $request->getParsedBody();
+        if (!\is_array($post)) {
+            throw new \Error('Empty post body');
+        }
         if (empty($post['publickey'])) {
             throw new \Error('Error: Public key expected');
         }

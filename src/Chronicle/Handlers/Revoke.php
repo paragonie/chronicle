@@ -38,6 +38,9 @@ class Revoke implements HandlerInterface
         }
 
         $post = $request->getParsedBody();
+        if (!\is_array($post)) {
+            throw new \Error('Empty post body');
+        }
         if (empty($post['clientid'])) {
             throw new \Error('Error: Cliend ID expected');
         }
