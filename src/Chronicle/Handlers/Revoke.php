@@ -62,9 +62,10 @@ class Revoke implements HandlerInterface
                 'deleted' => $db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $post['clientid'])
             ];
             if (!$result['deleted']) {
-                $result['reason'] = !empty($db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']))
-                        ? 'You cannot delete administrators from this API'
-                        : 'Unknown';
+                $isAdmin = $db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']);
+                $result['reason'] = !empty($isAdmin)
+                    ? 'You cannot delete administrators from this API'
+                    : 'Unknown';
             }
         } else {
             $db->rollBack();
