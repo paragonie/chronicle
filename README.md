@@ -24,6 +24,11 @@ times to a private Chronicle in order to have verifiable, tamper-resistant
 proof that specific records were accessed by specific user accounts at a
 specific time.
 
+### Proof of Knowledge
+
+By inserting an encrypted message and then revealing the key at a later date,
+you can provide strong evidence of prior knowledge.
+
 ### Userbase Consistency Verification
 
 For building a [secure code delivery](https://defuse.ca/triangle-of-secure-code-delivery.htm) system,
