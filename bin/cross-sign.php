@@ -1,4 +1,7 @@
 <?php
+/**
+ * This script sets up cross-signing to another Chronicle
+ */
 
 use ParagonIE\EasyDB\Factory;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
@@ -31,15 +34,12 @@ $db = Factory::create(
  * @var Getopt
  *
  * This defines the Command Line options.
- *
- * These two are equivalent:
- *     php create-client.php -p foo
- *     php create-client php --public=key=foo
  */
 $getopt = new Getopt([
     new Option(null, 'url', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'publickey', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'push-after', Getopt::OPTIONAL_ARGUMENT),
+    new Option(null, 'push-days', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'name', Getopt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->parse();
