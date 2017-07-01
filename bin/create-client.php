@@ -9,7 +9,7 @@ use tflori\Getopt\{
 };
 
 $root = \dirname(__DIR__);
-require_once $root . '/vendor/autoload.php';
+require_once $root . '/cli-autoload.php';
 
 if (!\is_readable($root . '/local/settings.json')) {
     echo 'Settings are not loaded.', PHP_EOL;

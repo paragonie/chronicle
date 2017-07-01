@@ -1,6 +1,6 @@
 <?php
 $root = \dirname(__DIR__);
-require_once $root . '/vendor/autoload.php';
+require_once $root . '/cli-autoload.php';
 require_once $root . '/src/settings.php';
 
 /** @var array $settings */

@@ -1,6 +1,6 @@
 <?php
 $root = \dirname(__DIR__);
-require_once $root . '/vendor/autoload.php';
+require_once $root . '/cli-autoload.php';
 
 // Generate a signing key.
 $signingKey = \ParagonIE\Sapient\CryptographyKeys\SigningSecretKey::generate();
