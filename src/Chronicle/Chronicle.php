@@ -40,8 +40,8 @@ class Chronicle
      */
     public static function extendBlakechain(
         string $body,
-        string $signature = '',
-        SigningPublicKey $publicKey = null
+        string $signature,
+        SigningPublicKey $publicKey
     ): array {
         $db = self::$easyDb;
         $db->beginTransaction();

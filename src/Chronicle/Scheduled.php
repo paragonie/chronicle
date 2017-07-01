@@ -36,7 +36,7 @@ class Scheduled
     }
 
     /**
-     *
+     * @return void
      */
     public function doCrossSigns()
     {
