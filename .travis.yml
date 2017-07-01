@@ -13,6 +13,8 @@ matrix:
 install:
     - composer self-update
     - composer update
+    - php bin/install.php
+    - php bin/make-tables.php
 
 script:
     - composer test

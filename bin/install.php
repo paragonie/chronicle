@@ -14,7 +14,7 @@ $signingKey = \ParagonIE\Sapient\CryptographyKeys\SigningSecretKey::generate();
 // Write the default settings to the local settings file.
 $localSettings = [
     'database' => [
-        'dsn' => $root . '/local/chronicle.sql'
+        'dsn' => 'sqlite:' . $root . '/local/chronicle.sql'
     ],
     'signing-public-key' => $signingKey->getPublicKey()->getString()
 ];
