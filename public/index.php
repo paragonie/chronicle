@@ -9,22 +9,22 @@ if (PHP_SAPI == 'cli-server') {
     }
 }
 
-require __DIR__ . '/../vendor/autoload.php';
+require CHRONICLE_APP_ROOT . '/cli-autoload.php';
 
 session_start();
 
 // Instantiate the app
-$settings = require __DIR__ . '/../src/settings.php';
+$settings = require CHRONICLE_APP_ROOT . '/src/settings.php';
 $app = new \Slim\App($settings);
 
 // Set up dependencies
-require __DIR__ . '/../src/dependencies.php';
+require CHRONICLE_APP_ROOT . '/src/dependencies.php';
 
 // Register middleware
-require __DIR__ . '/../src/middleware.php';
+require CHRONICLE_APP_ROOT . '/src/middleware.php';
 
 // Register routes
-require __DIR__ . '/../src/routes.php';
+require CHRONICLE_APP_ROOT . '/src/routes.php';
 
 // Run app
 $app->run();

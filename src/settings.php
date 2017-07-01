@@ -1,10 +1,9 @@
 <?php
-define('CHRONICLE_APP_ROOT', \dirname(__DIR__));
 
 /* Local settings; not checked into git. */
 $localSettings = [];
-if (\is_readable(\dirname(__DIR__) . '/local/settings.json')) {
-    $settingsFile = \file_get_contents(\dirname(__DIR__) . '/local/settings.json');
+if (\is_readable(CHRONICLE_APP_ROOT . '/local/settings.json')) {
+    $settingsFile = \file_get_contents(CHRONICLE_APP_ROOT . '/local/settings.json');
     if (\is_string($settingsFile)) {
         $localSettings = \json_decode($settingsFile, true);
     }
@@ -17,13 +16,13 @@ $settings = [
 
     // Renderer settings
     'renderer' => [
-        'template_path' => __DIR__ . '/../templates/',
+        'template_path' => CHRONICLE_APP_ROOT . '/templates/',
     ],
 
     // Monolog settings
     'logger' => [
         'name' => 'paragonie-chronicle',
-        'path' => __DIR__ . '/../logs/app.log',
+        'path' => CHRONICLE_APP_ROOT . '/logs/app.log',
         'level' => \Monolog\Logger::DEBUG,
     ],
 ];

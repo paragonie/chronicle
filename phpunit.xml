@@ -2,7 +2,7 @@
 <phpunit
     backupGlobals="true"
     backupStaticAttributes="false"
-    bootstrap="vendor/autoload.php"
+    bootstrap="cli-autoload.php"
     colors="true"
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
