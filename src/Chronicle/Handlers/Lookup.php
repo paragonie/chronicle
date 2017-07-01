@@ -96,6 +96,7 @@ class Lookup implements HandlerInterface
                  prevhash,
                  currhash,
                  summaryhash,
+                 created,
                  publickey,
                  signature
              FROM
@@ -174,6 +175,7 @@ class Lookup implements HandlerInterface
                  prevhash,
                  currhash,
                  summaryhash,
+                 created,
                  publickey,
                  signature
              FROM
@@ -208,6 +210,7 @@ class Lookup implements HandlerInterface
                 'prev' => $row['prevhash'],
                 'hash' => $row['currhash'],
                 'summary' => $row['summaryhash'],
+                'created' => $row['created'],
                 'publickey' => $row['publickey'],
                 'signature' => $row['signature']
             ];
