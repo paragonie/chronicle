@@ -24,5 +24,6 @@ CREATE TABLE chronicle_replication_chain (
   summaryhash TEXT,
   publickey TEXT,
   signature TEXT,
-  created TIMESTAMP
+  created TIMESTAMP,
+  replicated TIMESTAMP
 );

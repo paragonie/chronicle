@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
 use ParagonIE\Chronicle\Process\CrossSign;
+use ParagonIE\Chronicle\Process\Replicate;
 use ParagonIE\EasyDB\EasyDB;
 
 /**
@@ -33,6 +34,7 @@ class Scheduled
     public function run()
     {
         $this->doCrossSigns();
+        $this->doReplication();
     }
 
     /**
@@ -45,6 +47,17 @@ class Scheduled
             if ($xsign->needsToCrossSign()) {
                 $xsign->performCrossSign();
             }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function doReplication()
+    {
+        foreach ($this->db->run('SELECT id FROM chronicle_replication_sources') as $row) {
+            Replicate::byId((int) $row['id'])->replicate();
+
         }
     }
 }

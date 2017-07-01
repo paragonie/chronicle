@@ -167,6 +167,7 @@ class CrossSign
                 'POST',
                 $this->url . '/publish',
                 [
+                    'target' => $this->publicKey->getString(),
                     'cross-sign-at' => $this->now->format(\DateTime::ATOM),
                     'currhash' => $message['currhash'],
                     'summaryhash' => $message['summaryhash']
