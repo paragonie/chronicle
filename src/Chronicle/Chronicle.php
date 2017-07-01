@@ -40,8 +40,8 @@ class Chronicle
      */
     public static function extendBlakechain(
         string $body,
-        string $signature = '',
-        SigningPublicKey $publicKey = null
+        string $signature,
+        SigningPublicKey $publicKey
     ): array {
         $db = self::$easyDb;
         $db->beginTransaction();
@@ -60,19 +60,23 @@ class Chronicle
             $hashstate = Base64UrlSafe::decode($lasthash['hashstate']);
             $blakechain->setSummaryHashState($hashstate);
         }
-        $blakechain->appendData($body);
+        $currentTime = (new \DateTime())->format(\DateTime::ATOM);
+        $blakechain->appendData(
+            $currentTime .
+            $publicKey->getString(true) .
+            Base64UrlSafe::decode($signature) .
+            $body
+        );
         $fields = [
             'data' => $body,
             'prevhash' => $prevhash,
             'currhash' => $blakechain->getLastHash(),
             'hashstate' => $blakechain->getSummaryHashState(),
             'summaryhash' => $blakechain->getSummaryHash(),
-            'created' => (new \DateTime())->format(\DateTime::ATOM)
+            'publickey' => $publicKey->getString(),
+            'signature' => $signature,
+            'created' => $currentTime
         ];
-        if ($signature && $publicKey) {
-            $fields['publickey'] = $publicKey->getString();
-            $fields['signature'] = $signature;
-        }
         $db->insert('chronicle_chain', $fields);
         if (!$db->commit()) {
             $db->rollBack();
@@ -81,7 +85,7 @@ class Chronicle
         return [
             'currhash' => $fields['currhash'],
             'summaryhash' => $fields['summaryhash'],
-            'created' => $fields['created']
+            'created' => $currentTime
         ];
     }
 
