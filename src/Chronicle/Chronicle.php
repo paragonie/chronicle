@@ -7,8 +7,10 @@ use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Slim;
-use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
-use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
+use ParagonIE\Sapient\CryptographyKeys\{
+    SigningPublicKey,
+    SigningSecretKey
+};
 use ParagonIE\Sapient\Sapient;
 use Psr\Http\Message\ResponseInterface;
 
@@ -49,6 +51,7 @@ class Chronicle
             'SELECT currhash, hashstate FROM chronicle_chain ORDER BY id DESC LIMIT 1'
         );
 
+        // Instantiate the Blakechain.
         $blakechain = new Blakechain();
         if (empty($lasthash)) {
             $prevhash = '';
@@ -60,13 +63,18 @@ class Chronicle
             $hashstate = Base64UrlSafe::decode($lasthash['hashstate']);
             $blakechain->setSummaryHashState($hashstate);
         }
+
         $currentTime = (new \DateTime())->format(\DateTime::ATOM);
+
+        // Append data to the Blakechain:
         $blakechain->appendData(
             $currentTime .
             $publicKey->getString(true) .
             Base64UrlSafe::decode($signature) .
             $body
         );
+
+        // Fields for insert:
         $fields = [
             'data' => $body,
             'prevhash' => $prevhash,
@@ -77,11 +85,15 @@ class Chronicle
             'signature' => $signature,
             'created' => $currentTime
         ];
+
+        // Insert new row into the database:
         $db->insert('chronicle_chain', $fields);
         if (!$db->commit()) {
             $db->rollBack();
             throw new \Error('Could not commit new hash to database');
         }
+
+        // This data is returned to the publisher:
         return [
             'currhash' => $fields['currhash'],
             'summaryhash' => $fields['summaryhash'],
@@ -171,6 +183,8 @@ class Chronicle
         if (self::$signingKey) {
             return self::$signingKey;
         }
+
+        // Load the signing key:
         $keyFile = \file_get_contents(CHRONICLE_APP_ROOT . '/local/signing-secret.key');
         if (!\is_string($keyFile)) {
             throw new \Error('Could not load key file');

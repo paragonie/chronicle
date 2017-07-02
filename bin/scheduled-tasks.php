@@ -3,6 +3,7 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
+use ParagonIE\Chronicle\Chronicle;
 
 $root = \dirname(__DIR__);
 require_once $root . '/cli-autoload.php';
@@ -16,6 +17,7 @@ $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
+
 /** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
@@ -23,7 +25,7 @@ $db = Factory::create(
     $settings['database']['password'] ?? '',
     $settings['database']['options'] ?? []
 );
+Chronicle::setDatabase($db);
 
 // Run the scheduler:
-(new ParagonIE\Chronicle\Scheduled($db))
-    ->run();
+(new ParagonIE\Chronicle\Scheduled())->run();

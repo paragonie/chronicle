@@ -121,9 +121,10 @@ class Replicate
             $hashstate = Base64UrlSafe::decode($lasthash['hashstate']);
             $blakechain->setSummaryHashState($hashstate);
         }
-
         $decodedSig = Base64UrlSafe::decode($entry['signature']);
         $decodedPk = Base64UrlSafe::decode($entry['publickey']);
+
+        /* If the signature is not valid for this public key, abort: */
         $sigMatches = \ParagonIE_Sodium_Compat::crypto_sign_verify_detached(
             $decodedSig,
             $entry['contents'],
@@ -134,6 +135,7 @@ class Replicate
             throw new \Error('Invalid Ed25519 signature');
         }
 
+        /* Update the Blakechain */
         $blakechain->appendData(
             $entry['created'] .
             $decodedPk .
@@ -141,6 +143,7 @@ class Replicate
             $entry['contents']
         );
 
+        /* If the summary hash we calculated doesn't match what was given, abort */
         if (!\hash_equals($entry['summary'], $blakechain->getSummaryHash())) {
             $db->rollBack();
             throw new \Error(
@@ -149,6 +152,7 @@ class Replicate
             );
         }
 
+        /* Enter the new row to the replication table */
         $db->insert('chronicle_replication_chain', [
             'source' => $this->id,
             'data' => $entry['contents'],

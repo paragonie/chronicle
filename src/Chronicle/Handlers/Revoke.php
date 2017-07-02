@@ -68,7 +68,7 @@ class Revoke implements HandlerInterface
         if ($db->commit()) {
             // Confirm deletion:
             $result = [
-                'deleted' => $db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $post['clientid'])
+                'deleted' => !$db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $post['clientid'])
             ];
 
             if (!$result['deleted']) {

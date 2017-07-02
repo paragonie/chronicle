@@ -73,6 +73,8 @@ class CrossSign
     }
 
     /**
+     * Get a CrossSign instance, given its database ID
+     *
      * @param int $id
      * @return self
      * @throws \Error
@@ -140,6 +142,10 @@ class CrossSign
     /**
      * Perform the actual cross-signing.
      *
+     * First, sign and send a JSON request to the server.
+     * Then, verify and decode the JSOM response.
+     * Finally, update the local metadata table.
+     *
      * @return bool
      */
     public function performCrossSign(): bool
@@ -189,6 +195,9 @@ class CrossSign
     }
 
     /**
+     * Update the lastrun element of the cross-signing table, which helps
+     * enforce our local cross-signing policies:
+     *
      * @param EasyDB $db
      * @param array $response
      * @param array $message

@@ -9,55 +9,49 @@ use ParagonIE\EasyDB\EasyDB;
 /**
  * Class Scheduled
  *
- * Invoked by a CLI script, this runs the scheduled tasks
- *
  * @package ParagonIE\Chronicle
  */
 class Scheduled
 {
-    /** @var EasyDB $db */
-    protected $db;
-
     /**
-     * Cron constructor.
-     * @param EasyDB $db
+     * Invoked by a CLI script, this runs all of the scheduled tasks.
+     *
+     * @return self
      */
-    public function __construct(EasyDB $db)
+    public function run(): self
     {
-        $this->db = $db;
-        Chronicle::setDatabase($db);
+        return $this
+            ->doCrossSigns()
+            ->doReplication()
+        ;
     }
 
     /**
-     * @return void
+     * Cross-sign to other Chronicles (where it is needed)
+     *
+     * @return self
      */
-    public function run()
+    public function doCrossSigns(): self
     {
-        $this->doCrossSigns();
-        $this->doReplication();
-    }
-
-    /**
-     * @return void
-     */
-    public function doCrossSigns()
-    {
-        foreach ($this->db->run('SELECT id FROM chronicle_xsign_targets') as $row) {
+        foreach (Chronicle::getDatabase()->run('SELECT id FROM chronicle_xsign_targets') as $row) {
             $xsign = CrossSign::byId((int) $row['id']);
             if ($xsign->needsToCrossSign()) {
                 $xsign->performCrossSign();
             }
         }
+        return $this;
     }
 
     /**
-     * @return void
+     * Replicate any new records from the Chronicles we're mirroring
+     *
+     * @return self
      */
-    public function doReplication()
+    public function doReplication(): self
     {
-        foreach ($this->db->run('SELECT id FROM chronicle_replication_sources') as $row) {
+        foreach (Chronicle::getDatabase()->run('SELECT id FROM chronicle_replication_sources') as $row) {
             Replicate::byId((int) $row['id'])->replicate();
-
         }
+        return $this;
     }
 }
