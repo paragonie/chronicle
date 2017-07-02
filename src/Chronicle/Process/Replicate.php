@@ -122,10 +122,22 @@ class Replicate
             $blakechain->setSummaryHashState($hashstate);
         }
 
+        $decodedSig = Base64UrlSafe::decode($entry['signature']);
+        $decodedPk = Base64UrlSafe::decode($entry['publickey']);
+        $sigMatches = \ParagonIE_Sodium_Compat::crypto_sign_verify_detached(
+            $decodedSig,
+            $entry['contents'],
+            $decodedPk
+        );
+        if (!$sigMatches) {
+            $db->rollBack();
+            throw new \Error('Invalid Ed25519 signature');
+        }
+
         $blakechain->appendData(
             $entry['created'] .
-            Base64UrlSafe::decode($entry['publickey']) .
-            Base64UrlSafe::decode($entry['signature']) .
+            $decodedPk .
+            $decodedSig .
             $entry['contents']
         );
 
