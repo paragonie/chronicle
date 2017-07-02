@@ -5,6 +5,10 @@
 [![Latest Unstable Version](https://poser.pugx.org/paragonie/chronicle/v/unstable)](https://packagist.org/packages/paragonie/chronicle)
 [![License](https://poser.pugx.org/paragonie/chronicle/license)](https://packagist.org/packages/paragonie/chronicle)
 
+**Chronicle** is a self-hostable microservice, built with Slim Framework,
+which enables authorized users to commit arbitrary data to an immutable,
+append-only public ledger.
+
 Chronicle is superior to "blockchain" solutions for most real-world
 technical problems that don't involve proofs-of-work or Byzantine fault
 tolerance.
@@ -14,6 +18,11 @@ cryptographically-secure hash chain data structure that accepts arbitrary
 data from authorized clients through an HTTP API, secured by [Sapient](https://github.com/paragonie/sapient),
 that can be used as a building block for building a cryptographic audit trail
 similar to [Certificate Transparency](https://www.certificate-transparency.org/).
+
+> [Chronicle will make You question the need for blockchain technology](https://paragonie.com/blog/2017/07/chronicle-will-make-you-question-need-for-blockchain-technology).
+
+Chronicle was developed by [Paragon Initiative Enterprises](https://paragonie.com)
+as part of our continued efforts to make the Internet more secure.
 
 ## What does Chronicle do?
 
