@@ -5,7 +5,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/paragonie/chronicle/v/unstable)](https://packagist.org/packages/paragonie/chronicle)
 [![License](https://poser.pugx.org/paragonie/chronicle/license)](https://packagist.org/packages/paragonie/chronicle)
 
-**Chronicle** is a self-hostable microservice, built with Slim Framework,
+**Chronicle** is a self-hostable microservice, built with [Slim Framework](https://www.slimframework.com),
 which enables authorized users to commit arbitrary data to an immutable,
 append-only public ledger.
 
