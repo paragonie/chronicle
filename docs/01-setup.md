@@ -27,8 +27,8 @@ the API, only normal clients.)
 
 ### Generating Client Keys
 
-First, run `bin/keygen.php`. You should get something like this (valid keypair,
-but don't use it):
+First, run `bin/keygen.php`. You should get something like this (the example below contains
+a valid keypair, but don't use it! Use your own keys instead):
 
 ```json
 {
