@@ -1,5 +1,13 @@
 # How to Write to Your Chronicle
 
+**Important:** Any HTTP client that signs messages with Ed25519 as
+defined in the [Sapient specification](https://github.com/paragonie/sapient/blob/master/docs/Specification.md)
+can write to a Chronicle, regardless of what programming language
+you're using. If you're not a PHP developer, don't be discouraged
+just because our examples are in PHP.
+
+-----
+
 If you have an HTTP client, such as Guzzle, with a [Sapient](https://github.com/paragonie/sapient)
 adapter, all you need to do is send messages like so:
 
