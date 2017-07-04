@@ -46,4 +46,4 @@ a valid keypair, but don't use it! Use your own keys instead):
 ```
 
 You want to keep your secret-key, well, **secret**! Your public key can safely
-be given out to Chronicles.
+be given out to other Chronicles.
