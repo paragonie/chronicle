@@ -9,7 +9,7 @@ if (PHP_SAPI == 'cli-server') {
     }
 }
 
-require CHRONICLE_APP_ROOT . '/cli-autoload.php';
+require dirname(__DIR__) . '/cli-autoload.php';
 
 session_start();
 
@@ -19,6 +19,7 @@ $app = new \Slim\App($settings);
 
 // Set up dependencies
 require CHRONICLE_APP_ROOT . '/src/dependencies.php';
+require CHRONICLE_APP_ROOT . '/src/database.php';
 
 // Register middleware
 require CHRONICLE_APP_ROOT . '/src/middleware.php';

@@ -29,14 +29,5 @@ $container['logger'] = function (Container $c): \Monolog\Logger {
 
 // easydb
 $container['database'] = function (Container $c): \ParagonIE\EasyDB\EasyDB {
-    $settings = $c->get('settings')['database'];
-
-    return \ParagonIE\Chronicle\Chronicle::setDatabase(
-        ParagonIE\EasyDB\Factory::create(
-            $settings['dsn'],
-            $settings['username'] ?? null,
-            $settings['password'] ?? null,
-            $settings['options'] ?? []
-        )
-    );
+    return \ParagonIE\Chronicle\Chronicle::getDatabase();
 };

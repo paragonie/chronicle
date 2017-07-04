@@ -46,7 +46,7 @@ class Lookup implements HandlerInterface
                     return $this->exportChain();
                 case 'lasthash':
                     return $this->getLastHash();
-                case 'lookup':
+                case 'hash':
                     if (!empty($args['hash'])) {
                         return $this->getByHash($args);
                     }
@@ -60,7 +60,7 @@ class Lookup implements HandlerInterface
         } catch (\Throwable $ex) {
             return Chronicle::errorResponse($response, $ex->getMessage());
         }
-        return Chronicle::errorResponse($response, 'Unknown method');
+        return Chronicle::errorResponse($response, 'Unknown method: '.$this->method);
     }
 
     /**

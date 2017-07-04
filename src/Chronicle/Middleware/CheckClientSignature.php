@@ -55,12 +55,13 @@ class CheckClientSignature implements MiddlewareInterface
         try {
             // Get the client ID from the request
             $clientId = $this->getClientId($request);
-        } catch (\Error $ex) {
+        } catch (\Exception $ex) {
             return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
-        $publicKey = Chronicle::getClientsPublicKey($clientId);
-        if (!isset($publicKey)) {
+        try {
+            $publicKey = Chronicle::getClientsPublicKey($clientId);
+        } catch (ClientNotFound $ex) {
             return Chronicle::errorResponse($response, 'Invalid client', 403);
         }
 

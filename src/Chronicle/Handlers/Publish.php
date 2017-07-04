@@ -2,7 +2,10 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\ClientNotFound;
+use ParagonIE\Chronicle\Exception\{
+    AccessDenied,
+    ClientNotFound
+};
 use ParagonIE\Chronicle\HandlerInterface;
 use ParagonIE\Chronicle\Scheduled;
 use ParagonIE\Sapient\Sapient;
@@ -21,6 +24,8 @@ class Publish implements HandlerInterface
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     *
+     * @throws AccessDenied
      * @throws \Error
      * @throws \TypeError
      */
@@ -31,10 +36,10 @@ class Publish implements HandlerInterface
     ): ResponseInterface {
         if ($request instanceof Request) {
             if (!$request->getAttribute('authenticated')) {
-                throw new \Error('Unauthenticated request');
+                return Chronicle::errorResponse($response, 'Access denied', 403);
             }
         } else {
-            throw new \TypeError('Something unexpected happen when attempting to publish.');
+            return Chronicle::errorResponse($response, 'Something unexpected happen when attempting to publish.', 500);
         }
 
         // Get the public key and signature; store this information:

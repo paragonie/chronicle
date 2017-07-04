@@ -50,12 +50,19 @@ $db = ParagonIE\EasyDB\Factory::create(
 
 $scripts = [];
 foreach (\glob($root . '/sql/' . $db->getDriver() . '/*.sql') as $file) {
+    echo $file . PHP_EOL;
     $scripts[] = \file_get_contents($file);
 }
 
 $db->beginTransaction();
 foreach ($scripts as $script) {
-    $db->query($script);
+    foreach (explode(';', $script) as $piece) {
+        $piece = trim($piece);
+        if (empty($piece)) {
+            continue;
+        }
+        $db->query($piece);
+    }
 }
 if ($db->commit()) {
     echo 'Tables created successfully!', PHP_EOL;

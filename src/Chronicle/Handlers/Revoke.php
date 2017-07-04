@@ -3,6 +3,7 @@ namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
     Chronicle,
+    Exception\AccessDenied,
     HandlerInterface
 };
 use Psr\Http\Message\{
@@ -23,6 +24,7 @@ class Revoke implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws AccessDenied
      * @throws \Error
      * @throws \TypeError
      */
@@ -34,10 +36,10 @@ class Revoke implements HandlerInterface
         // Sanity checks:
         if ($request instanceof Request) {
             if (!$request->getAttribute('authenticated')) {
-                throw new \Error('Unauthenticated request');
+                throw new AccessDenied('Unauthenticated request');
             }
             if (!$request->getAttribute('administrator')) {
-                throw new \Error('Unprivileged request');
+                throw new AccessDenied('Unprivileged request');
             }
         } else {
             throw new \TypeError('Something unexpected happen when attempting to publish.');
