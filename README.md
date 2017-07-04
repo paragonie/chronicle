@@ -24,6 +24,13 @@ similar to [Certificate Transparency](https://www.certificate-transparency.org/)
 Chronicle was developed by [Paragon Initiative Enterprises](https://paragonie.com)
 as part of our continued efforts to make the Internet more secure.
 
+## Getting Started with Chronicle (Documentation)
+
+* [Instructions for Installing Chronicle](docs/01-setup.md)
+* [How to write (publish) to your  Chronicle](docs/02-publish.md)
+* [How to setup cross-signing to other Chronicles](docs/03-cross-signing.md)
+* [How to replicate other Chronicles](docs/04-replication.md)
+
 ## What does Chronicle do?
 
 Chronicle allows trusted clients to send data to be included in an immutable,
@@ -71,10 +78,3 @@ The rationale for using the previous message's hash was to add a degree of domai
 separation in the event that a BLAKE2b collision attack is ever discovered. The
 keying should reduce the likelihood of any practical attacks, especially if the
 chain is updated rapdily.
-
-## Getting Started with Chronicle (Documentation)
-
-* [Instructions for Installing Chronicle](docs/01-setup.md)
-* [How to write (publish) to your  Chronicle](docs/02-publish.md)
-* [How to setup cross-signing to other Chronicles](docs/03-cross-signing.md)
-* [How to replicate other Chronicles](docs/04-replication.md)
