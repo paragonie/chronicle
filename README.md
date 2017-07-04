@@ -74,7 +74,7 @@ chain is updated rapdily.
 
 ## Getting Started with Chronicle (Documentation)
 
-* [Instructions for Istalling Chronicle](docs/01-setup.md)
+* [Instructions for Installing Chronicle](docs/01-setup.md)
 * [How to write (publish) to your  Chronicle](docs/02-publish.md)
 * [How to setup cross-signing to other Chronicles](docs/03-cross-signing.md)
 * [How to replicate other Chronicles](docs/04-replication.md)
