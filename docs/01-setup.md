@@ -24,3 +24,18 @@ php bin/create-client.php \
 You can also specify `--administrator` if you wiish to allow this client to add/remove
 other clients from the API. (It is not possible to add or remove administrators through
 the API, only normal clients.)
+
+### Generating Client Keys
+
+First, run `bin/keygen.php`. You should get something like this (valid keypair,
+but don't use it):
+
+```json
+{
+    "secret-key": "ouSEaSX_MvsQk_LJGDP-HHX2uLkBxEhYOFAe6J3_sZKAhA68DFVsXbMt5qchkNB7tLaAGxpt_Eze8_yyMEj_Tw==",
+    "public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
+}
+```
+
+You want to keep your secret-key, well, **secret**! Your public key can safely
+be given out to Chronicles.
