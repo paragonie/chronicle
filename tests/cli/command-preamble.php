@@ -8,7 +8,7 @@ use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 use ParagonIE\Sapient\Sapient;
 
-require_once dirname(__DIR__) . '/cli-include.php';
+require_once __DIR__ . '/cli-include.php';
 
 /**
  * @global Client $http

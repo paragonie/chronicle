@@ -9,7 +9,7 @@ if (file_exists(__DIR__ . '/client.json')) {
     exit(0);
 }
 
-require_once dirname(__DIR__) . '/cli-include.php';
+require_once __DIR__ . '/cli-include.php';
 
 Chronicle::getDatabase()->beginTransaction();
 Chronicle::getDatabase()->delete(

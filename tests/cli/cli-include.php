@@ -13,7 +13,7 @@ use tflori\Getopt\{
     Option
 };
 
-require_once dirname(__DIR__) . '/cli-autoload.php';
+require_once dirname(dirname(__DIR__)) . '/cli-autoload.php';
 
 
 if (!\is_readable(CHRONICLE_APP_ROOT . '/local/settings.json')) {
