@@ -2,6 +2,7 @@
 
 1. Clone this repository: `git clone git@github.com:paragonie/chronicle.git`
 2. Run `composer install`
+   * If you don't have Composer, [go here for **Composer installation** instructions](https://getcomposer.org/download/).
 3. Run `bin/install.php` to generate a keypair and basic configuration file.
 4. Edit `local/settings.json` to configure your Chronicle. For example, you
    can choose a MySQL, PostgreSQL, or SQLite backend.
@@ -9,7 +10,10 @@
 6. Configure a new virtual host for Apache/nginx/etc. to point to the `public`
    directory, **OR** run `composer start` to launch the built-in web server.
 
-If you don't have Composer, [get it here](https://getcomposer.org/download/).
+If you want greater performance, be sure to 
+[install the libsodium extension from PECL](https://paragonie.com/book/pecl-libsodium/read/00-intro.md#installing-libsodium).
+Chronicle uses [sodium_compat](https://github.com/paragonie/sodium_compat) to
+minimize its dependency on PHP extensions written in C.
 
 ## How to add clients to your Chronicle
 
@@ -24,6 +28,10 @@ php bin/create-client.php \
 You can also specify `--administrator` if you wiish to allow this client to add/remove
 other clients from the API. (It is not possible to add or remove administrators through
 the API, only normal clients.)
+
+*Reading* from a Chronicle is 100% public. You do **not** need to have your key added
+to the Chronicle to read from it. Client accounts are needed in order to *write*  to
+a Chronicle.
 
 ### Generating Client Keys
 

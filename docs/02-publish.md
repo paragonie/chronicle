@@ -64,3 +64,23 @@ try {
     // Not signed
 }
 ```
+
+The above snippet assumes that you've already [created a keypair](01-setup.md#generating-client-keys)
+for the client, and loaded it like so:
+
+```php
+<?php
+use ParagonIE\ConstantTime\Base64UrlSafe;
+use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
+
+/**
+ * @global string $secretKeyText 
+ */
+
+$secret = new SigningSecretKey(
+    Base64UrlSafe::decode($secretKeyText)
+);
+```
+
+This creates a [`SigningSecretKey`](https://github.com/paragonie/sapient/blob/master/docs/Internals/CryptographyKey.md)
+object, which is used by [Sapient](https://github.com/paragonie/sapient).
