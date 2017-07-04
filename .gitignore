@@ -5,3 +5,4 @@
 !/local/.gitkeep
 /composer.lock
 /.idea/
+/tests/cli/client.json
