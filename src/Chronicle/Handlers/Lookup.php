@@ -73,6 +73,7 @@ class Lookup implements HandlerInterface
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
+                'version' => Chronicle::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => $this->getFullChain()
@@ -114,6 +115,7 @@ class Lookup implements HandlerInterface
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
+                'version' => Chronicle::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => $record
@@ -133,6 +135,7 @@ class Lookup implements HandlerInterface
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
+                'version' => Chronicle::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => [
@@ -189,6 +192,7 @@ class Lookup implements HandlerInterface
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
+                'version' => Chronicle::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => $since

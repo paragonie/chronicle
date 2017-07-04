@@ -1,5 +1,6 @@
 <?php
 use ParagonIE\Chronicle\Handlers\{
+    Index,
     Lookup,
     Publish,
     Register,
@@ -44,6 +45,7 @@ $app->group('/chronicle', function () {
     $this->get('/lookup/[{hash}]', 'lookup.hash');
     $this->get('/since/[{hash}]', 'lookup.since');
     $this->get('/export', 'lookup.export');
+    $this->get('', Index::class);
 });
 
 $app->get('/', function ($request, $response, $args): ResponseInterface {

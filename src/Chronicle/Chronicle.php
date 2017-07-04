@@ -30,6 +30,9 @@ class Chronicle
        corresponding public key: */
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
+    /* This constant denotes the Chronicle version running, server-side */
+    const VERSION = 'pre-1.0.0';
+
     /**
      * This extends the Blakechain with an arbitrary message, signature, and
      * public key.
@@ -118,6 +121,7 @@ class Chronicle
         return static::getSapient()->createSignedJsonResponse(
             $errorCode,
             [
+                'version' => static::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'ERROR',
                 'message' => $errorMessage
