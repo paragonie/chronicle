@@ -126,7 +126,7 @@ $request = $sapient->createSignedRequest(
 );
 
 // Send the request to the Chronicle
-$http->send($request);
+$response = $http->send($request);
 ```
 
 If the request was successful, the JSON response you receive should
