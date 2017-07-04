@@ -72,86 +72,9 @@ separation in the event that a BLAKE2b collision attack is ever discovered. The
 keying should reduce the likelihood of any practical attacks, especially if the
 chain is updated rapdily.
 
-## How to Install Chronicle
+## Getting Started with Chronicle (Documentation)
 
-1. Clone this repository: `git clone git@github.com:paragonie/chronicle.git`
-2. Run `composer install`
-3. Run `bin/install.php` to generate a keypair and basic configuration file.
-4. Edit `local/settings.json` to configure your Chronicle. For example, you
-   can choose a MySQL, PostgreSQL, or SQLite backend.
-5. Run `bin/make-tables.php` to setup the database tables 
-6. Configure a new virtual host for Apache/nginx/etc. to point to the `public`
-   directory, **OR** run `composer start` to launch the built-in web server.
-
-### How to add clients
-
-First, you'll need the client's Ed25519 public key.
-
-```sh
-php bin/create-client.php \
-    --publickey=[the base64url-encoded public key] \
-    --comment=[any comment you want to use to remember them by]
-```
-
-You can also specify `--administrator` if you wiish to allow this client to add/remove
-other clients from the API. (It is not possible to add or remove administrators through
-the API, only normal clients.)
-
-## How to write to your Chronicle
-
-If you have an HTTP client, such as Guzzle, with a [Sapient](https://github.com/paragonie/sapient)
-adapter, all you need to do is send messages like so:
-
-```php
-<?php
-
-use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
-use ParagonIE\Sapient\Sapient;
-use GuzzleHttp\Client;
-
-/**
- * @global SigningSecretKey $secret
- * @global Sapient $sapient
- * @global Client $http 
- */
-
-$message = 'lorem ipsum';
-
-// Create a signed HTTP request (PSR-7)
-$request = $sapient->createSignedRequest(
-    'POST',
-    'http://your-chronicle-instance.localhost/chronicle/publish',
-    $message,
-    $secret
-);
-
-// Send the request to the Chronicle
-$response = $http->send($request);
-```
-
-If the request was successful, the JSON response you receive should
-include a valid signature.
-
-```php
-<?php
-
-use GuzzleHttp\Psr7\Response;
-use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
-use ParagonIE\Sapient\Exception\{
-    HeaderMissingException,
-    InvalidMessageException
-};
-
-/**
- * @global Response $response
- * @global SigningPublicKey $publicKey
- */
-
-try {
-    $decoded = $sapient->decodeSignedJsonResponse($response, $publicKey);
-} catch (InvalidMessageException $ex) {
-    // Invalid signature
-} catch (HeaderMissingException $ex) {
-    // Not signed
-}
-```
+* [Instructions for Istalling Chronicle](docs/01-setup.md)
+* [How to write (publish) to your  Chronicle](docs/02-publish.md)
+* [How to setup cross-signing to other Chronicles](docs/03-cross-signing.md)
+* [How to replicate other Chronicles](docs/04-replication.md)

@@ -31,15 +31,17 @@ class Index implements HandlerInterface
         ResponseInterface $response,
         array $args = []
     ): ResponseInterface {
+        $signingKey = Chronicle::getSigningKey();
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
                 'version' => Chronicle::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
+                'public-key' => $signingKey->getPublicKey()->getString(),
                 'results' => $this->getRoutes($request)
             ],
-            Chronicle::getSigningKey()
+            $signingKey
         );
     }
 
