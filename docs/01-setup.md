@@ -53,7 +53,8 @@ be given out to other Chronicles.
 
 ## local/settings.json
 
-In general, your `local/settings.json` file will look like one of the samples below:
+In general, your `local/settings.json` file will look like one of the samples below,
+except with information pertinent to your instance and your public key:
 
 ### MySQL
 
@@ -61,7 +62,7 @@ In general, your `local/settings.json` file will look like one of the samples be
 {
   "database": {
     "dsn": "mysql:host=localhost;port=3306;dbname=chronicle",
-    "username": "mysql_user",
+    "username": "mysqluser",
     "password": "correct horse battery staple"
   },
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
@@ -73,7 +74,7 @@ In general, your `local/settings.json` file will look like one of the samples be
 {
   "database": {
     "dsn": "pgsql:host=localhost;port=5432;dbname=chronicle",
-    "username": "pgsql_user",
+    "username": "pgsqluser",
     "password": "correct horse battery staple"
   },
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
