@@ -5,7 +5,7 @@
    * If you don't have Composer, [go here for **Composer installation** instructions](https://getcomposer.org/download/).
 3. Run `bin/install.php` to generate a keypair and basic configuration file.
 4. Edit `local/settings.json` to configure your Chronicle. For example, you
-   can choose a MySQL, PostgreSQL, or SQLite backend. See below.
+   can choose a MySQL, PostgreSQL, or SQLite backend. [See below](#localsettingsjson).
 5. Run `bin/make-tables.php` to setup the database tables 
 6. Configure a new virtual host for Apache/nginx/etc. to point to the `public`
    directory, **OR** run `composer start` to launch the built-in web server.
@@ -61,7 +61,7 @@ In general, your `local/settings.json` file will look like one of the samples be
 {
   "database": {
     "dsn": "mysql:host=localhost;port=3306;dbname=chronicle",
-    "username": "pgsql_user",
+    "username": "mysql_user",
     "password": "correct horse battery staple"
   },
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
