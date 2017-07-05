@@ -1,11 +1,11 @@
 # How to Install Chronicle
 
-1. Clone this repository: `git clone git@github.com:paragonie/chronicle.git`
+1. Clone this repository: `git clone https://github.com/paragonie/chronicle.git`
 2. Run `composer install`
    * If you don't have Composer, [go here for **Composer installation** instructions](https://getcomposer.org/download/).
 3. Run `bin/install.php` to generate a keypair and basic configuration file.
 4. Edit `local/settings.json` to configure your Chronicle. For example, you
-   can choose a MySQL, PostgreSQL, or SQLite backend.
+   can choose a MySQL, PostgreSQL, or SQLite backend. See below.
 5. Run `bin/make-tables.php` to setup the database tables 
 6. Configure a new virtual host for Apache/nginx/etc. to point to the `public`
    directory, **OR** run `composer start` to launch the built-in web server.
@@ -24,6 +24,9 @@ php bin/create-client.php \
     --publickey=[the base64url-encoded public key] \
     --comment=[any comment you want to use to remember them by]
 ```
+
+This will return a message that contains your `clientId`, which should be included
+with this client's HTTP requests to the Chronicle.
 
 You can also specify `--administrator` if you wiish to allow this client to add/remove
 other clients from the API. (It is not possible to add or remove administrators through
@@ -47,3 +50,43 @@ a valid keypair, but don't use it! Use your own keys instead):
 
 You want to keep your secret-key, well, **secret**! Your public key can safely
 be given out to other Chronicles.
+
+## local/settings.json
+
+In general, your `local/settings.json` file will look like one of the samples below:
+
+### MySQL
+
+```json
+{
+  "database": {
+    "dsn": "mysql:host=localhost;port=3306;dbname=chronicle",
+    "username": "pgsql_user",
+    "password": "correct horse battery staple"
+  },
+  "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
+}
+```
+### PostgreSQL
+
+```json
+{
+  "database": {
+    "dsn": "pgsql:host=localhost;port=5432;dbname=chronicle",
+    "username": "pgsql_user",
+    "password": "correct horse battery staple"
+  },
+  "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
+}
+```
+
+### SQLite
+
+```json
+{
+  "database": {
+    "dsn": "sqlite:/var/www/chronicle/local/live.db"
+  },
+  "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
+}
+```
