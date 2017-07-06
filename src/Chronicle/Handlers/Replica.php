@@ -303,7 +303,7 @@ class Replica implements HandlerInterface
 
     /**
      * @param string $uniqueId
-     * @return Replica
+     * @return self
      * @throws ReplicationSourceNotFound
      */
     protected function selectReplication(string $uniqueId): self
