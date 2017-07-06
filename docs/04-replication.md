@@ -18,3 +18,13 @@ regular interval (e.g. every 15 minutes):
 ```cron
 */15 * * * * /path/to/chronicle/bin/scheduled-tasks.php
 ```
+
+## How to Access a Replicated Chronicle
+
+Visit `https://your-chronicle-domain/chronicle/replica` to see an index of all
+other Chronicles being replicated. Each entry should have a list of URLs that
+can be accessed to query the replicated data.
+
+## Scheduled Attestation
+
+

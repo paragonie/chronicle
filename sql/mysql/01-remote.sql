@@ -12,6 +12,7 @@ CREATE TABLE chronicle_replication_sources (
   uniqueid TEXT,
   name TEXT,
   url TEXT,
+  policy TEXT,
   publickey TEXT
 );
 
