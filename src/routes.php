@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 use ParagonIE\Chronicle\Handlers\{
     Index,
     Lookup,
     Publish,
     Register,
+    Replica,
     Revoke
 };
 use ParagonIE\Chronicle\Middleware\{
@@ -42,9 +44,14 @@ $app->group('/chronicle', function () {
 
     // Public:
     $this->get('/lasthash', 'lookup.lasthash');
-    $this->get('/lookup/[{hash}]', 'lookup.hash');
-    $this->get('/since/[{hash}]', 'lookup.since');
+    $this->get('/lookup/{hash}', 'lookup.hash');
+    $this->get('/since/{hash}', 'lookup.since');
     $this->get('/export', 'lookup.export');
+    $this->get('/replica/{source}/lasthash', 'replica.lasthash');
+    $this->get('/replica/{source}/lookup/{hash}', 'replica.hash');
+    $this->get('/replica/{source}/since/{hash}', 'replica.since');
+    $this->get('/replica/{source}/export', 'replica.export');
+    $this->get('/replica', 'replica.index');
     $this->get('', Index::class);
 });
 
@@ -79,4 +86,19 @@ $container['lookup.since'] = function () {
 };
 $container['lookup.export'] = function () {
     return new Lookup('export');
+};
+$container['replica.lasthash'] = function () {
+    return new Replica('lasthash');
+};
+$container['replica.hash'] = function () {
+    return new Replica('hash');
+};
+$container['replica.since'] = function () {
+    return new Replica('since');
+};
+$container['replica.export'] = function () {
+    return new Replica('export');
+};
+$container['replica.index'] = function () {
+    return new Replica('index');
 };
