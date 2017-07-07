@@ -59,6 +59,7 @@ class Attest
     {
         $now = (new \DateTime('NOW'))->format(\DateTime::ATOM);
 
+        /** @var int|bool $lock */
         $lock = \file_put_contents(
             CHRONICLE_APP_ROOT . '/local/replication-last-run',
             $now

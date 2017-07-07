@@ -15,8 +15,8 @@ use ParagonIE\Chronicle\Process\{
  */
 class Scheduled
 {
-    /** @var array */
-    protected $settngs;
+    /**@var array */
+    protected $settings;
 
     /**
      * Scheduled constructor.
