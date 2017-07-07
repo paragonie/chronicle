@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\CliTests;
 
 use GuzzleHttp\Client;
-use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 use ParagonIE\Sapient\Sapient;
@@ -93,6 +92,16 @@ if ($response['status'] !== 'OK') {
 }
 
 $request = new Request('GET', $baseUrl . '/chronicle/lookup/' . \urlencode($lastHash), []);
+$response = $sapient->decodeSignedJsonResponse(
+    $http->send($request),
+    $serverPublicKey
+);
+if ($response['status'] !== 'OK') {
+    var_dump($response);
+    exit(255);
+}
+
+$request = new Request('GET', $baseUrl . '/chronicle/replica', []);
 $response = $sapient->decodeSignedJsonResponse(
     $http->send($request),
     $serverPublicKey
