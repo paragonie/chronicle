@@ -15,7 +15,7 @@ use ParagonIE\Chronicle\Process\{
  */
 class Scheduled
 {
-    /**@var array */
+    /** @var array */
     protected $settings;
 
     /**

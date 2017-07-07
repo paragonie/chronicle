@@ -53,6 +53,7 @@ class Attest
     }
 
     /**
+     * @throws \Error
      * @return void
      */
     public function run()
