@@ -1,4 +1,4 @@
-# Chronicle
+# ![Chronicle](public/chronicle-logo.svg) Chronicle
 
 [![Build Status](https://travis-ci.org/paragonie/chronicle.svg?branch=master)](https://travis-ci.org/paragonie/chronicle)
 [![Latest Stable Version](https://poser.pugx.org/paragonie/chronicle/v/stable)](https://packagist.org/packages/paragonie/chronicle)

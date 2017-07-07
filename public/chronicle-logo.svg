@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg
+	version="1.1"
+	id="Layer_1"
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	x="0px"
+	y="0px"
+	viewBox="0 0 1000 1000"
+	style="enable-background: new 0 0 1000 1000;"
+	xml:space="preserve"
+>
+<style type="text/css">
+    .book-binding {
+        stroke: #000;
+        stroke-width: 2;
+        fill: #334;
+    }
+    .book-main {
+        box-shadow: rgba(0, 0, 0, 0.5) 1px;
+        stroke: #000;
+        fill: #eee;
+        stroke-width: 2;
+    }
+    .book-pages {
+        stroke: #000;
+        fill: #999;
+        stroke-width: 2;
+    }
+    .text-line {
+        stroke: #000;
+    }
+    .50percent {
+        opacity: 0.5;
+    }
+    .25percent {
+        opacity: 0.25;
+    }
+</style>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0.25" />
+      <stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+    <g>
+        <path
+            d="M95 140 L00 900 L430 900 L428 905 L572 905 L570 900 L990 900 L905 140 Z"
+            class="book-binding"
+        ></path>
+    </g>
+    <g>
+        <path
+            d="M500 858 L500 890 Q350 870 8 890 L10 860 L350 500 Z"
+            class="book-pages"
+        ></path>
+        <path
+            d="M501 858 L501 890 Q650 870 982 890 L980 860 L650 500 Z"
+            class="book-pages"
+        ></path>
+    </g>
+    <g>
+        <path
+            d="M500 100 Q350 25 100 120 L10 860 Q350 800 500 860 Z"
+            class="book-main"
+        ></path>
+        <path
+            d="M500 100 Q750 25 900 120 L980 860 Q750 800 501 860 Z"
+            class="book-main"
+        ></path>
+    </g>
+    <g>
+        <path d="M480 130 Q370  60 120 140" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 171 Q370 101 116 181" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 213 Q369 144 112 223" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 256 Q369 187 108 266" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 300 Q368 232 104 310" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 345 Q368 277 100 355" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 391 Q367 324  96 401" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 438 Q367 371  92 448" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 486 Q366 423  88 496" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 535 Q366 471  84 545" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 585 Q366 523  80 595" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 636 Q366 572  76 646" stroke-width="6" fill="none" class="text-line"></path>
+    </g>
+    <circle cx="130" cy="740" r="63" stroke="rgba(0, 0, 0, 0.5)" fill="none" stroke-dasharray="5,5" />
+    <circle cx="130" cy="740" r="62" stroke="black" fill="gold" stroke-dasharray="5,5" />
+    <circle cx="130" cy="740" r="61" stroke="rgba(0, 0, 0, 0.5)" fill="none" stroke-dasharray="5,5" />
+    <circle cx="130" cy="740" r="60" stroke="rgba(0, 0, 0, 0.25)" fill="url(#grad1)" class="gradient" stroke-dasharray="5,5" />
+</svg>
