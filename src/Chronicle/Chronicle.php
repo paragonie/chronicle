@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
 use ParagonIE\Blakechain\Blakechain;
+use ParagonIE\Chronicle\Exception\ChainAppendException;
 use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
@@ -41,7 +42,7 @@ class Chronicle
      * @param string $signature
      * @param SigningPublickey $publicKey
      * @return array<string, string>
-     * @throws \Error
+     * @throws ChainAppendException
      */
     public static function extendBlakechain(
         string $body,
@@ -93,7 +94,7 @@ class Chronicle
         $db->insert('chronicle_chain', $fields);
         if (!$db->commit()) {
             $db->rollBack();
-            throw new \Error('Could not commit new hash to database');
+            throw new ChainAppendException('Could not commit new hash to database');
         }
 
         // This data is returned to the publisher:
