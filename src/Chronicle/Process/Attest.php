@@ -11,8 +11,6 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
  */
 class Attest
 {
-    const DEFAULT_ATTEST_FREQUENCY = '7 days';
-
     /** @var array */
     protected $settings;
 
@@ -34,6 +32,9 @@ class Attest
         if (!Chronicle::getDatabase()->exists('SELECT count(id) FROM chronicle_replication_sources')) {
             return false;
         }
+        if (!isset($this->settings['scheduled-attestation'])) {
+            return false;
+        }
         if (!\file_exists(CHRONICLE_APP_ROOT . '/local/replication-last-run')) {
             return true;
         }
@@ -46,8 +47,7 @@ class Attest
         $runTime = new \DateTimeImmutable($lastRun);
 
         // Return true only if the next scheduled run has come to pass.
-        $frequency = $this->settings['scheduled-attestation'] ?? static::DEFAULT_ATTEST_FREQUENCY;
-        $interval = \DateInterval::createFromDateString($frequency);
+        $interval = \DateInterval::createFromDateString($this->settings['scheduled-attestation']);
         $nextRunTime = $runTime->add($interval);
         return $nextRunTime < $now;
     }
