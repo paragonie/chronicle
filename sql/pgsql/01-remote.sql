@@ -9,6 +9,7 @@ CREATE TABLE chronicle_xsign_targets (
 
 CREATE TABLE chronicle_replication_sources (
   id BIGSERIAL PRIMARY KEY,
+  uniqueid TEXT,
   name TEXT,
   url TEXT,
   publickey TEXT

@@ -16,6 +16,7 @@ $localSettings = [
     'database' => [
         'dsn' => 'sqlite:' . $root . '/local/chronicle.sql'
     ],
+    'scheduled-attestation' => '7 days',
     'signing-public-key' => $signingKey->getPublicKey()->getString()
 ];
 

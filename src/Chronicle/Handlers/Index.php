@@ -56,11 +56,17 @@ class Index implements HandlerInterface
                 'uri' => '/chronicle/lasthash',
                 'description' => 'Get information about the latest entry in this Chronicle'
             ], [
-                'uri' => '/chronicle/since/[{hash}]',
+                'uri' => '/chronicle/lookup/{hash}',
+                'description' => 'Lookup the information for the given hash'
+            ], [
+                'uri' => '/chronicle/since/{hash}',
                 'description' => 'List all new entries since a given hash'
             ], [
                 'uri' => '/chronicle/export',
                 'description' => 'Export the entire Chronicle'
+            ], [
+                'uri' => '/chronicle/replica',
+                'description' => 'List of Chronicles being replicated onto this one (and other options)'
             ], [
                 'uri' => '/chronicle/',
                 'description' => 'API method description'
