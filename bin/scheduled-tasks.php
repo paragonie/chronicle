@@ -28,4 +28,4 @@ $db = Factory::create(
 Chronicle::setDatabase($db);
 
 // Run the scheduler:
-(new ParagonIE\Chronicle\Scheduled())->run();
+(new ParagonIE\Chronicle\Scheduled($settings))->run();

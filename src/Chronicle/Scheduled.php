@@ -2,9 +2,11 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
-use ParagonIE\Chronicle\Process\CrossSign;
-use ParagonIE\Chronicle\Process\Replicate;
-use ParagonIE\EasyDB\EasyDB;
+use ParagonIE\Chronicle\Process\{
+    Attest,
+    CrossSign,
+    Replicate
+};
 
 /**
  * Class Scheduled
@@ -13,6 +15,18 @@ use ParagonIE\EasyDB\EasyDB;
  */
 class Scheduled
 {
+    /** @var array */
+    protected $settngs;
+
+    /**
+     * Scheduled constructor.
+     * @param array $settings
+     */
+    public function __construct(array $settings = [])
+    {
+        $this->settings = $settings;
+    }
+
     /**
      * Invoked by a CLI script, this runs all of the scheduled tasks.
      *
@@ -23,6 +37,7 @@ class Scheduled
         return $this
             ->doCrossSigns()
             ->doReplication()
+            ->doAttestation()
         ;
     }
 
@@ -51,6 +66,18 @@ class Scheduled
     {
         foreach (Chronicle::getDatabase()->run('SELECT id FROM chronicle_replication_sources') as $row) {
             Replicate::byId((int) $row['id'])->replicate();
+        }
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function doAttestation(): self
+    {
+        $attest = new Attest($this->settings);
+        if ($attest->isScheduled()) {
+            $attest->run();
         }
         return $this;
     }

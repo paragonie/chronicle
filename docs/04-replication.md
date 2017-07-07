@@ -27,4 +27,8 @@ can be accessed to query the replicated data.
 
 ## Scheduled Attestation
 
+To enable scheduled attestation, update your `local/settings.json` file and add
+one of the following directives:
 
+* `attest-days` (integer) - Push a message to the local Chronicle that reports
+  the current replication status if this many days have transpired.
