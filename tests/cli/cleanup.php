@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\CliTests;
 
 use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 
 if (file_exists(__DIR__ . '/client.json')) {
     exit(0);

@@ -3,7 +3,6 @@
 	version="1.1"
 	id="Layer_1"
 	xmlns="http://www.w3.org/2000/svg"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
 	x="0px"
 	y="0px"
 	viewBox="0 0 1000 1000"
@@ -47,41 +46,41 @@
         <path
             d="M95 140 L00 900 L430 900 L428 905 L572 905 L570 900 L990 900 L905 140 Z"
             class="book-binding"
-        ></path>
+        />
     </g>
     <g>
         <path
             d="M500 858 L500 890 Q350 870 8 890 L10 860 L350 500 Z"
             class="book-pages"
-        ></path>
+        />
         <path
             d="M501 858 L501 890 Q650 870 982 890 L980 860 L650 500 Z"
             class="book-pages"
-        ></path>
+        />
     </g>
     <g>
         <path
             d="M500 100 Q350 25 100 120 L10 860 Q350 800 500 860 Z"
             class="book-main"
-        ></path>
+        />
         <path
             d="M500 100 Q750 25 900 120 L980 860 Q750 800 501 860 Z"
             class="book-main"
-        ></path>
+        />
     </g>
     <g>
-        <path d="M480 130 Q370  60 120 140" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 171 Q370 101 116 181" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 213 Q369 144 112 223" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 256 Q369 187 108 266" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 300 Q368 232 104 310" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 345 Q368 277 100 355" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 391 Q367 324  96 401" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 438 Q367 371  92 448" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 486 Q366 423  88 496" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 535 Q366 471  84 545" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 585 Q366 523  80 595" stroke-width="6" fill="none" class="text-line"></path>
-        <path d="M480 636 Q366 572  76 646" stroke-width="6" fill="none" class="text-line"></path>
+        <path d="M480 130 Q370  60 120 140" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 171 Q370 101 116 181" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 213 Q369 144 112 223" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 256 Q369 187 108 266" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 300 Q368 232 104 310" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 345 Q368 277 100 355" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 391 Q367 324  96 401" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 438 Q367 371  92 448" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 486 Q366 423  88 496" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 535 Q366 471  84 545" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 585 Q366 523  80 595" stroke-width="6" fill="none" class="text-line"/>
+        <path d="M480 636 Q366 572  76 646" stroke-width="6" fill="none" class="text-line"/>
     </g>
     <circle cx="130" cy="740" r="63" stroke="rgba(0, 0, 0, 0.5)" fill="none" stroke-dasharray="5,5" />
     <circle cx="130" cy="740" r="62" stroke="black" fill="gold" stroke-dasharray="5,5" />
