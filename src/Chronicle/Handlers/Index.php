@@ -21,6 +21,9 @@ use Psr\Http\Message\{
 class Index implements HandlerInterface
 {
     /**
+     * The handler gets invoked by the router. This accepts a Request
+     * and returns a Response.
+     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -46,6 +49,9 @@ class Index implements HandlerInterface
     }
 
     /**
+     * Get the available routes. If the request is authenticated, this will
+     * also include the routes the client has access to.
+     *
      * @param RequestInterface $request
      * @return array
      */
@@ -73,6 +79,7 @@ class Index implements HandlerInterface
             ],
         ];
 
+        // Also include these routes if the client has permission:
         if ($request->hasHeader(Chronicle::CLIENT_IDENTIFIER_HEADER)) {
             $headers = $request->getHeader(Chronicle::CLIENT_IDENTIFIER_HEADER);
             $clientId = array_shift($headers);

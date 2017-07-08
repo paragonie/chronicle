@@ -21,14 +21,15 @@ use Slim\Http\Request;
 class Publish implements HandlerInterface
 {
     /**
+     * The handler gets invoked by the router. This accepts a Request
+     * and returns a Response.
+     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
      *
      * @throws AccessDenied
-     * @throws \Error
-     * @throws \TypeError
      */
     public function __invoke(
         RequestInterface $request,

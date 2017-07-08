@@ -46,7 +46,7 @@ class CheckClientSignature implements MiddlewareInterface
      * @param ResponseInterface $response
      * @param callable $next
      * @return ResponseInterface
-     * @throws \Error
+     * @throws ClientNotFound
      */
     public function __invoke(
         RequestInterface $request,

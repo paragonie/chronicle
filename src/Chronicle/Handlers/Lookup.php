@@ -30,6 +30,9 @@ class Lookup implements HandlerInterface
     }
 
     /**
+     * The handler gets invoked by the router. This accepts a Request
+     * and returns a Response.
+     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -126,6 +129,8 @@ class Lookup implements HandlerInterface
     }
 
     /**
+     * List the latest current hash and summary hash
+     *
      * @return ResponseInterface
      */
     public function getLastHash(): ResponseInterface
@@ -140,7 +145,7 @@ class Lookup implements HandlerInterface
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => [
-                    'curr-hash' =>
+                    'current-hash' =>
                         $lasthash['currhash'],
                     'summary-hash' =>
                         $lasthash['summaryhash']
@@ -151,6 +156,8 @@ class Lookup implements HandlerInterface
     }
 
     /**
+     * Get updates to the chain since a given hash
+     *
      * @param array $args
      * @return ResponseInterface
      * @throws HashNotFound
@@ -203,6 +210,8 @@ class Lookup implements HandlerInterface
     }
 
     /**
+     * Get the entire chain, as-is, as of the time of the request.
+     *
      * @return array
      */
     protected function getFullChain(): array

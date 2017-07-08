@@ -37,6 +37,9 @@ class Replica implements HandlerInterface
     }
 
     /**
+     * The handler gets invoked by the router. This accepts a Request
+     * and returns a Response.
+     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -151,7 +154,10 @@ class Replica implements HandlerInterface
             Chronicle::getSigningKey()
         );
     }
+
     /**
+     * List the latest current hash and summary hash for this replica
+     *
      * @return ResponseInterface
      */
     public function getLastHash(): ResponseInterface
@@ -188,6 +194,8 @@ class Replica implements HandlerInterface
     }
 
     /**
+     * List all replicated Chronicles and their respective URIs
+     *
      * @return ResponseInterface
      */
     protected function getIndex(): ResponseInterface
@@ -231,6 +239,8 @@ class Replica implements HandlerInterface
     }
 
     /**
+     * Get updates to the replica since a given hash
+     *
      * @param array $args
      * @return ResponseInterface
      * @throws HashNotFound
@@ -289,6 +299,8 @@ class Replica implements HandlerInterface
     }
 
     /**
+     * Export an entire replicated chain, as-is.
+     *
      * @return array
      */
     protected function getFullChain(): array
@@ -313,6 +325,9 @@ class Replica implements HandlerInterface
     }
 
     /**
+     * Given a unique ID, set this object's source property to the respective
+     * database record ID (to use in future querying).
+     *
      * @param string $uniqueId
      * @return self
      * @throws ReplicationSourceNotFound

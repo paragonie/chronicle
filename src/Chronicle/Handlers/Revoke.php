@@ -21,6 +21,9 @@ use Slim\Http\Request;
 class Revoke implements HandlerInterface
 {
     /**
+     * The handler gets invoked by the router. This accepts a Request
+     * and returns a Response.
+     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -45,7 +48,7 @@ class Revoke implements HandlerInterface
                 throw new AccessDenied('Unprivileged request');
             }
         } else {
-            throw new \TypeError('Something unexpected happen when attempting to publish.');
+            throw new \TypeError('Something unexpected happen when attempting to revoke.');
         }
 
         // Get the parsed POST body:

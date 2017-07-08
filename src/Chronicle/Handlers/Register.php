@@ -2,7 +2,11 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
-    Chronicle, Exception\AccessDenied, Exception\HTTPException, Exception\SecurityViolation, HandlerInterface
+    Chronicle,
+    Exception\AccessDenied,
+    Exception\HTTPException,
+    Exception\SecurityViolation,
+    HandlerInterface
 };
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
@@ -19,6 +23,9 @@ use Slim\Http\Request;
 class Register implements HandlerInterface
 {
     /**
+     * The handler gets invoked by the router. This accepts a Request
+     * and returns a Response.
+     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
@@ -43,7 +50,7 @@ class Register implements HandlerInterface
                 throw new AccessDenied('Unprivileged request');
             }
         } else {
-            throw new \TypeError('Something unexpected happen when attempting to publish.');
+            throw new \TypeError('Something unexpected happen when attempting to register.');
         }
 
         // Get the parsed POST body:
