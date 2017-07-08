@@ -3,8 +3,11 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
 use ParagonIE\Blakechain\Blakechain;
-use ParagonIE\Chronicle\Exception\ChainAppendException;
-use ParagonIE\Chronicle\Exception\ClientNotFound;
+use ParagonIE\Chronicle\Exception\{
+    ChainAppendException,
+    ClientNotFound,
+    FilesystemException
+};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Slim;
@@ -181,7 +184,7 @@ class Chronicle
      * We should audit all calls to this method.
      *
      * @return SigningSecretKey
-     * @throws \Error
+     * @throws FilesystemException
      */
     public static function getSigningKey(): SigningSecretKey
     {
@@ -192,7 +195,7 @@ class Chronicle
         // Load the signing key:
         $keyFile = \file_get_contents(CHRONICLE_APP_ROOT . '/local/signing-secret.key');
         if (!\is_string($keyFile)) {
-            throw new \Error('Could not load key file');
+            throw new FilesystemException('Could not load key file');
         }
         return new SigningSecretKey(
             Base64UrlSafe::decode($keyFile)

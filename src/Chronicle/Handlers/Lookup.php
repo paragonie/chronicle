@@ -3,6 +3,7 @@ namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
     Chronicle,
+    Exception\HashNotFound,
     HandlerInterface
 };
 use Psr\Http\Message\{
@@ -87,7 +88,7 @@ class Lookup implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
-     * @throws \Error
+     * @throws HashNotFound
      */
     public function getByHash(array $args = []): ResponseInterface
     {
@@ -110,7 +111,7 @@ class Lookup implements HandlerInterface
             $args['hash']
         );
         if (!$record) {
-            throw new \Error('No record found matching this hash.');
+            throw new HashNotFound('No record found matching this hash.');
         }
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
@@ -152,7 +153,7 @@ class Lookup implements HandlerInterface
     /**
      * @param array $args
      * @return ResponseInterface
-     * @throws \Error
+     * @throws HashNotFound
      */
     public function getSince(array $args = []): ResponseInterface
     {
@@ -170,7 +171,7 @@ class Lookup implements HandlerInterface
             $args['hash']
         );
         if (!$id) {
-            throw new \Error('No record found matching this hash.');
+            throw new HashNotFound('No record found matching this hash.');
         }
         $since = Chronicle::getDatabase()->run(
             "SELECT

@@ -3,7 +3,10 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
-    Chronicle, Exception\ReplicationSourceNotFound, HandlerInterface
+    Chronicle,
+    Exception\ReplicationSourceNotFound,
+    Exception\HashNotFound,
+    HandlerInterface
 };
 use Psr\Http\Message\{
     RequestInterface,
@@ -56,21 +59,29 @@ class Replica implements HandlerInterface
             return Chronicle::errorResponse($response, 'No replication source given', 404);
         }
 
-        switch ($this->method) {
-            case 'export':
-                return $this->exportChain();
-            case 'lasthash':
-                return $this->getLastHash();
-            case 'hash':
-                if (!empty($args['hash'])) {
-                    return $this->getByHash($args);
-                }
-                break;
-            case 'since':
-                if (!empty($args['hash'])) {
-                    return $this->getSince($args);
-                }
-                break;
+        try {
+            switch ($this->method) {
+                case 'export':
+                    return $this->exportChain();
+                case 'lasthash':
+                    return $this->getLastHash();
+                case 'hash':
+                    if (!empty($args['hash'])) {
+                        return $this->getByHash($args);
+                    }
+                    break;
+                case 'since':
+                    if (!empty($args['hash'])) {
+                        return $this->getSince($args);
+                    }
+                    break;
+            }
+        } catch (\Throwable $ex) {
+            return Chronicle::errorResponse(
+                $response,
+                $ex->getMessage(),
+                404
+            );
         }
         return Chronicle::errorResponse($response, 'Unknown URI', 404);
     }
@@ -100,7 +111,7 @@ class Replica implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
-     * @throws \Error
+     * @throws HashNotFound
      */
     public function getByHash(array $args = []): ResponseInterface
     {
@@ -126,7 +137,7 @@ class Replica implements HandlerInterface
             $args['hash']
         );
         if (!$record) {
-            throw new \Error('No record found matching this hash.');
+            throw new HashNotFound('No record found matching this hash.');
         }
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
@@ -222,7 +233,7 @@ class Replica implements HandlerInterface
     /**
      * @param array $args
      * @return ResponseInterface
-     * @throws \Error
+     * @throws HashNotFound
      */
     public function getSince(array $args = []): ResponseInterface
     {
@@ -243,7 +254,7 @@ class Replica implements HandlerInterface
             $args['hash']
         );
         if (!$id) {
-            throw new \Error('No record found matching this hash.');
+            throw new HashNotFound('No record found matching this hash.');
         }
         $since = Chronicle::getDatabase()->run(
             "SELECT

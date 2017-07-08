@@ -4,7 +4,8 @@ namespace ParagonIE\Chronicle\Handlers;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\{
     AccessDenied,
-    ClientNotFound
+    ClientNotFound,
+    SecurityViolation
 };
 use ParagonIE\Chronicle\HandlerInterface;
 use ParagonIE\Chronicle\Scheduled;
@@ -73,18 +74,19 @@ class Publish implements HandlerInterface
      *
      * @param RequestInterface $request
      * @return array
+     *
+     * @throws SecurityViolation
      * @throws ClientNotFound
-     * @throws \Error
      */
     public function getHeaderData(RequestInterface $request): array
     {
         $clientHeader = $request->getHeader(Chronicle::CLIENT_IDENTIFIER_HEADER);
         if (!$clientHeader) {
-            throw new \Error('No client header provided');
+            throw new SecurityViolation('No client header provided');
         }
         $signatureHeader = $request->getHeader(Sapient::HEADER_SIGNATURE_NAME);
         if (!$signatureHeader) {
-            throw new \Error('No signature provided');
+            throw new SecurityViolation('No signature provided');
         }
 
         if (\count($signatureHeader) === 1 && count($clientHeader) === 1) {

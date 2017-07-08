@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\Process;
 
 use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Chronicle\Exception\FilesystemException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 
 /**
@@ -25,7 +26,7 @@ class Attest
 
     /**
      * @return bool
-     * @throws \Error
+     * @throws FilesystemException
      */
     public function isScheduled(): bool
     {
@@ -40,7 +41,7 @@ class Attest
         }
         $lastRun = \file_get_contents(CHRONICLE_APP_ROOT . '/local/replication-last-run');
         if (!\is_string($lastRun)) {
-            throw new \Error('Could not read replication last run file');
+            throw new FilesystemException('Could not read replication last run file');
         }
 
         $now = new \DateTimeImmutable('NOW');
@@ -53,7 +54,7 @@ class Attest
     }
 
     /**
-     * @throws \Error
+     * @throws FilesystemException
      * @return void
      */
     public function run()
@@ -66,7 +67,7 @@ class Attest
             $now
         );
         if (!\is_int($lock)) {
-            throw new \Error('Cannot save replication last run file.');
+            throw new FilesystemException('Cannot save replication last run file.');
         }
         $this->attestAll();
     }

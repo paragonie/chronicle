@@ -2,9 +2,7 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
-    Chronicle,
-    Exception\AccessDenied,
-    HandlerInterface
+    Chronicle, Exception\AccessDenied, Exception\HTTPException, Exception\SecurityViolation, HandlerInterface
 };
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
@@ -27,7 +25,8 @@ class Register implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws AccessDenied
-     * @throws \Error
+     * @throws HTTPException
+     * @throws SecurityViolation
      * @throws \TypeError
      */
     public function __invoke(
@@ -50,10 +49,10 @@ class Register implements HandlerInterface
         // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
-            throw new \TypeError('POST body empty or invalid');
+            throw new HTTPException('POST body empty or invalid');
         }
         if (empty($post['publickey'])) {
-            throw new \Error('Error: Public key expected');
+            throw new SecurityViolation('Error: Public key expected');
         }
 
         // If this is not a valid public key, let the exception be uncaught:
@@ -82,7 +81,7 @@ class Register implements HandlerInterface
      *
      * @param array $post
      * @return string
-     * @throws \Error
+     * @throws \PDOException
      */
     protected function createClient(array $post): string
     {
@@ -106,7 +105,7 @@ class Register implements HandlerInterface
         );
         if (!$db->commit()) {
             $db->rollBack();
-            throw new \Error($db->errorInfo()[0]);
+            throw new \PDOException($db->errorInfo()[0]);
         }
         return $clientId;
     }

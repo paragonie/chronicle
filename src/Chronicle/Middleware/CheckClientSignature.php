@@ -4,6 +4,7 @@ namespace ParagonIE\Chronicle\Middleware;
 
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\ClientNotFound;
+use ParagonIE\Chronicle\Exception\SecurityViolation;
 use ParagonIE\Chronicle\MiddlewareInterface;
 use Psr\Http\Message\{
     RequestInterface,
@@ -26,7 +27,7 @@ class CheckClientSignature implements MiddlewareInterface
      * @param RequestInterface $request
      * @return string
      * @throws ClientNotFound
-     * @throws \Error
+     * @throws SecurityViolation
      */
     public function getClientId(RequestInterface $request): string
     {
@@ -35,7 +36,7 @@ class CheckClientSignature implements MiddlewareInterface
             throw new ClientNotFound('No client header provided');
         }
         if (\count($header) !== 1) {
-            throw new \Error('Only one client header may be provided');
+            throw new SecurityViolation('Only one client header may be provided');
         }
         return (string) \array_shift($header);
     }

@@ -4,6 +4,8 @@ namespace ParagonIE\Chronicle\Handlers;
 use ParagonIE\Chronicle\{
     Chronicle,
     Exception\AccessDenied,
+    Exception\ClientNotFound,
+    Exception\HTTPException,
     HandlerInterface
 };
 use Psr\Http\Message\{
@@ -25,7 +27,8 @@ class Revoke implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws AccessDenied
-     * @throws \Error
+     * @throws ClientNotFound
+     * @throws HTTPException
      * @throws \TypeError
      */
     public function __invoke(
@@ -48,13 +51,13 @@ class Revoke implements HandlerInterface
         // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
-            throw new \Error('Empty post body');
+            throw new HTTPException('Empty post body');
         }
         if (empty($post['clientid'])) {
-            throw new \Error('Error: Client ID expected');
+            throw new ClientNotFound('Error: Client ID expected');
         }
         if (empty($post['publickey'])) {
-            throw new \Error('Error: Public key expected');
+            throw new ClientNotFound('Error: Public key expected');
         }
 
         $db = Chronicle::getDatabase();
@@ -80,8 +83,9 @@ class Revoke implements HandlerInterface
                     : 'Unknown';
             }
         } else {
+            /* PDO should have already thrown an exception. */
             $db->rollBack();
-            throw new \Error($db->errorInfo()[0]);
+            throw new \PDOException($db->errorInfo()[0]);
         }
 
         return Chronicle::getSapient()->createSignedJsonResponse(

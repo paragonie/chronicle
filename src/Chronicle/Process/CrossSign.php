@@ -4,6 +4,8 @@ namespace ParagonIE\Chronicle\Process;
 
 use GuzzleHttp\Client;
 use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Chronicle\Error\ConfigurationError;
+use ParagonIE\Chronicle\Exception\TargetNotFound;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Guzzle;
@@ -77,14 +79,14 @@ class CrossSign
      *
      * @param int $id
      * @return self
-     * @throws \Error
+     * @throws TargetNotFound
      */
     public static function byId(int $id): self
     {
         $db = Chronicle::getDatabase();
         $data = $db->row('SELECT * FROM chronicle_xsign_targets WHERE id = ?', $id);
         if (empty($data)) {
-            throw new \Error('Cross-sign target not found');
+            throw new TargetNotFound('Cross-sign target not found');
         }
         $policy = \json_decode($data['policy'], true);
         $lastRun = \json_decode($data['lastrun'], true);
@@ -103,7 +105,7 @@ class CrossSign
      * Are we supposed to cross-sign our latest hash to this target?
      *
      * @return bool
-     * @throws \Error
+     * @throws ConfigurationError
      */
     public function needsToCrossSign(): bool
     {
@@ -136,7 +138,7 @@ class CrossSign
             return new $this->now > $lastRun;
         }
 
-        throw new \Error('No valid policy configured');
+        throw new ConfigurationError('No valid policy configured');
     }
 
     /**

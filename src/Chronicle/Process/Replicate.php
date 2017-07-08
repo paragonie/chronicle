@@ -6,6 +6,10 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use ParagonIE\Blakechain\Blakechain;
 use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Chronicle\Exception\{
+    ReplicationSourceNotFound,
+    SecurityViolation
+};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\Adapter\Guzzle;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
@@ -61,7 +65,7 @@ class Replicate
     /**
      * @param int $id
      * @return self
-     * @throws \Error
+     * @throws ReplicationSourceNotFound
      */
     public static function byId(int $id): self
     {
@@ -70,7 +74,9 @@ class Replicate
             $id
         );
         if (empty($row)) {
-            throw new \Error('Could not find a replication source for this ID');
+            throw new ReplicationSourceNotFound(
+                'Could not find a replication source for this ID'
+            );
         }
         return new static(
             (int) $row['id'],
@@ -99,7 +105,7 @@ class Replicate
     /**
      * @param array $entry
      * @return bool
-     * @throws \Error
+     * @throws SecurityViolation
      */
     protected function appendToChain(array $entry): bool
     {
@@ -132,7 +138,7 @@ class Replicate
         );
         if (!$sigMatches) {
             $db->rollBack();
-            throw new \Error('Invalid Ed25519 signature');
+            throw new SecurityViolation('Invalid Ed25519 signature');
         }
 
         /* Update the Blakechain */
@@ -146,7 +152,7 @@ class Replicate
         /* If the summary hash we calculated doesn't match what was given, abort */
         if (!\hash_equals($entry['summary'], $blakechain->getSummaryHash())) {
             $db->rollBack();
-            throw new \Error(
+            throw new SecurityViolation(
                 'Invalid summary hash. Expected ' . $entry['summary'] .
                 ', calculated ' . $blakechain->getSummaryHash()
             );
