@@ -79,7 +79,7 @@ class Attest
         $hashes = [];
         foreach (Chronicle::getDatabase()->run('SELECT id, uniqueid FROM chronicle_replication_sources') as $row) {
             $latest = Chronicle::getDatabase()->row(
-                "SELECT currhash, summaryash FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1",
+                "SELECT currhash, summaryhash FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1",
                 $row['id']
             );
             $latest['source'] = $row['uniqueid'];

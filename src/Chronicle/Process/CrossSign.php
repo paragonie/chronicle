@@ -143,7 +143,7 @@ class CrossSign
      * Perform the actual cross-signing.
      *
      * First, sign and send a JSON request to the server.
-     * Then, verify and decode the JSOM response.
+     * Then, verify and decode the JSON response.
      * Finally, update the local metadata table.
      *
      * @return bool

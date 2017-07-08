@@ -66,7 +66,7 @@ class Replicate
     public static function byId(int $id): self
     {
         $row = Chronicle::getDatabase()->row(
-            "SELCET * FROM chronicle_replication_sources WHERE id = ?",
+            "SELECT * FROM chronicle_replication_sources WHERE id = ?",
             $id
         );
         if (empty($row)) {

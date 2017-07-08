@@ -51,7 +51,7 @@ class Revoke implements HandlerInterface
             throw new \Error('Empty post body');
         }
         if (empty($post['clientid'])) {
-            throw new \Error('Error: Cliend ID expected');
+            throw new \Error('Error: Client ID expected');
         }
         if (empty($post['publickey'])) {
             throw new \Error('Error: Public key expected');
