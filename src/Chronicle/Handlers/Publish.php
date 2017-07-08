@@ -1,17 +1,19 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\{
-    AccessDenied,
-    ClientNotFound,
-    SecurityViolation
+use ParagonIE\Chronicle\{
+    Chronicle,
+    Exception\AccessDenied,
+    Exception\ClientNotFound,
+    Exception\SecurityViolation,
+    HandlerInterface,
+    Scheduled
 };
-use ParagonIE\Chronicle\HandlerInterface;
-use ParagonIE\Chronicle\Scheduled;
 use ParagonIE\Sapient\Sapient;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
 use Slim\Http\Request;
 
 /**
