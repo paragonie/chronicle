@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (!\is_readable(CHRONICLE_APP_ROOT . '/local/settings.json')) {
     echo 'Settings are not loaded.', PHP_EOL;

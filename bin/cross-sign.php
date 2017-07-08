@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * This script sets up cross-signing to another Chronicle
  */

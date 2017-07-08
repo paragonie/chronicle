@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * This script sets up replication of another Chronicle
  */

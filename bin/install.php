@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 $root = \dirname(__DIR__);
 require_once $root . '/cli-autoload.php';
 
