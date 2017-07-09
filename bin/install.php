@@ -18,6 +18,10 @@ $localSettings = [
     'database' => [
         'dsn' => 'sqlite:' . $root . '/local/chronicle.sql'
     ],
+    'publish-new-clients' => true,
+    'publish-revoked-clients' => true,
+    // The maximum window of opportunity for replay attacks:
+    'request-timeout' => '10 minutes',
     'scheduled-attestation' => '7 days',
     'signing-public-key' => $signingKey->getPublicKey()->getString()
 ];

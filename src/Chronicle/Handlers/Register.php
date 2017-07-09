@@ -6,7 +6,8 @@ use ParagonIE\Chronicle\{
     Exception\AccessDenied,
     Exception\HTTPException,
     Exception\SecurityViolation,
-    HandlerInterface
+    HandlerInterface,
+    Scheduled
 };
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
@@ -53,6 +54,16 @@ class Register implements HandlerInterface
             throw new \TypeError('Something unexpected happen when attempting to register.');
         }
 
+        try {
+            Chronicle::validateTimestamps($request);
+        } catch (\Throwable $ex) {
+            return Chronicle::errorResponse(
+                $response,
+                $ex->getMessage(),
+                $ex->getCode()
+            );
+        }
+
         // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
@@ -69,11 +80,41 @@ class Register implements HandlerInterface
             'client-id' => $this->createClient($post)
         ];
 
+        $now = (new \DateTime())->format(\DateTime::ATOM);
+
+        $settings = Chronicle::getSettings();
+        if (!empty($settings['publish-new-clients'])) {
+            $serverKey = Chronicle::getSigningKey();
+            $message = \json_encode(
+                [
+                    'server-action' => 'New Client Registration',
+                    'now' => $now,
+                    'clientid' => $result['client-id'],
+                    'publickey' => $post['publickey']
+                ],
+                JSON_PRETTY_PRINT
+            );
+            $signature = Base64UrlSafe::encode(
+                \ParagonIE_Sodium_Compat::crypto_sign_detached(
+                    $message,
+                    $serverKey->getString(true)
+                )
+            );
+            $result['publish'] = Chronicle::extendBlakechain(
+                $signature,
+                $message,
+                $serverKey->getPublicKey()
+            );
+
+            // If we need to do a cross-sign, do it now:
+            (new Scheduled())->doCrossSigns();
+        }
+
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
                 'version' => Chronicle::VERSION,
-                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+                'datetime' => $now,
                 'status' => 'OK',
                 'results' => $result
             ],

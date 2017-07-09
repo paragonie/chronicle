@@ -6,6 +6,7 @@ use ParagonIE\Chronicle\{
     Exception\AccessDenied,
     Exception\ClientNotFound,
     Exception\SecurityViolation,
+    Exception\TimestampNotProvided,
     HandlerInterface,
     Scheduled
 };
@@ -38,12 +39,34 @@ class Publish implements HandlerInterface
         ResponseInterface $response,
         array $args = []
     ): ResponseInterface {
+        // Sanity checks
         if ($request instanceof Request) {
             if (!$request->getAttribute('authenticated')) {
-                return Chronicle::errorResponse($response, 'Access denied', 403);
+                return Chronicle::errorResponse(
+                    $response,
+                    'Access denied',
+                    403
+                );
             }
         } else {
-            return Chronicle::errorResponse($response, 'Something unexpected happen when attempting to publish.', 500);
+            return Chronicle::errorResponse(
+                $response,
+                'Something unexpected happen when attempting to publish.',
+                500
+            );
+        }
+
+        try {
+            Chronicle::validateTimestamps($request, 'now');
+        } catch (TimestampNotProvided $ex) {
+            // Timestamps are optional for publishing. So, we just continue.
+        } catch (\Throwable $ex) {
+            // Invalid timestamp. Possibly a replay attack.
+            return Chronicle::errorResponse(
+                $response,
+                $ex->getMessage(),
+                $ex->getCode()
+            );
         }
 
         // Get the public key and signature; store this information:

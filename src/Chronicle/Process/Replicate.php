@@ -88,6 +88,7 @@ class Replicate
 
     /**
      * Append new data to the replication table.
+     *
      * @return void
      */
     public function replicate()
@@ -103,6 +104,9 @@ class Replicate
     }
 
     /**
+     * Add an entry to the Blakechain for this replica of the upstream
+     * Chronicle.
+     *
      * @param array $entry
      * @return bool
      * @throws SecurityViolation
@@ -175,6 +179,8 @@ class Replicate
     }
 
     /**
+     * Get the latest summary hash from this replica.
+     *
      * @return string
      */
     protected function getLatestSummaryHash(): string
@@ -190,6 +196,8 @@ class Replicate
     }
 
     /**
+     * Get the updates from the upstream server.
+     *
      * @param string $lastHash
      * @return array
      */

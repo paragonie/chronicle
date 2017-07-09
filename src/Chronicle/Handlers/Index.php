@@ -97,11 +97,20 @@ class Index implements HandlerInterface
                     $allowed []= [
                         'uri' => '/chronicle/register',
                         'description' => 'Approve a new client.',
+                        'required-fields' => [
+                            'request-time' => 'The time of your request.',
+                            'publickey' => 'Public key of the client to be removed'
+                        ],
                         'note' => 'Administrators only'
                     ];
                     $allowed []= [
                         'uri' => '/chronicle/revoke',
                         'description' => 'Revoke a client\'s access',
+                        'required-fields' => [
+                            'request-time' => 'The time of your request.',
+                            'clientid' => 'Unique ID of the client to be removed',
+                            'publickey' => 'Public key of the client to be removed'
+                        ],
                         'note' => 'Administrators only'
                     ];
                 }

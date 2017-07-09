@@ -15,6 +15,7 @@ session_start();
 
 // Instantiate the app
 $settings = require CHRONICLE_APP_ROOT . '/src/settings.php';
+\ParagonIE\Chronicle\Chronicle::storeSettings($settings);
 $app = new \Slim\App($settings);
 
 // Set up dependencies

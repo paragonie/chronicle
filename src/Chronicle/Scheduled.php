@@ -24,6 +24,9 @@ class Scheduled
      */
     public function __construct(array $settings = [])
     {
+        if (empty($settings)) {
+            $this->settings = Chronicle::getSettings();
+        }
         $this->settings = $settings;
     }
 

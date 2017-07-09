@@ -6,7 +6,10 @@ use ParagonIE\Blakechain\Blakechain;
 use ParagonIE\Chronicle\Exception\{
     ChainAppendException,
     ClientNotFound,
-    FilesystemException
+    FilesystemException,
+    HTTPException,
+    SecurityViolation,
+    TimestampNotProvided
 };
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
@@ -16,6 +19,7 @@ use ParagonIE\Sapient\CryptographyKeys\{
     SigningSecretKey
 };
 use ParagonIE\Sapient\Sapient;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -26,6 +30,9 @@ class Chronicle
 {
     /** @var EasyDB $easyDb */
     protected static $easyDb;
+
+    /** @var array $settings */
+    protected static $settings;
 
     /** @var SigningSecretKey $signingKey */
     protected static $signingKey;
@@ -179,6 +186,14 @@ class Chronicle
     }
 
     /**
+     * @return array
+     */
+    public static function getSettings(): array
+    {
+        return self::$settings;
+    }
+
+    /**
      * This gets the server's signing key.
      *
      * We should audit all calls to this method.
@@ -212,5 +227,58 @@ class Chronicle
     {
         self::$easyDb = $db;
         return self::$easyDb;
+    }
+
+    /**
+     * @param array $settings
+     * @return void
+     */
+    public static function storeSettings(array $settings)
+    {
+        self::$settings = $settings;
+    }
+
+    /**
+     * Optional feature: Reject old signed messages.
+     *
+     * @param RequestInterface $request
+     * @param string $index
+     * @return void
+     *
+     * @throws HTTPException
+     * @throws SecurityViolation
+     * @throws TimestampNotProvided
+     */
+    public static function validateTimestamps(
+        RequestInterface $request,
+        string $index = 'request-time'
+    ) {
+        if (empty(self::$settings['request-timeout'])) {
+            return;
+        }
+        $body = (string) $request->getBody();
+        if (empty($body)) {
+            throw new HTTPException('No post body was provided', 406);
+        }
+        /** @var array $json */
+        $json = \json_decode($body, true);
+        if (!\is_array($json)) {
+            throw new HTTPException('Invalid JSON message', 406);
+        }
+        if (empty($json[$index])) {
+            throw new TimestampNotProvided('Parameter "' . $index . '" not provided.', 401);
+        }
+        $sent = new \DateTimeImmutable($json[$index]);
+        $expires = $sent->add(
+            \DateInterval::createFromDateString(
+                self::$settings['request-timeout']
+            )
+        );
+
+        if (new \DateTime('NOW') > $expires) {
+            throw new SecurityViolation('Request timestamp is too old. Please resend.', 408);
+        }
+
+        /* Timestamp checks out. We don't throw anything. */
     }
 }

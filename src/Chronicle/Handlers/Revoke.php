@@ -6,8 +6,10 @@ use ParagonIE\Chronicle\{
     Exception\AccessDenied,
     Exception\ClientNotFound,
     Exception\HTTPException,
-    HandlerInterface
+    HandlerInterface,
+    Scheduled
 };
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -51,6 +53,17 @@ class Revoke implements HandlerInterface
             throw new \TypeError('Something unexpected happen when attempting to revoke.');
         }
 
+        /* Revoking a public key cannot be replayed. */
+        try {
+            Chronicle::validateTimestamps($request);
+        } catch (\Throwable $ex) {
+            return Chronicle::errorResponse(
+                $response,
+                $ex->getMessage(),
+                $ex->getCode()
+            );
+        }
+
         // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
@@ -84,6 +97,35 @@ class Revoke implements HandlerInterface
                 $result['reason'] = !empty($isAdmin)
                     ? 'You cannot delete administrators from this API'
                     : 'Unknown';
+            }
+            $now = (new \DateTime())->format(\DateTime::ATOM);
+
+            $settings = Chronicle::getSettings();
+            if (!empty($settings['publish-revoked-clients'])) {
+                $serverKey = Chronicle::getSigningKey();
+                $message = \json_encode(
+                    [
+                        'server-action' => 'Client Access Revocation',
+                        'now' => $now,
+                        'clientid' => $result['client-id'],
+                        'publickey' => $post['publickey']
+                    ],
+                    JSON_PRETTY_PRINT
+                );
+                $signature = Base64UrlSafe::encode(
+                    \ParagonIE_Sodium_Compat::crypto_sign_detached(
+                        $message,
+                        $serverKey->getString(true)
+                    )
+                );
+                $result['revoke'] = Chronicle::extendBlakechain(
+                    $signature,
+                    $message,
+                    $serverKey->getPublicKey()
+                );
+
+                // If we need to do a cross-sign, do it now:
+                (new Scheduled())->doCrossSigns();
             }
         } else {
             /* PDO should have already thrown an exception. */
