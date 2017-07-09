@@ -36,6 +36,10 @@ as part of our continued efforts to make the Internet more secure.
 Chronicle allows trusted clients to send data to be included in an immutable,
 auditable, cryptographic permanent record.
 
+Furthermore, Chronicle has cross-signing and many-to-one replication built-in,
+which, when used, greatly enhances the auditability and availability of the
+data written to your local Chronicle instance.
+
 ## What problems do Chronicle solve?
 
 ### Chain of Custody
