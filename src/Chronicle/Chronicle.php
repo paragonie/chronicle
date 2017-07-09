@@ -60,6 +60,9 @@ class Chronicle
         SigningPublicKey $publicKey
     ): array {
         $db = self::$easyDb;
+        if ($db->inTransaction()) {
+            $db->commit();
+        }
         $db->beginTransaction();
         $lasthash = $db->row(
             'SELECT currhash, hashstate FROM chronicle_chain ORDER BY id DESC LIMIT 1'

@@ -67,6 +67,7 @@ try {
 $db->beginTransaction();
 $db->insert('chronicle_replication_sources', [
     'name' => $name,
+    'uniqueid' => Base64UrlSafe::encode(random_bytes(33)),
     'publickey' => $publicKey,
     'url' => $url
 ]);

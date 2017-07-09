@@ -100,12 +100,9 @@ class Replicate
     public function replicate()
     {
         $response = $this->getUpstream($this->getLatestSummaryHash());
+        var_dump($response['results']);
         foreach ($response['results'] as $row) {
-            try {
-                $this->appendToChain($row);
-            } catch (\Throwable $ex) {
-                continue;
-            }
+            $this->appendToChain($row);
         }
     }
 
@@ -212,12 +209,12 @@ class Replicate
         if ($lastHash) {
             $request = new Request(
                 'GET',
-                $this->url . '/lookup/since/' . \urlencode($lastHash)
+                $this->url . '/since/' . \urlencode($lastHash)
             );
         } else {
             $request = new Request(
                 'GET',
-                $this->url . '/lookup/export'
+                $this->url . '/export'
             );
         }
         return $this->sapient->decodeSignedJsonResponse(
