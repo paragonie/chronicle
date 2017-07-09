@@ -74,8 +74,9 @@ Chroncile is a good fit for integrating with SIEM solutions and internal SOCs.
 ## How does it work?
 
 All communications are secured with [Sapient](https://github.com/paragonie/sapient).
-All messages are committed to a hash chain data structure backed by BLAKE2b, which
-we call [Blakechain](https://github.com/paragonie/blakechain) for short.
+Sapient ensures that all published messages are signed with Ed25519. All messages
+are committed to a hash chain data structure backed by BLAKE2b, which we call
+[Blakechain](https://github.com/paragonie/blakechain) for short.
 
 There are two hashes for each message:
 
