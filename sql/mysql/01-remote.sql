@@ -2,6 +2,7 @@ CREATE TABLE chronicle_xsign_targets (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   name TEXT,
   url TEXT,
+  clientid TEXT,
   publickey TEXT,
   policy TEXT,
   lastrun TEXT

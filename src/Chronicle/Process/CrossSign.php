@@ -19,6 +19,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class CrossSign
 {
+    /** @var string */
+    protected $clientId;
+
     /** @var Client */
     protected $guzzle;
 
@@ -52,6 +55,7 @@ class CrossSign
      * @param int $id
      * @param string $name
      * @param string $url
+     * @param string $clientId
      * @param SigningPublicKey $publicKey
      * @param array $policy
      * @param array $lastRun
@@ -60,6 +64,7 @@ class CrossSign
         int $id,
         string $name,
         string $url,
+        string $clientId,
         SigningPublicKey $publicKey,
         array $policy,
         array $lastRun = []
@@ -67,6 +72,7 @@ class CrossSign
         $this->id = $id;
         $this->name = $name;
         $this->url = $url;
+        $this->clientId = $clientId;
         $this->publicKey = $publicKey;
         $this->policy = $policy;
         $this->lastRun = $lastRun;
@@ -96,6 +102,7 @@ class CrossSign
             $id,
             $data['name'],
             $data['url'],
+            $data['clientid'],
             new SigningPublicKey(Base64UrlSafe::decode($data['publickey'])),
             \is_array($policy) ? $policy : [],
             \is_array($lastRun) ? $lastRun : []
@@ -181,7 +188,10 @@ class CrossSign
                     'currhash' => $message['currhash'],
                     'summaryhash' => $message['summaryhash']
                 ],
-                $signingKey
+                $signingKey,
+                [
+                    Chronicle::CLIENT_IDENTIFIER_HEADER => $this->clientId
+                ]
             )
         );
     }

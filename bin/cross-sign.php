@@ -40,6 +40,7 @@ $db = Factory::create(
 $getopt = new Getopt([
     new Option(null, 'url', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'publickey', Getopt::OPTIONAL_ARGUMENT),
+    new Option(null, 'clientid', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'push-after', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'push-days', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'name', Getopt::OPTIONAL_ARGUMENT),
@@ -48,6 +49,7 @@ $getopt->parse();
 
 $url = $getopt->getOption('url') ?? null;
 $publicKey = $getopt->getOption('publickey') ?? null;
+$clientId = $getopt->getOption('clientid') ?? null;
 $pushAfter = $getopt->getOption('push-after') ?? null;
 $pushDays = $getopt->getOption('push-days') ?? null;
 $name = $getopt->getOption('name') ?? (new DateTime())->format(DateTime::ATOM);
@@ -86,6 +88,7 @@ if (empty($fields)) {
         "\t--url\n";
     exit(1);
 }
+$fields['clientid'] = $clientId;
 
 $db->beginTransaction();
 if ($db->exists('SELECT * FROM chronicle_xsign_targets WHERE name = ?', $name)) {
