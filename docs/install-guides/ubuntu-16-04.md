@@ -39,7 +39,7 @@ if you're using a version of PHP earlier than 7.2.
 Once you have a working webserver configuration, you can begin to setup Chronicle.
 
 ```bash
-LATESTVERSION="v0.5.0"
+LATESTVERSION="v0.5.1"
 cd /var/www
 
 # If our GPG key is already imported, do nothing
