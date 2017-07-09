@@ -74,7 +74,7 @@ class Index implements HandlerInterface
                 'uri' => '/chronicle/replica',
                 'description' => 'List of Chronicles being replicated onto this one (and other options)'
             ], [
-                'uri' => '/chronicle/',
+                'uri' => '/chronicle',
                 'description' => 'API method description'
             ],
         ];

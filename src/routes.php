@@ -53,6 +53,7 @@ $app->group('/chronicle', function () {
     $this->get('/replica/{source}/since/{hash}', 'replica.since');
     $this->get('/replica/{source}/export', 'replica.export');
     $this->get('/replica', 'replica.index');
+    $this->get('/', Index::class);
     $this->get('', Index::class);
 });
 
