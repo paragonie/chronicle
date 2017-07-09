@@ -95,8 +95,8 @@ class CrossSign
         if (empty($data)) {
             throw new TargetNotFound('Cross-sign target not found');
         }
-        $policy = \json_decode($data['policy'], true);
-        $lastRun = \json_decode($data['lastrun'], true);
+        $policy = \json_decode($data['policy'] ?? '[]', true);
+        $lastRun = \json_decode($data['lastrun'] ?? '[]', true);
 
         return new static(
             $id,
@@ -162,6 +162,9 @@ class CrossSign
     {
         $db = Chronicle::getDatabase();
         $message = $this->getEndOfChain($db);
+        if (!isset($message['currhash'], $message['summaryhash'])) {
+            return false;
+        }
         $response = $this->sapient->decodeSignedJsonResponse(
             $this->sendToPeer($message),
             $this->publicKey
@@ -204,7 +207,11 @@ class CrossSign
      */
     protected function getEndOfChain(EasyDB $db): array
     {
-        return $db->row('SELECT * FROM chronicle_chain ORDER BY id DESC LIMIT 1');
+        $last = $db->row('SELECT * FROM chronicle_chain ORDER BY id DESC LIMIT 1');
+        if (empty($last)) {
+            return [];
+        }
+        return $last;
     }
 
     /**

@@ -100,7 +100,6 @@ class Replicate
     public function replicate()
     {
         $response = $this->getUpstream($this->getLatestSummaryHash());
-        var_dump($response['results']);
         foreach ($response['results'] as $row) {
             $this->appendToChain($row);
         }
@@ -157,7 +156,7 @@ class Replicate
         );
 
         /* If the summary hash we calculated doesn't match what was given, abort */
-        if (!\hash_equals($entry['summary'], $blakechain->getSummaryHash())) {
+        if (!\hash_equals($entry['summaryhash'], $blakechain->getSummaryHash())) {
             $db->rollBack();
             throw new SecurityViolation(
                 'Invalid summary hash. Expected ' . $entry['summary'] .
