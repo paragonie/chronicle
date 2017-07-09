@@ -38,23 +38,37 @@ $db = Factory::create(
  * This defines the Command Line options.
  */
 $getopt = new Getopt([
-    new Option(null, 'url', Getopt::OPTIONAL_ARGUMENT),
-    new Option(null, 'publickey', Getopt::OPTIONAL_ARGUMENT),
-    new Option(null, 'clientid', Getopt::OPTIONAL_ARGUMENT),
+    new Option(null, 'url', Getopt::REQUIRED_ARGUMENT),
+    new Option(null, 'publickey', Getopt::REQUIRED_ARGUMENT),
+    new Option(null, 'clientid', Getopt::REQUIRED_ARGUMENT),
     new Option(null, 'push-after', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'push-days', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'name', Getopt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->parse();
 
-$url = $getopt->getOption('url') ?? null;
-$publicKey = $getopt->getOption('publickey') ?? null;
-$clientId = $getopt->getOption('clientid') ?? null;
+$url = $getopt->getOption('url');
+$publicKey = $getopt->getOption('publickey');
+$clientId = $getopt->getOption('clientid');
 $pushAfter = $getopt->getOption('push-after') ?? null;
 $pushDays = $getopt->getOption('push-days') ?? null;
 $name = $getopt->getOption('name') ?? (new DateTime())->format(DateTime::ATOM);
 
 $fields = [];
+$policy = [];
+if ($pushAfter) {
+    $policy['push-after'] = (int) $pushAfter;
+}
+if ($pushDays) {
+    $policy['push-days'] = (int) $pushDays;
+}
+if (empty($policy)) {
+    echo "Not enough data. Please specify one of:\n",
+        "\t--push-days\n",
+        "\t--push-after\n";
+    exit(1);
+}
+$fields['policy'] = \json_encode($policy);
 if ($url) {
     $fields['url'] = $url;
 }
@@ -68,25 +82,6 @@ if (is_string($publicKey)) {
         exit(1);
     }
     $fields['publickey'] = $publicKey;
-}
-$policy = [];
-    if ($pushAfter) {
-        $policy['push-after'] = (int) $pushAfter;
-    }
-    if ($pushDays) {
-        $policy['push-days'] = (int) $pushDays;
-    }
-if (!empty($policy)) {
-    $fields['policy'] = \json_encode($policy);
-}
-
-if (empty($fields)) {
-    echo "Not enough data. Please specify one of:\n",
-        "\t--publickey\n",
-        "\t--push-days\n",
-        "\t--push-after\n",
-        "\t--url\n";
-    exit(1);
 }
 $fields['clientid'] = $clientId;
 

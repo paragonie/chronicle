@@ -45,13 +45,25 @@ class Register implements HandlerInterface
         // Sanity checks:
         if ($request instanceof Request) {
             if (!$request->getAttribute('authenticated')) {
-                throw new AccessDenied('Unauthenticated request');
+                return Chronicle::errorResponse(
+                    $response,
+                    'Unauthenticated request',
+                    401
+                );
             }
             if (!$request->getAttribute('administrator')) {
-                throw new AccessDenied('Unprivileged request');
+                return Chronicle::errorResponse(
+                    $response,
+                    'Unprivileged request',
+                   403
+                );
             }
         } else {
-            throw new \TypeError('Something unexpected happen when attempting to register.');
+            return Chronicle::errorResponse(
+                $response,
+                'Something unexpected happen when attempting to register.',
+                500
+            );
         }
 
         try {
@@ -67,14 +79,22 @@ class Register implements HandlerInterface
         // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
-            throw new HTTPException('POST body empty or invalid');
+            return Chronicle::errorResponse($response, 'POST body empty or invalid', 406);
         }
-        if (empty($post['publickey'])) {
-            throw new SecurityViolation('Error: Public key expected');
-        }
+        try {
+            if (empty($post['publickey'])) {
+                throw new SecurityViolation('Error: Public key expected');
+            }
 
-        // If this is not a valid public key, let the exception be uncaught:
-        new SigningPublicKey(Base64UrlSafe::decode($post['publickey']));
+            // If this is not a valid public key, let the exception be uncaught:
+            new SigningPublicKey(Base64UrlSafe::decode($post['publickey']));
+        } catch (\Throwable $ex) {
+            return Chronicle::errorResponse(
+                $response,
+                $ex->getMessage(),
+                500
+            );
+        }
 
         $result = [
             'client-id' => $this->createClient($post)
