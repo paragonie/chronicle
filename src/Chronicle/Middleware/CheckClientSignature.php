@@ -69,6 +69,14 @@ class CheckClientSignature implements MiddlewareInterface
         try {
             $request = Chronicle::getSapient()->verifySignedRequest($request, $publicKey);
             if ($request instanceof Request) {
+                $serverPublicKey = Chronicle::getSigningKey()->getPublicKey()->getString();
+                if (\hash_equals($serverPublicKey, $publicKey->getString())) {
+                    return Chronicle::errorResponse(
+                        $response,
+                        "The server's signing keys cannot be used by clients.",
+                        403
+                    );
+                }
                 // Cache authenticated status in the request
                 foreach (static::PROPERTIES_TO_SET as $prop) {
                     $request = $request->withAttribute($prop, true);
