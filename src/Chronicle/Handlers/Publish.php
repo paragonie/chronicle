@@ -6,7 +6,6 @@ use ParagonIE\Chronicle\{
     Exception\AccessDenied,
     Exception\ClientNotFound,
     Exception\SecurityViolation,
-    Exception\TimestampNotProvided,
     HandlerInterface,
     Scheduled
 };
@@ -58,15 +57,15 @@ class Publish implements HandlerInterface
 
         try {
             Chronicle::validateTimestamps($request, 'now');
-        } catch (TimestampNotProvided $ex) {
-            // Timestamps are optional for publishing. So, we just continue.
-        } catch (\Throwable $ex) {
+        } catch (SecurityViolation $ex) {
             // Invalid timestamp. Possibly a replay attack.
             return Chronicle::errorResponse(
                 $response,
                 $ex->getMessage(),
                 $ex->getCode()
             );
+        } catch (\Throwable $ex) {
+            // We aren't concerned with non-security failures here.
         }
 
         // Get the public key and signature; store this information:
