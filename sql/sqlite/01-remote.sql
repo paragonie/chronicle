@@ -27,3 +27,7 @@ CREATE TABLE chronicle_replication_chain (
   signature TEXT,
   created DATETIME
 );
+
+CREATE INDEX chronicle_replication_chain_prevhash_idx ON chronicle_replication_chain(source, prevhash);
+CREATE INDEX chronicle_replication_chain_currhash_idx ON chronicle_replication_chain(source, currhash);
+CREATE INDEX chronicle_replication_chain_summaryhash_idx ON chronicle_replication_chain(source, summaryhash);
