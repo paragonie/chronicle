@@ -65,6 +65,12 @@ update server).
 For best results, combine with cryptographic signatures (which may also be
 registered in the Chronicle) and reproducible builds.
 
+### Auditable Security Event Logging
+
+Because of Chronicle's cryptographically assured append-only properties, and
+its use of [modern elliptic curve digital signatures](https://ed25519.cr.yp.to/),
+Chroncile is a good fit for integrating with SIEM solutions and internal SOCs.
+
 ## How does it work?
 
 All communications are secured with [Sapient](https://github.com/paragonie/sapient).
