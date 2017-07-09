@@ -1,5 +1,11 @@
 # How to Install Chronicle
 
+More in-depth guides:
+
+* [Installing Chronicle on Ubuntu 16.04](install-guides/ubuntu-16-04.md)
+
+General process:
+
 1. Clone this repository: `git clone https://github.com/paragonie/chronicle.git`
 2. Run `composer install`
    * If you don't have Composer, [go here for **Composer installation** instructions](https://getcomposer.org/download/).
