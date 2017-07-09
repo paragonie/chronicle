@@ -77,13 +77,12 @@ Next, you will need to [get Composer](https://getcomposer.org/download/)
 ### First-Run Configuration
 
 First, run `php bin/install.php` to generate your server's keypair and create
-a basic configuration file. Then, edit `local/settings.json`.
+a basic configuration file. Then, edit `local/settings.json` to your liking.
+In particular, make sure you configure your database connection settings. 
 
 Once you're ready, run `php bin/make-tables.php` to populate the SQL databases.
 If you're using SQLite, make sure `local` (and everything in it) is owned by
 `www-data`.
-
------
 
 Nothing else is specific to Ubuntu. Refer to the [general setup instructions](../01-setup.md)
 for the remaining steps.
