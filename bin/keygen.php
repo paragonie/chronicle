@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 
-require '../cli-autoload.php';
+$root = \dirname(__DIR__);
+require_once $root . '/cli-autoload.php';
 
 /* This generates a new secret key from your kernel's CSPRNG */
 $signingSecretKey = SigningSecretKey::generate();

@@ -164,7 +164,6 @@ class Chronicle
         );
     }
 
-
     /**
      * Get the EasyDB object (used for database queries)
      *

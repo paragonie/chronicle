@@ -21,6 +21,9 @@ class Attest
      */
     public function __construct(array $settings = [])
     {
+        if (empty($settings)) {
+            $settings = Chronicle::getSettings();
+        }
         $this->settings = $settings;
     }
 

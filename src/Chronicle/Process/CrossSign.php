@@ -48,6 +48,7 @@ class CrossSign
 
     /**
      * CrossSign constructor.
+     *
      * @param int $id
      * @param string $name
      * @param string $url
@@ -216,8 +217,9 @@ class CrossSign
                     'time' => $this->now->format(\DateTime::ATOM),
                     'response' => $response
                 ])
-            ],
-            ['id' => $this->id]
+            ], [
+                'id' => $this->id
+            ]
         );
         return $db->commit();
     }

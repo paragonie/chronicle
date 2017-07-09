@@ -27,6 +27,7 @@ $db = Factory::create(
     $settings['database']['password'] ?? '',
     $settings['database']['options'] ?? []
 );
+Chronicle::storeSettings($settings);
 Chronicle::setDatabase($db);
 
 // Run the scheduler:

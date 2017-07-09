@@ -50,8 +50,12 @@ class Replicate
      * @param string $url
      * @param SigningPublicKey $publicKey
      */
-    public function __construct(int $id, string $name, string $url, SigningPublicKey $publicKey)
-    {
+    public function __construct(
+        int $id,
+        string $name,
+        string $url,
+        SigningPublicKey $publicKey
+    ) {
         $this->id = $id;
         $this->name = $name;
         $this->url = $url;
@@ -63,6 +67,8 @@ class Replicate
     }
 
     /**
+     * Get a Replica instance, given its database ID
+     *
      * @param int $id
      * @return self
      * @throws ReplicationSourceNotFound

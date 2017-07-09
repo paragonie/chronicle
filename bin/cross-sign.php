@@ -56,7 +56,7 @@ $fields = [];
 if ($url) {
     $fields['url'] = $url;
 }
-if ($publicKey) {
+if (is_string($publicKey)) {
     try {
         $publicKeyObj = new SigningPublicKey(
             Base64UrlSafe::decode($publicKey)
