@@ -96,11 +96,6 @@ if ($db->exists('SELECT * FROM chronicle_xsign_targets WHERE name = ?', $name)) 
         echo '--url and --publickey are mandatory for new cross-sign targets', PHP_EOL;
         exit(1);
     }
-    if (empty($policy)) {
-        $db->rollBack();
-        echo 'New cross-sign targets must have a --push-days or --push-after argument', PHP_EOL;
-        exit(1);
-    }
     $fields['name'] = $name;
     $db->insert('chronicle_xsign_targets', $fields);
 }

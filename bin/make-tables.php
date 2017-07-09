@@ -5,14 +5,14 @@ $root = \dirname(__DIR__);
 require_once $root . '/cli-autoload.php';
 require_once $root . '/src/settings.php';
 
-/** @var array $settings */
+/**
+ * @global array $settings
+ * @global \Slim\App $app
+ */
 $app = new \Slim\App($settings);
 
 if (!isset($app)) {
     throw new Error('Variable $app is not defined');
-}
-if (!($app instanceof \Slim\App)) {
-    throw new Error('Variable $app is not an App');
 }
 
 /* Local settings; not checked into git. */
