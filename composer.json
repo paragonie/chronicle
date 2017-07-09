@@ -1,7 +1,7 @@
 {
     "name": "paragonie/chronicle",
     "description": "Public hash chain powered by Slim Framework, Sapient, and Blakechain",
-    "keywords": ["sapient", "blakechain", "hash-chain", "security", "hash", "BLAKE2", "BLAKE2b"],
+    "keywords": ["sapient", "blakechain", "hash-chain", "security", "hash", "BLAKE2", "BLAKE2b", "append-only", "cryptography"],
     "homepage": "http://github.com/paragonie/chronicle",
     "license": "MIT",
     "type": "project",
@@ -16,7 +16,7 @@
         "php": "^7",
         "ext-pdo": "*",
         "guzzlehttp/guzzle": "^6",
-        "paragonie/blakechain": "^0|^1",
+        "paragonie/blakechain": "^1",
         "paragonie/easydb": "^2",
         "paragonie/sapient": "^1",
         "paragonie/slim-sapient": "^1",
