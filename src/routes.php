@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Handlers\{
     Index,
     Lookup,
@@ -58,6 +59,13 @@ $app->group('/chronicle', function () {
 });
 
 $app->get('/', function ($request, $response, $args): ResponseInterface {
+    /* UX enhancement: Automatically redirect to chronicle URI if client header is present: */
+    if ($request instanceof \Slim\Http\Request && $response instanceof \Slim\Http\Response) {
+        if ($request->hasHeader(Chronicle::CLIENT_IDENTIFIER_HEADER)) {
+            \header("Location: /chronicle");
+            exit;
+        }
+    }
     // Render index view
     return $this->renderer->render($response, 'index.phtml', $args);
 });
