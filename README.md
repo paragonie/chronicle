@@ -74,7 +74,7 @@ registered in the Chronicle) and reproducible builds.
 
 Because of Chronicle's cryptographically assured append-only properties, and
 its use of [modern elliptic curve digital signatures](https://ed25519.cr.yp.to/),
-Chroncile is a good fit for integrating with SIEM solutions and internal SOCs.
+Chronicle is a good fit for integrating with SIEM solutions and internal SOCs.
 
 ## How does it work?
 
@@ -93,4 +93,4 @@ There are two hashes for each message:
 The rationale for using the previous message's hash was to add a degree of domain
 separation in the event that a BLAKE2b collision attack is ever discovered. The
 keying should reduce the likelihood of any practical attacks, especially if the
-chain is updated rapdily.
+chain is updated rapidly.
