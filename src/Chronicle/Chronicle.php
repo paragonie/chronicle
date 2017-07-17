@@ -42,7 +42,7 @@ class Chronicle
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
     /* This constant denotes the Chronicle version running, server-side */
-    const VERSION = 'pre-1.0.0';
+    const VERSION = '1.0.x';
 
     /**
      * This extends the Blakechain with an arbitrary message, signature, and
