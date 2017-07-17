@@ -31,6 +31,11 @@ as part of our continued efforts to make the Internet more secure.
 * [How to setup cross-signing to other Chronicles](docs/03-cross-signing.md)
 * [How to replicate other Chronicles](docs/04-replication.md)
 
+### Client-Side Software that Interacts with Chronicle
+
+* [Chronicle-API](https://github.com/lookyman/chronicle-api) - 
+  [Lukáš Unger (@lookyman)](https://github.com/lookyman)
+
 ## What does Chronicle do?
 
 Chronicle allows trusted clients to send data to be included in an immutable,
