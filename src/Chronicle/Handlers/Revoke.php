@@ -70,10 +70,10 @@ class Revoke implements HandlerInterface
             return Chronicle::errorResponse($response, 'POST body empty or invalid', 406);
         }
         if (empty($post['clientid'])) {
-            Chronicle::errorResponse($response, 'Error: Client ID expected', 401);
+            return Chronicle::errorResponse($response, 'Error: Client ID expected', 401);
         }
         if (empty($post['publickey'])) {
-            Chronicle::errorResponse($response, 'Error: Public key expected', 401);
+            return Chronicle::errorResponse($response, 'Error: Public key expected', 401);
         }
 
         $db = Chronicle::getDatabase();
@@ -85,7 +85,7 @@ class Revoke implements HandlerInterface
             $post['publickey']
         );
         if (!$found) {
-            Chronicle::errorResponse($response, 'Error: Client not found. It may have already been deleted.', 404);
+            return Chronicle::errorResponse($response, 'Error: Client not found. It may have already been deleted.', 404);
         }
         $isAdmin = $db->cell(
             'SELECT isAdmin FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
@@ -93,7 +93,7 @@ class Revoke implements HandlerInterface
             $post['publickey']
         );
         if ($isAdmin) {
-            Chronicle::errorResponse($response, 'You cannot delete administrators from this API.', 403);
+            return Chronicle::errorResponse($response, 'You cannot delete administrators from this API.', 403);
         }
 
         $db->delete(
