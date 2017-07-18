@@ -85,11 +85,15 @@ class Revoke implements HandlerInterface
             $post['publickey']
         );
         if (!$found) {
-            Chronicle::errorResponse($response, 'Error: Client not found.', 404);
+            Chronicle::errorResponse($response, 'Error: Client not found. It may have already been deleted.', 404);
         }
-        $isAdmin = $db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']);
+        $isAdmin = $db->cell(
+            'SELECT isAdmin FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
+            $post['clientid'],
+            $post['publickey']
+        );
         if ($isAdmin) {
-            Chronicle::errorResponse($response, 'You cannot delete administrators from this API', 403);
+            Chronicle::errorResponse($response, 'You cannot delete administrators from this API.', 403);
         }
 
         $db->delete(
@@ -103,11 +107,15 @@ class Revoke implements HandlerInterface
         if ($db->commit()) {
             // Confirm deletion:
             $result = [
-                'deleted' => !$db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $post['clientid'])
+                'deleted' => !$db->exists(
+                    'SELECT count(id) FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
+                    $post['clientid'],
+                    $post['publickey']
+                )
             ];
 
             if (!$result['deleted']) {
-                $result['reason'] = 'An unknown error must have occurred.';
+                $result['reason'] = 'Delete operatio nwas unsuccessful due to unknown reasons.';
             }
             $now = (new \DateTime())->format(\DateTime::ATOM);
 
