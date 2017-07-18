@@ -4,7 +4,7 @@ The process is relatively simple:
 
 1. Obtain your server's public key. This can be obtained by visiting 
    `/chronicle`.
-2. Send your public to the person who operates the other Chronicle and request
+2. Send your public key to the person who operates the other Chronicle and request
    access as a client.
 3. Configure cross-signing on your client.
 4. (Optional) set up a cronjob that runs `bin/scheduled-tasks.php` regularly.
