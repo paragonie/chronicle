@@ -147,6 +147,21 @@ class Chronicle
     }
 
     /**
+     * If we're using SQLite, we need a 1 or a 0.
+     * Otherwise, TRUE/FALSE is fine.
+     *
+     * @param bool $value
+     * @return bool|int
+     */
+    public static function getDatabaseBoolean(bool $value)
+    {
+        if (self::$easyDb->getDriver() === 'sqlite') {
+            return $value ? 1 : 0;
+        }
+        return !empty($value);
+    }
+
+    /**
      * Given a clients Public ID, retrieve their Ed25519 public key.
      *
      * @param string $clientId

@@ -67,13 +67,13 @@ class Revoke implements HandlerInterface
         // Get the parsed POST body:
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
-            throw new HTTPException('Empty post body');
+            return Chronicle::errorResponse($response, 'POST body empty or invalid', 406);
         }
         if (empty($post['clientid'])) {
-            throw new ClientNotFound('Error: Client ID expected');
+            Chronicle::errorResponse($response, 'Error: Client ID expected', 401);
         }
         if (empty($post['publickey'])) {
-            throw new ClientNotFound('Error: Public key expected');
+            Chronicle::errorResponse($response, 'Error: Public key expected', 401);
         }
 
         $db = Chronicle::getDatabase();
@@ -83,7 +83,7 @@ class Revoke implements HandlerInterface
             [
                 'publicid' => $post['clientid'],
                 'publickey' => $post['publickey'],
-                'isAdmin' => false
+                'isAdmin' => Chronicle::getDatabaseBoolean(false)
             ]
         );
         if ($db->commit()) {
@@ -130,7 +130,11 @@ class Revoke implements HandlerInterface
         } else {
             /* PDO should have already thrown an exception. */
             $db->rollBack();
-            throw new \PDOException($db->errorInfo()[0]);
+            return Chronicle::errorResponse(
+                $response,
+                $db->errorInfo()[0],
+                500
+            );
         }
 
         return Chronicle::getSapient()->createSignedJsonResponse(

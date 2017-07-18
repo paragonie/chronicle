@@ -167,6 +167,7 @@ class Register implements HandlerInterface
                 'publicid' => $clientId,
                 'publickey' => $post['publickey'],
                 'comment' => $post['comment'] ?? '',
+                'isAdmin' => Chronicle::getDatabaseBoolean(false),
                 'created' => $now,
                 'modified' => $now
             ]

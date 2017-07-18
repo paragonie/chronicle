@@ -2,7 +2,7 @@ CREATE TABLE chronicle_clients (
   id INTEGER PRIMARY KEY ASC,
   publicid TEXT,
   publickey TEXT,
-  isAdmin INTEGER,
+  isAdmin INTEGER NOT NULL DEFAULT 0,
   comment TEXT,
   created TEXT,
   modified TEXT
