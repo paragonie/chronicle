@@ -15,6 +15,7 @@ require_once dirname(__DIR__) . '/command-preamble.php';
 /**
  * @global string $baseUrl
  * @global array $client
+ * @global array $clientAdmin
  * @global Client $http
  * @global Sapient $sapient
  * @global SigningPublickey $serverPublicKey
@@ -47,6 +48,50 @@ $request = $sapient->createSignedJsonRequest(
     $client['secret-key'],
     [
         Chronicle::CLIENT_IDENTIFIER_HEADER => 'CLI-testing-user'
+    ]
+);
+$response = $sapient->decodeSignedJsonResponse(
+    $http->send($request),
+    $serverPublicKey
+);
+if ($response['status'] !== 'OK') {
+    var_dump($response);
+    exit(255);
+}
+
+$registeredClientSecretKey = SigningSecretKey::generate();
+
+$request = $sapient->createSignedJsonRequest(
+    'POST',
+    $baseUrl . '/chronicle/register',
+    [
+        'publickey' => $registeredClientSecretKey->getPublickey()->getString(),
+        'comment' => 'this is a comment',
+    ],
+    $clientAdmin['secret-key'],
+    [
+        Chronicle::CLIENT_IDENTIFIER_HEADER => 'CLI-admin-user'
+    ]
+);
+$response = $sapient->decodeSignedJsonResponse(
+    $http->send($request),
+    $serverPublicKey
+);
+if ($response['status'] !== 'OK') {
+    var_dump($response);
+    exit(255);
+}
+
+$request = $sapient->createSignedJsonRequest(
+    'POST',
+    $baseUrl . '/chronicle/revoke',
+    [
+        'clientid' => $response['results']['client-id'],
+        'publickey' => $registeredClientSecretKey->getPublickey()->getString(),
+    ],
+    $clientAdmin['secret-key'],
+    [
+        Chronicle::CLIENT_IDENTIFIER_HEADER => 'CLI-admin-user'
     ]
 );
 $response = $sapient->decodeSignedJsonResponse(
