@@ -30,6 +30,16 @@ $client = [
     'public-key' => new SigningPublicKey(Base64UrlSafe::decode($clientData['public-key']))
 ];
 
+if (!\is_readable((__DIR__ . '/client-admin.json'))) {
+    echo 'client-admin.json is not found!', PHP_EOL;
+    exit(255);
+}
+$clientAdminData = \json_decode(\file_get_contents(__DIR__ . '/client-admin.json'), true);
+$clientAdmin = [
+    'secret-key' => new SigningSecretKey(Base64UrlSafe::decode($clientAdminData['secret-key'])),
+    'public-key' => new SigningPublicKey(Base64UrlSafe::decode($clientAdminData['public-key']))
+];
+
 /*
 $request = $sapient->createSignedJsonRequest(
     'POST',

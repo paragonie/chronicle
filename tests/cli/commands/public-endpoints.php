@@ -13,6 +13,7 @@ require_once dirname(__DIR__) . '/command-preamble.php';
 /**
  * @global string $baseUrl
  * @global array $client
+ * @global array $clientAdmin
  * @global Client $http
  * @global Sapient $sapient
  * @global SigningPublickey $serverPublicKey

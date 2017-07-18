@@ -6,3 +6,4 @@
 /composer.lock
 /.idea/
 /tests/cli/client.json
+/tests/cli/client-admin.json
