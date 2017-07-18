@@ -78,6 +78,20 @@ class Revoke implements HandlerInterface
 
         $db = Chronicle::getDatabase();
         $db->beginTransaction();
+
+        $found = $db->exists(
+            'SELECT count(id) FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
+            $post['clientid'],
+            $post['publickey']
+        );
+        if (!$found) {
+            Chronicle::errorResponse($response, 'Error: Client not found.', 404);
+        }
+        $isAdmin = $db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']);
+        if ($isAdmin) {
+            Chronicle::errorResponse($response, 'You cannot delete administrators from this API', 403);
+        }
+
         $db->delete(
             'chronicle_clients',
             [
@@ -93,10 +107,7 @@ class Revoke implements HandlerInterface
             ];
 
             if (!$result['deleted']) {
-                $isAdmin = $db->cell('SELECT isAdmin FROM chronicle_clients WHERE publicid = ?', $post['clientid']);
-                $result['reason'] = !empty($isAdmin)
-                    ? 'You cannot delete administrators from this API'
-                    : 'Unknown';
+                $result['reason'] = 'An unknown error must have occurred.';
             }
             $now = (new \DateTime())->format(\DateTime::ATOM);
 
