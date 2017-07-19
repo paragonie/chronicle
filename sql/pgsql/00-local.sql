@@ -2,7 +2,7 @@ CREATE TABLE chronicle_clients (
   id BIGSERIAL PRIMARY KEY,
   publicid TEXT,
   publickey TEXT,
-  isAdmin BOOLEAN NOT NULL DEFAULT FALSE,
+  "isAdmin" BOOLEAN DEFAULT FALSE,
   comment TEXT,
   created TIMESTAMP,
   modified TIMESTAMP

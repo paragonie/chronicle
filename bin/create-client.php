@@ -67,7 +67,7 @@ $db->insert(
     [
         'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,
-        'publicKey' => $publicKey
+        'publickey' => $publicKey
     ]
 );
 if ($db->commit()) {
