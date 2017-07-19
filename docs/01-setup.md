@@ -76,7 +76,7 @@ php bin/create-client.php \
 This will return a message that contains your `clientId`, which should be included
 with this client's HTTP requests to the Chronicle.
 
-You can also specify `--administrator` if you wiish to allow this client to add/remove
+You can also specify `--administrator` if you wish to allow this client to add/remove
 other clients from the API. (It is not possible to add or remove administrators through
 the API, only normal clients.)
 

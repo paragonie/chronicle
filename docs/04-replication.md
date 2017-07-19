@@ -6,7 +6,7 @@ The setup process is simpler than cross-signing.
 First, run the following command:
 
 ```bash
-php bin/cross-sign.php \
+php bin/replicate.php \
     --url=http://target-chronicle \
     --publickey=[public key of target chronicle] \
     --name=[whatever you want to refer to it]
