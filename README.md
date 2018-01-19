@@ -35,8 +35,11 @@ as part of our continued efforts to make the Internet more secure.
 
 #### PHP
 
+* [Herd](https://github.com/paragonie/herd) - PIE
+* [Quill](https://github.com/paragonie/quill) - PIE
+  * [Monolog-Quill](https://github.com/paragonie/monolog-quill) - PIE
 * [Chronicle-API](https://github.com/lookyman/chronicle-api) - 
-  [Lukáš Unger (@lookyman)](https://github.com/lookyman)
+  [Lukáš Unger (@lookyman)](https://github.com/lookyman) 
 
 ## What does Chronicle do?
 
