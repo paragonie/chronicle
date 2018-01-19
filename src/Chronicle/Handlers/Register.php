@@ -3,8 +3,8 @@ namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
     Chronicle,
-    Exception\AccessDenied,
-    Exception\HTTPException,
+    Exception\ChainAppendException,
+    Exception\FilesystemException,
     Exception\SecurityViolation,
     HandlerInterface,
     Scheduled
@@ -32,9 +32,9 @@ class Register implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
-     * @throws AccessDenied
-     * @throws HTTPException
-     * @throws SecurityViolation
+     * @throws ChainAppendException
+     * @throws FilesystemException
+     * @throws \SodiumException
      * @throws \TypeError
      */
     public function __invoke(
@@ -105,6 +105,7 @@ class Register implements HandlerInterface
         $settings = Chronicle::getSettings();
         if (!empty($settings['publish-new-clients'])) {
             $serverKey = Chronicle::getSigningKey();
+            /** @var string $message */
             $message = \json_encode(
                 [
                     'server-action' => 'New Client Registration',
@@ -114,6 +115,9 @@ class Register implements HandlerInterface
                 ],
                 JSON_PRETTY_PRINT
             );
+            if (!\is_string($message)) {
+                throw new \TypeError('Invalid messsage');
+            }
             $signature = Base64UrlSafe::encode(
                 \ParagonIE_Sodium_Compat::crypto_sign_detached(
                     $message,

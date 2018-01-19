@@ -4,6 +4,7 @@ namespace ParagonIE\Chronicle\Handlers;
 
 use ParagonIE\Chronicle\{
     Chronicle,
+    Exception\FilesystemException,
     Exception\ReplicationSourceNotFound,
     Exception\HashNotFound,
     HandlerInterface
@@ -93,6 +94,7 @@ class Replica implements HandlerInterface
      * Gets the entire Blakechain.
      *
      * @return ResponseInterface
+     * @throws FilesystemException
      */
     public function exportChain(): ResponseInterface
     {
@@ -115,6 +117,7 @@ class Replica implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      * @throws HashNotFound
+     * @throws FilesystemException
      */
     public function getByHash(array $args = []): ResponseInterface
     {
@@ -159,6 +162,7 @@ class Replica implements HandlerInterface
      * List the latest current hash and summary hash for this replica
      *
      * @return ResponseInterface
+     * @throws FilesystemException
      */
     public function getLastHash(): ResponseInterface
     {
@@ -197,6 +201,7 @@ class Replica implements HandlerInterface
      * List all replicated Chronicles and their respective URIs
      *
      * @return ResponseInterface
+     * @throws FilesystemException
      */
     protected function getIndex(): ResponseInterface
     {
@@ -243,6 +248,7 @@ class Replica implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
+     * @throws FilesystemException
      * @throws HashNotFound
      */
     public function getSince(array $args = []): ResponseInterface

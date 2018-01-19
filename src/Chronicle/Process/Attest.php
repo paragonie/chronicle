@@ -77,6 +77,10 @@ class Attest
 
     /**
      * @return array
+     * @throws FilesystemException
+     * @throws \ParagonIE\Chronicle\Exception\ChainAppendException
+     * @throws \SodiumException
+     * @throws \TypeError
      */
     public function attestAll(): array
     {
@@ -91,6 +95,7 @@ class Attest
         }
 
         // Build the message
+        /** @var string $message */
         $message = \json_encode(
             [
                 'version' => Chronicle::VERSION,
@@ -99,6 +104,9 @@ class Attest
             ],
             JSON_PRETTY_PRINT
         );
+        if (!\is_string($message)) {
+            throw new \TypeError('Invalid messsage');
+        }
 
         // Sign the message:
         $signature = Base64UrlSafe::encode(

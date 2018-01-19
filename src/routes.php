@@ -15,6 +15,7 @@ use ParagonIE\Chronicle\Middleware\{
     CheckClientSignature
 };
 use Psr\Http\Message\{
+    RequestInterface,
     ResponseInterface
 };
 
@@ -58,7 +59,7 @@ $app->group('/chronicle', function () {
     $this->get('', Index::class);
 });
 
-$app->get('/', function ($request, $response, $args): ResponseInterface {
+$app->get('/', function (RequestInterface $request, ResponseInterface $response, array $args = []): ResponseInterface {
     /* UX enhancement: Automatically redirect to chronicle URI if client header is present: */
     if ($request instanceof \Slim\Http\Request && $response instanceof \Slim\Http\Response) {
         if ($request->hasHeader(Chronicle::CLIENT_IDENTIFIER_HEADER)) {

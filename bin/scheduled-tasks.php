@@ -8,6 +8,7 @@ use ParagonIE\EasyDB\{
 use ParagonIE\Chronicle\Chronicle;
 
 $root = \dirname(__DIR__);
+/** @psalm-suppress UnresolvableInclude */
 require_once $root . '/cli-autoload.php';
 
 if (!\is_readable($root . '/local/settings.json')) {

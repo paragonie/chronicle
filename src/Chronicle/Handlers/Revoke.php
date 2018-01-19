@@ -4,8 +4,8 @@ namespace ParagonIE\Chronicle\Handlers;
 use ParagonIE\Chronicle\{
     Chronicle,
     Exception\AccessDenied,
-    Exception\ClientNotFound,
-    Exception\HTTPException,
+    Exception\ChainAppendException,
+    Exception\FilesystemException,
     HandlerInterface,
     Scheduled
 };
@@ -32,8 +32,9 @@ class Revoke implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws AccessDenied
-     * @throws ClientNotFound
-     * @throws HTTPException
+     * @throws ChainAppendException
+     * @throws FilesystemException
+     * @throws \SodiumException
      * @throws \TypeError
      */
     public function __invoke(
@@ -115,7 +116,7 @@ class Revoke implements HandlerInterface
             ];
 
             if (!$result['deleted']) {
-                $result['reason'] = 'Delete operatio nwas unsuccessful due to unknown reasons.';
+                $result['reason'] = 'Delete operation was unsuccessful due to unknown reasons.';
             }
             $now = (new \DateTime())->format(\DateTime::ATOM);
 
@@ -126,11 +127,14 @@ class Revoke implements HandlerInterface
                     [
                         'server-action' => 'Client Access Revocation',
                         'now' => $now,
-                        'clientid' => $result['client-id'],
+                        'clientid' => $post['clientid'],
                         'publickey' => $post['publickey']
                     ],
                     JSON_PRETTY_PRINT
                 );
+                if (!\is_string($message)) {
+                    throw new \TypeError('Invalid messsage');
+                }
                 $signature = Base64UrlSafe::encode(
                     \ParagonIE_Sodium_Compat::crypto_sign_detached(
                         $message,

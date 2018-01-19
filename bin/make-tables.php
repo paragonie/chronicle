@@ -2,7 +2,9 @@
 declare(strict_types=1);
 
 $root = \dirname(__DIR__);
+/** @psalm-suppress UnresolvableInclude */
 require_once $root . '/cli-autoload.php';
+/** @psalm-suppress UnresolvableInclude */
 require_once $root . '/src/settings.php';
 
 /**
@@ -29,7 +31,7 @@ if (\is_readable($root . '/local/settings.json')) {
 
 if (empty($settings['database'])) {
     echo "Please defined a database in local/settings.json. For example:\n\n";
-    echo \json_encode(
+    echo (string) \json_encode(
         [
             'database' => [
                 'dsn' => 'pgsql:rest-of-dsn-goes-here',

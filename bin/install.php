@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 $root = \dirname(__DIR__);
+/** @psalm-suppress UnresolvableInclude */
 require_once $root . '/cli-autoload.php';
 
 // Generate a signing key.
