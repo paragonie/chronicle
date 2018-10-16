@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <psalm
     autoloader="cli-autoload.php"
-    stopOnFirstError="false"
     useDocblockTypes="true"
 >
     <projectFiles>
@@ -12,5 +11,6 @@
         <InvalidScope errorLevel="suppress" />
         <MissingClosureReturnType errorLevel="suppress" />
         <UndefinedConstant errorLevel="suppress" />
+        <RedundantConditionGivenDocblockType errorLevel="info" />
     </issueHandlers>
 </psalm>

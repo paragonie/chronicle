@@ -3,13 +3,18 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\Process;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Error\ConfigurationError;
-use ParagonIE\Chronicle\Exception\TargetNotFound;
+use ParagonIE\Chronicle\Exception\{
+    FilesystemException,
+    TargetNotFound
+};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Guzzle;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
+use ParagonIE\Sapient\Exception\InvalidMessageException;
 use ParagonIE\Sapient\Sapient;
 use Psr\Http\Message\ResponseInterface;
 
@@ -139,11 +144,15 @@ class CrossSign
             if ($days < 10) {
                 $days = '0' . $days;
             }
-            $lastRun = (new \DateTime($this->lastRun['time']))
-                ->add(new \DateInterval('P' . $days . 'D'));
+            try {
+                $lastRun = (new \DateTime($this->lastRun['time']))
+                    ->add(new \DateInterval('P' . $days . 'D'));
+            } catch (\Exception $ex) {
+                throw new ConfigurationError('Invalid push-days policy: ' . $days, 0, $ex);
+            }
 
             // Return true only if we're more than N days since the last run:
-            return new $this->now > $lastRun;
+            return $this->now > $lastRun;
         }
 
         throw new ConfigurationError('No valid policy configured');
@@ -157,6 +166,9 @@ class CrossSign
      * Finally, update the local metadata table.
      *
      * @return bool
+     * @throws InvalidMessageException
+     * @throws GuzzleException
+     * @throws FilesystemException
      */
     public function performCrossSign(): bool
     {
@@ -177,6 +189,8 @@ class CrossSign
      *
      * @param array $message
      * @return ResponseInterface
+     * @throws GuzzleException
+     * @throws FilesystemException
      */
     protected function sendToPeer(array $message): ResponseInterface
     {

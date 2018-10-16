@@ -8,7 +8,7 @@ declare(strict_types=1);
 use ParagonIE\EasyDB\Factory;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\ConstantTime\Base64UrlSafe;
-use tflori\Getopt\{
+use Getopt\{
     Getopt,
     Option
 };

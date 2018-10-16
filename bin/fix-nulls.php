@@ -5,7 +5,6 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
-use ParagonIE\Chronicle\Chronicle;
 
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */

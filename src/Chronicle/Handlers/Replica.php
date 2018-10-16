@@ -44,7 +44,8 @@ class Replica implements HandlerInterface
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
-     * @return mixed
+     * @return ResponseInterface
+     * @throws FilesystemException
      */
     public function __invoke(
         RequestInterface $request,
