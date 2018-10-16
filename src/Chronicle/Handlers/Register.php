@@ -77,6 +77,7 @@ class Register implements HandlerInterface
         }
 
         // Get the parsed POST body:
+        /** @var array<string, string> $post */
         $post = $request->getParsedBody();
         if (!\is_array($post)) {
             return Chronicle::errorResponse($response, 'POST body empty or invalid', 406);
@@ -154,15 +155,15 @@ class Register implements HandlerInterface
      * @param array $post
      * @return string
      * @throws \PDOException
+     * @throws \Exception
      */
     protected function createClient(array $post): string
     {
         $db = Chronicle::getDatabase();
         $now = (new \DateTime())->format(\DateTime::ATOM);
-
         do {
             $clientId = Base64UrlSafe::encode(\random_bytes(24));
-        } while ($db->cell('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $clientId) > 0);
+        } while ($db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $clientId));
 
         $db->beginTransaction();
         $db->insert(
@@ -178,7 +179,9 @@ class Register implements HandlerInterface
         );
         if (!$db->commit()) {
             $db->rollBack();
-            throw new \PDOException($db->errorInfo()[0]);
+            /** @var array<int, string> $errorInfo */
+            $errorInfo = $db->errorInfo();
+            throw new \PDOException($errorInfo[0]);
         }
         return $clientId;
     }

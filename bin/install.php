@@ -1,12 +1,16 @@
 <?php
 declare(strict_types=1);
 
+use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
+
+/** @var string $root */
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */
 require_once $root . '/cli-autoload.php';
 
 // Generate a signing key.
-$signingKey = \ParagonIE\Sapient\CryptographyKeys\SigningSecretKey::generate();
+/** @var SigningSecretKey $signingKey */
+$signingKey = SigningSecretKey::generate();
 
 // Store the signing key:
 \file_put_contents(

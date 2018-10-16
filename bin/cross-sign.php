@@ -5,6 +5,7 @@ declare(strict_types=1);
  * This script sets up cross-signing to another Chronicle
  */
 
+use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\EasyDB\Factory;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\ConstantTime\Base64UrlSafe;
@@ -22,10 +23,12 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
+/** @var array<string, string> $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
+/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
@@ -34,7 +37,7 @@ $db = Factory::create(
 );
 
 /**
- * @var Getopt
+ * @var Getopt $getopt
  *
  * This defines the Command Line options.
  */
@@ -48,14 +51,22 @@ $getopt = new Getopt([
 ]);
 $getopt->parse();
 
+/** @var string $url */
 $url = $getopt->getOption('url');
+/** @var string $publicKey */
 $publicKey = $getopt->getOption('publickey');
+/** @var string $clientId */
 $clientId = $getopt->getOption('clientid');
+/** @var string|null $pushAfter $pushAfter */
 $pushAfter = $getopt->getOption('push-after') ?? null;
+/** @var string|null $pushDays */
 $pushDays = $getopt->getOption('push-days') ?? null;
+/** @var string $name */
 $name = $getopt->getOption('name') ?? (new DateTime())->format(DateTime::ATOM);
 
+/** @var array<string, string> $fields */
 $fields = [];
+/** @var array<string, int> $policy */
 $policy = [];
 if ($pushAfter) {
     $policy['push-after'] = (int) $pushAfter;
@@ -75,6 +86,7 @@ if ($url) {
 }
 if (is_string($publicKey)) {
     try {
+        /** @var SigningPublicKey $publicKeyObj */
         $publicKeyObj = new SigningPublicKey(
             Base64UrlSafe::decode($publicKey)
         );
@@ -103,6 +115,8 @@ if ($db->exists('SELECT * FROM chronicle_xsign_targets WHERE name = ?', $name)) 
 
 if (!$db->commit()) {
     $db->rollBack();
-    echo $db->errorInfo()[0], PHP_EOL;
+    /** @var array<int, string> $errorInfo */
+    $errorInfo = $db->errorInfo();
+    echo $errorInfo[0], PHP_EOL;
     exit(1);
 }

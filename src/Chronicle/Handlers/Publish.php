@@ -1,14 +1,19 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
+use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Chronicle\{
     Chronicle,
-    Exception\AccessDenied,
+    Exception\ChainAppendException,
     Exception\ClientNotFound,
+    Exception\FilesystemException,
     Exception\SecurityViolation,
+    Exception\TargetNotFound,
     HandlerInterface,
     Scheduled
 };
+use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
+use ParagonIE\Sapient\Exception\InvalidMessageException;
 use ParagonIE\Sapient\Sapient;
 use Psr\Http\Message\{
     RequestInterface,
@@ -31,7 +36,13 @@ class Publish implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
-     * @throws AccessDenied
+     * @throws ChainAppendException
+     * @throws ClientNotFound
+     * @throws FilesystemException
+     * @throws InvalidMessageException
+     * @throws SecurityViolation
+     * @throws TargetNotFound
+     * @throws GuzzleException
      */
     public function __invoke(
         RequestInterface $request,
@@ -69,6 +80,10 @@ class Publish implements HandlerInterface
         }
 
         // Get the public key and signature; store this information:
+        /**
+         * @var SigningPublicKey $publicKey
+         * @var string $signature
+         */
         list($publicKey, $signature) = $this->getHeaderData($request);
 
         $result = Chronicle::extendBlakechain(

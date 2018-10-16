@@ -16,16 +16,28 @@ $container = $app->getContainer();
 
 // view renderer
 $container['renderer'] = function (Container $c): \Slim\Views\PhpRenderer {
-    $settings = $c->get('settings')['renderer'];
+    /** @var array<string, array> $cset */
+    $cset = $c->get('settings');
+    /** @var array<string, string> $settings */
+    $settings = $cset['renderer'];
     return new Slim\Views\PhpRenderer($settings['template_path']);
 };
 
 // monolog
 $container['logger'] = function (Container $c): \Monolog\Logger {
-    $settings = $c->get('settings')['logger'];
-    $logger = new Monolog\Logger($settings['name']);
+
+    /** @var array<string, array> $cset */
+    $cset = $c->get('settings');
+    /** @var array<string, string> $settings */
+    $settings = $cset['logger'];
+    $logger = new Monolog\Logger((string)$settings['name']);
     $logger->pushProcessor(new Monolog\Processor\UidProcessor());
-    $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
+    $logger->pushHandler(
+        new Monolog\Handler\StreamHandler(
+            $settings['path'],
+            (int) $settings['level']
+        )
+    );
     return $logger;
 };
 

@@ -1,15 +1,17 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
+use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Chronicle\{
     Chronicle,
     Exception\AccessDenied,
     Exception\ChainAppendException,
     Exception\FilesystemException,
+    Exception\TargetNotFound,
     HandlerInterface,
-    Scheduled
-};
+    Scheduled};
 use ParagonIE\ConstantTime\Base64UrlSafe;
+use ParagonIE\Sapient\Exception\InvalidMessageException;
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -34,8 +36,10 @@ class Revoke implements HandlerInterface
      * @throws AccessDenied
      * @throws ChainAppendException
      * @throws FilesystemException
+     * @throws GuzzleException
+     * @throws InvalidMessageException
      * @throws \SodiumException
-     * @throws \TypeError
+     * @throws TargetNotFound
      */
     public function __invoke(
         RequestInterface $request,
@@ -80,6 +84,7 @@ class Revoke implements HandlerInterface
         $db = Chronicle::getDatabase();
         $db->beginTransaction();
 
+        /** @var bool $found */
         $found = $db->exists(
             'SELECT count(id) FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
             $post['clientid'],
@@ -88,6 +93,7 @@ class Revoke implements HandlerInterface
         if (!$found) {
             return Chronicle::errorResponse($response, 'Error: Client not found. It may have already been deleted.', 404);
         }
+        /** @var bool $isAdmin */
         $isAdmin = $db->cell(
             'SELECT isAdmin FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
             $post['clientid'],
@@ -153,9 +159,11 @@ class Revoke implements HandlerInterface
         } else {
             /* PDO should have already thrown an exception. */
             $db->rollBack();
+            /** @var array<int, string> $errorInfo */
+            $errorInfo = $db->errorInfo();
             return Chronicle::errorResponse(
                 $response,
-                $db->errorInfo()[0],
+                $errorInfo[0],
                 500
             );
         }

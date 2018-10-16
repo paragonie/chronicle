@@ -81,6 +81,7 @@ class Index implements HandlerInterface
         if ($request->hasHeader(Chronicle::CLIENT_IDENTIFIER_HEADER)) {
             $headers = $request->getHeader(Chronicle::CLIENT_IDENTIFIER_HEADER);
             $clientId = array_shift($headers);
+            /** @var array<string, string> $dbQueryResult */
             $dbQueryResult = Chronicle::getDatabase()->row(
                 'SELECT * FROM chronicle_clients WHERE publicid = ?',
                 $clientId

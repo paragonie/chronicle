@@ -16,6 +16,7 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
+/** @var array<string, string> $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true

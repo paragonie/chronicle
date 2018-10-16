@@ -22,10 +22,12 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
+/** @var array<string, string> $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
+/** @var \ParagonIE\EasyDB\EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
@@ -45,8 +47,11 @@ $getopt = new Getopt([
 ]);
 $getopt->parse();
 
+/** @var string $url */
 $url = $getopt->getOption('url');
+/** @var string $publicKey */
 $publicKey = $getopt->getOption('publickey');
+/** @var string $name */
 $name = $getopt->getOption('name');
 if (!isset($url, $publicKey, $name)) {
     echo "Not enough data. Please specify:\n",
@@ -74,6 +79,8 @@ $db->insert('chronicle_replication_sources', [
 ]);
 if (!$db->commit()) {
     $db->rollBack();
-    echo $db->errorInfo()[0], PHP_EOL;
+    /** @var array<int, string> $errorInfo */
+    $errorInfo = $db->errorInfo();
+    echo $errorInfo[0], PHP_EOL;
     exit(1);
 }

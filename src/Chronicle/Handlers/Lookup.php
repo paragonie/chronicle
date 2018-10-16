@@ -1,11 +1,7 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\{
-    Chronicle,
-    Exception\HashNotFound,
-    HandlerInterface
-};
+use ParagonIE\Chronicle\{Chronicle, Exception\FilesystemException, Exception\HashNotFound, HandlerInterface};
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -91,10 +87,13 @@ class Lookup implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
+     *
+     * @throws FilesystemException
      * @throws HashNotFound
      */
     public function getByHash(array $args = []): ResponseInterface
     {
+        /** @var array<int, array<string, string>> $record */
         $record = Chronicle::getDatabase()->run(
             "SELECT
                  data AS contents,
@@ -132,9 +131,11 @@ class Lookup implements HandlerInterface
      * List the latest current hash and summary hash
      *
      * @return ResponseInterface
+     * @throws FilesystemException
      */
     public function getLastHash(): ResponseInterface
     {
+        /** @var array<string, string> $lasthash */
         $lasthash = Chronicle::getDatabase()->row(
             'SELECT currhash, summaryhash FROM chronicle_chain ORDER BY id DESC LIMIT 1'
         );
@@ -160,10 +161,13 @@ class Lookup implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
+     *
+     * @throws FilesystemException
      * @throws HashNotFound
      */
     public function getSince(array $args = []): ResponseInterface
     {
+        /** @var int $id */
         $id = Chronicle::getDatabase()->cell(
             "SELECT
                  id
@@ -180,6 +184,7 @@ class Lookup implements HandlerInterface
         if (!$id) {
             throw new HashNotFound('No record found matching this hash.');
         }
+        /** @var array<int, array<string, string>> $since */
         $since = Chronicle::getDatabase()->run(
             "SELECT
                  data AS contents,
@@ -217,7 +222,9 @@ class Lookup implements HandlerInterface
     protected function getFullChain(): array
     {
         $chain = [];
+        /** @var array<int, array<string, string>> $rows */
         $rows = Chronicle::getDatabase()->run("SELECT * FROM chronicle_chain ORDER BY id ASC");
+        /** @var array<string, string> $row */
         foreach ($rows as $row) {
             $chain[] = [
                 'contents' => $row['data'],

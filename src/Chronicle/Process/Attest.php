@@ -12,12 +12,12 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
  */
 class Attest
 {
-    /** @var array */
+    /** @var array<string, string> */
     protected $settings;
 
     /**
      * Attest constructor.
-     * @param array $settings
+     * @param array<string, string> $settings
      */
     public function __construct(array $settings = [])
     {
@@ -85,7 +85,9 @@ class Attest
     public function attestAll(): array
     {
         $hashes = [];
+        /** @var array<string, string> $row */
         foreach (Chronicle::getDatabase()->run('SELECT id, uniqueid FROM chronicle_replication_sources') as $row) {
+            /** @var array<string, string> $latest */
             $latest = Chronicle::getDatabase()->row(
                 "SELECT currhash, summaryhash FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1",
                 $row['id']

@@ -22,6 +22,7 @@ $settings = [];
 if (\is_readable($root . '/local/settings.json')) {
     $settingsFile = \file_get_contents($root . '/local/settings.json');
     if (\is_string($settingsFile)) {
+        /** @var array<string, string> $settings */
         $settings = \json_decode($settingsFile, true);
     }
 } else {
@@ -45,6 +46,7 @@ if (empty($settings['database'])) {
     exit(1);
 }
 
+/** @var \ParagonIE\EasyDB\EasyDB $db */
 $db = ParagonIE\EasyDB\Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? null,
@@ -72,6 +74,8 @@ if ($db->commit()) {
     echo 'Tables created successfully!', PHP_EOL;
 } else {
     $db->rollBack();
-    echo $db->errorInfo()[0], PHP_EOL;
+    /** @var array<int, string> $errorInfo */
+    $errorInfo = $db->errorInfo();
+    echo $errorInfo[0], PHP_EOL;
     exit(1);
 }

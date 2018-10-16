@@ -2,6 +2,7 @@
 <psalm
     autoloader="cli-autoload.php"
     useDocblockTypes="true"
+    totallyTyped="true"
 >
     <projectFiles>
         <directory name="bin" />

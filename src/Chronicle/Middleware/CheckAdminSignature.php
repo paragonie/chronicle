@@ -24,6 +24,7 @@ class CheckAdminSignature extends CheckClientSignature
      */
     public function getPublicKey(string $clientId): SigningPublicKey
     {
+        /** @var array<string, string> $sqlResult */
         $sqlResult = Chronicle::getDatabase()->row(
             "SELECT * FROM chronicle_clients WHERE publicid = ? AND isAdmin",
             $clientId

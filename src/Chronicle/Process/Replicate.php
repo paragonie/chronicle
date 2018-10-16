@@ -4,6 +4,7 @@ namespace ParagonIE\Chronicle\Process;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Blakechain\Blakechain;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\{
@@ -13,6 +14,7 @@ use ParagonIE\Chronicle\Exception\{
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\Adapter\Guzzle;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
+use ParagonIE\Sapient\Exception\InvalidMessageException;
 use ParagonIE\Sapient\Sapient;
 
 /**
@@ -75,6 +77,7 @@ class Replicate
      */
     public static function byId(int $id): self
     {
+        /** @var array<string, string> $row */
         $row = Chronicle::getDatabase()->row(
             "SELECT * FROM chronicle_replication_sources WHERE id = ?",
             $id
@@ -96,10 +99,16 @@ class Replicate
      * Append new data to the replication table.
      *
      * @return void
+     *
+     * @throws GuzzleException
+     * @throws InvalidMessageException
+     * @throws SecurityViolation
+     * @throws \SodiumException
      */
     public function replicate()
     {
         $response = $this->getUpstream($this->getLatestSummaryHash());
+        /** @var array<string, string> $row */
         foreach ($response['results'] as $row) {
             $this->appendToChain($row);
         }
@@ -109,14 +118,17 @@ class Replicate
      * Add an entry to the Blakechain for this replica of the upstream
      * Chronicle.
      *
-     * @param array $entry
+     * @param array<string, string> $entry
      * @return bool
+     *
      * @throws SecurityViolation
+     * @throws \SodiumException
      */
     protected function appendToChain(array $entry): bool
     {
         $db = Chronicle::getDatabase();
         $db->beginTransaction();
+        /** @var array<string, string> $lasthash */
         $lasthash = $db->row(
             'SELECT currhash, hashstate FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1',
             $this->id
@@ -187,6 +199,7 @@ class Replicate
      */
     protected function getLatestSummaryHash(): string
     {
+        /** @var string $last */
         $last = Chronicle::getDatabase()->cell(
             "SELECT summaryhash FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1",
             $this->id
@@ -202,6 +215,8 @@ class Replicate
      *
      * @param string $lastHash
      * @return array
+     * @throws GuzzleException
+     * @throws InvalidMessageException
      */
     protected function getUpstream(string $lastHash = ''): array
     {

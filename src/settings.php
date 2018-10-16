@@ -6,6 +6,7 @@ $localSettings = [];
 if (\is_readable(CHRONICLE_APP_ROOT . '/local/settings.json')) {
     $settingsFile = \file_get_contents(CHRONICLE_APP_ROOT . '/local/settings.json');
     if (\is_string($settingsFile)) {
+        /** @var array $localSettings */
         $localSettings = \json_decode($settingsFile, true);
     }
 }

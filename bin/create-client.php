@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\EasyDB\Factory;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\ConstantTime\Base64UrlSafe;
@@ -18,10 +19,12 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
+/** @var array $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
+/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
@@ -30,7 +33,7 @@ $db = Factory::create(
 );
 
 /**
- * @var Getopt
+ * @var Getopt $getopt
  *
  * This defines the Command Line options.
  *
@@ -45,10 +48,14 @@ $getopt = new Getopt([
 ]);
 $getopt->parse();
 
+/** @var string $publicKey */
 $publicKey = $getopt->getOption('publickey');
+/** @var string $comment */
 $comment = $getopt->getOption('comment') ?? '';
+/** @var bool $admin */
 $admin = $getopt->getOption('administrator') ?? false;
 
+/** @var SigningPublicKey $publicKeyObj */
 // Make sure it's a valid public key:
 try {
     $publicKeyObj = new SigningPublicKey(
@@ -60,6 +67,7 @@ try {
 }
 
 // Generate a unique ID for the user:
+/** @var string $newPublicId */
 $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
 $db->beginTransaction();
@@ -80,6 +88,8 @@ if ($db->commit()) {
     }
 } else {
     $db->rollBack();
-    echo $db->errorInfo()[0], PHP_EOL;
+    /** @var array<int, string> $errorInfo */
+    $errorInfo = $db->errorInfo();
+    echo $errorInfo[0], PHP_EOL;
     exit(1);
 }

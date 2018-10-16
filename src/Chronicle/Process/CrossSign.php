@@ -33,7 +33,7 @@ class CrossSign
     /** @var int */
     protected $id;
 
-    /** @var array */
+    /** @var array<string, string> */
     protected $lastRun;
 
     /** @var string */
@@ -63,7 +63,7 @@ class CrossSign
      * @param string $clientId
      * @param SigningPublicKey $publicKey
      * @param array $policy
-     * @param array $lastRun
+     * @param array<string, string> $lastRun
      */
     public function __construct(
         int $id,
@@ -96,11 +96,14 @@ class CrossSign
     public static function byId(int $id): self
     {
         $db = Chronicle::getDatabase();
+        /** @var array<string, string> $data */
         $data = $db->row('SELECT * FROM chronicle_xsign_targets WHERE id = ?', $id);
         if (empty($data)) {
             throw new TargetNotFound('Cross-sign target not found');
         }
+        /** @var array $policy */
         $policy = \json_decode($data['policy'] ?? '[]', true);
+        /** @var array<string, string> $lastRun */
         $lastRun = \json_decode($data['lastrun'] ?? '[]', true);
 
         return new static(
@@ -131,9 +134,10 @@ class CrossSign
         $db = Chronicle::getDatabase();
 
         if (isset($this->policy['push-after'])) {
+            /** @var int $head */
             $head = $db->cell('SELECT MAX(id) FROM chronicle_chain');
             // Only run if we've had more than N entries
-            if (($head - $this->lastRun['id']) >= $this->policy['push-after']) {
+            if (($head - (int) ($this->lastRun['id'])) >= $this->policy['push-after']) {
                 return true;
             }
             // Otherwise, fall back to the daily scheduler:
@@ -217,10 +221,11 @@ class CrossSign
      * Get the last row in this Chronicle's chain.
      *
      * @param EasyDB $db
-     * @return array
+     * @return array<string, string>
      */
     protected function getEndOfChain(EasyDB $db): array
     {
+        /** @var array<string, string> $last */
         $last = $db->row('SELECT * FROM chronicle_chain ORDER BY id DESC LIMIT 1');
         if (empty($last)) {
             return [];

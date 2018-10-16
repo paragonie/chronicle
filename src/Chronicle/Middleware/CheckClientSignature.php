@@ -6,6 +6,7 @@ use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\ClientNotFound;
 use ParagonIE\Chronicle\Exception\SecurityViolation;
 use ParagonIE\Chronicle\MiddlewareInterface;
+use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -55,12 +56,14 @@ class CheckClientSignature implements MiddlewareInterface
     ): ResponseInterface {
         try {
             // Get the client ID from the request
+            /** @var string $clientId */
             $clientId = $this->getClientId($request);
         } catch (\Exception $ex) {
             return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
         try {
+            /** @var SigningPublicKey $publicKey */
             $publicKey = Chronicle::getClientsPublicKey($clientId);
         } catch (ClientNotFound $ex) {
             return Chronicle::errorResponse($response, 'Invalid client', 403);
@@ -78,6 +81,7 @@ class CheckClientSignature implements MiddlewareInterface
                     );
                 }
                 // Cache authenticated status in the request
+                /** @var string $prop */
                 foreach (static::PROPERTIES_TO_SET as $prop) {
                     $request = $request->withAttribute($prop, true);
                 }
@@ -88,6 +92,11 @@ class CheckClientSignature implements MiddlewareInterface
             return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
-        return $next($request, $response);
+        /** @var ResponseInterface|null $nextOut */
+        $nextOut = $next($request, $response);
+        if ($nextOut instanceof ResponseInterface) {
+            return $nextOut;
+        }
+        return $response;
     }
 }

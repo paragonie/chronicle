@@ -2,11 +2,13 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
+use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Chronicle\Process\{
     Attest,
     CrossSign,
     Replicate
 };
+use ParagonIE\Sapient\Exception\InvalidMessageException;
 
 /**
  * Class Scheduled
@@ -15,12 +17,12 @@ use ParagonIE\Chronicle\Process\{
  */
 class Scheduled
 {
-    /** @var array */
+    /** @var array<string, string> */
     protected $settings;
 
     /**
      * Scheduled constructor.
-     * @param array $settings
+     * @param array<string, string> $settings
      */
     public function __construct(array $settings = [])
     {
@@ -34,6 +36,11 @@ class Scheduled
      * Invoked by a CLI script, this runs all of the scheduled tasks.
      *
      * @return self
+     * @throws Exception\FilesystemException
+     * @throws Exception\ReplicationSourceNotFound
+     * @throws Exception\TargetNotFound
+     * @throws GuzzleException
+     * @throws InvalidMessageException
      */
     public function run(): self
     {
@@ -48,9 +55,14 @@ class Scheduled
      * Cross-sign to other Chronicles (where it is needed)
      *
      * @return self
+     * @throws Exception\FilesystemException
+     * @throws Exception\TargetNotFound
+     * @throws GuzzleException
+     * @throws InvalidMessageException
      */
     public function doCrossSigns(): self
     {
+        /** @var array<string, int> $row */
         foreach (Chronicle::getDatabase()->run('SELECT id FROM chronicle_xsign_targets') as $row) {
             $xsign = CrossSign::byId((int) $row['id']);
             if ($xsign->needsToCrossSign()) {
@@ -64,9 +76,11 @@ class Scheduled
      * Replicate any new records from the Chronicles we're mirroring
      *
      * @return self
+     * @throws Exception\ReplicationSourceNotFound
      */
     public function doReplication(): self
     {
+        /** @var array<string, int> $row */
         foreach (Chronicle::getDatabase()->run('SELECT id FROM chronicle_replication_sources') as $row) {
             Replicate::byId((int) $row['id'])->replicate();
         }
@@ -75,6 +89,7 @@ class Scheduled
 
     /**
      * @return self
+     * @throws Exception\FilesystemException
      */
     public function doAttestation(): self
     {

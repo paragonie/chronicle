@@ -54,7 +54,7 @@ class Replica implements HandlerInterface
     ): ResponseInterface {
         if (!empty($args['source'])) {
             try {
-                $this->selectReplication($args['source']);
+                $this->selectReplication((string) $args['source']);
             } catch (ReplicationSourceNotFound $ex) {
                 return Chronicle::errorResponse($response, 'Unknown URI', 404);
             }
@@ -122,6 +122,7 @@ class Replica implements HandlerInterface
      */
     public function getByHash(array $args = []): ResponseInterface
     {
+        /** @var array<int, array<string, string>> $record */
         $record = Chronicle::getDatabase()->run(
             "SELECT
                  data AS contents,
@@ -167,6 +168,7 @@ class Replica implements HandlerInterface
      */
     public function getLastHash(): ResponseInterface
     {
+        /** @var array<string, string> $lasthash */
         $lasthash = Chronicle::getDatabase()->row(
             'SELECT
                  currhash,
@@ -206,6 +208,7 @@ class Replica implements HandlerInterface
      */
     protected function getIndex(): ResponseInterface
     {
+        /** @var array<int, array<string, string>> $replicationSources */
         $replicationSources = Chronicle::getDatabase()->run(
             "SELECT
                 uniqueid,
@@ -215,6 +218,10 @@ class Replica implements HandlerInterface
              FROM
                 chronicle_replication_sources"
         );
+        /**
+         * @var int $idx
+         * @var array<string, string> $row
+         */
         foreach ($replicationSources as $idx => $row) {
             $replicationSources[$idx]['urls'] = [
                 [
@@ -254,6 +261,7 @@ class Replica implements HandlerInterface
      */
     public function getSince(array $args = []): ResponseInterface
     {
+        /** @var int $id */
         $id = Chronicle::getDatabase()->cell(
             "SELECT
                  id
@@ -273,6 +281,7 @@ class Replica implements HandlerInterface
         if (!$id) {
             throw new HashNotFound('No record found matching this hash.');
         }
+        /** @var array<int, array<string, string>> $since */
         $since = Chronicle::getDatabase()->run(
             "SELECT
                  data AS contents,
@@ -313,10 +322,12 @@ class Replica implements HandlerInterface
     protected function getFullChain(): array
     {
         $chain = [];
+        /** @var array<int, array<string, string>> $rows */
         $rows = Chronicle::getDatabase()->run(
             "SELECT * FROM chronicle_replication_chain WHERE source = ? ORDER BY id ASC",
             $this->source
         );
+        /** @var array<string, string> $row */
         foreach ($rows as $row) {
             $chain[] = [
                 'contents' => $row['data'],
@@ -341,6 +352,7 @@ class Replica implements HandlerInterface
      */
     protected function selectReplication(string $uniqueId): self
     {
+        /** @var int $source */
         $source = Chronicle::getDatabase()->cell(
             "SELECT id FROM chronicle_replication_sources WHERE uniqueid = ?",
             $uniqueId

@@ -31,7 +31,7 @@ class Chronicle
     /** @var EasyDB $easyDb */
     protected static $easyDb;
 
-    /** @var array $settings */
+    /** @var array<string, string> $settings */
     protected static $settings;
 
     /** @var SigningSecretKey $signingKey */
@@ -64,6 +64,7 @@ class Chronicle
             $db->commit();
         }
         $db->beginTransaction();
+        /** @var array<string, string> $lasthash */
         $lasthash = $db->row(
             'SELECT currhash, hashstate FROM chronicle_chain ORDER BY id DESC LIMIT 1'
         );
@@ -170,6 +171,7 @@ class Chronicle
      */
     public static function getClientsPublicKey(string $clientId): SigningPublicKey
     {
+        /** @var array<string, string> $sqlResult */
         $sqlResult = static::$easyDb->row(
             "SELECT * FROM chronicle_clients WHERE publicid = ?",
             $clientId
@@ -203,7 +205,7 @@ class Chronicle
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
     public static function getSettings(): array
     {
@@ -247,7 +249,7 @@ class Chronicle
     }
 
     /**
-     * @param array $settings
+     * @param array<string, string> $settings
      * @return void
      */
     public static function storeSettings(array $settings)
@@ -285,10 +287,10 @@ class Chronicle
         if (empty($json[$index])) {
             throw new TimestampNotProvided('Parameter "' . $index . '" not provided.', 401);
         }
-        $sent = new \DateTimeImmutable($json[$index]);
+        $sent = new \DateTimeImmutable((string) ($json[$index]));
         $expires = $sent->add(
             \DateInterval::createFromDateString(
-                self::$settings['request-timeout']
+                (string) self::$settings['request-timeout']
             )
         );
 

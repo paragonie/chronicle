@@ -34,32 +34,38 @@ if (!($container instanceof \Slim\Container)) {
 
 // Routes
 $app->group('/chronicle', function () {
+    /** @var \Slim\App $self */
+    $self = $this;
 
     // Admin only:
-    $this->group('', function () {
-        $this->post('/register', Register::class);
-        $this->post('/revoke', Revoke::class);
+    $self->group('', function () {
+        /** @var \Slim\App $self */
+        $self = $this;
+        $self->post('/register', Register::class);
+        $self->post('/revoke', Revoke::class);
     })->add(CheckAdminSignature::class);
 
     // Clients:
-    $this->post('/publish', Publish::class)
+    $self->post('/publish', Publish::class)
         ->add(CheckClientSignature::class);
 
     // Public:
-    $this->get('/lasthash', 'lookup.lasthash');
-    $this->get('/lookup/{hash}', 'lookup.hash');
-    $this->get('/since/{hash}', 'lookup.since');
-    $this->get('/export', 'lookup.export');
-    $this->get('/replica/{source}/lasthash', 'replica.lasthash');
-    $this->get('/replica/{source}/lookup/{hash}', 'replica.hash');
-    $this->get('/replica/{source}/since/{hash}', 'replica.since');
-    $this->get('/replica/{source}/export', 'replica.export');
-    $this->get('/replica', 'replica.index');
-    $this->get('/', Index::class);
-    $this->get('', Index::class);
+    $self->get('/lasthash', 'lookup.lasthash');
+    $self->get('/lookup/{hash}', 'lookup.hash');
+    $self->get('/since/{hash}', 'lookup.since');
+    $self->get('/export', 'lookup.export');
+    $self->get('/replica/{source}/lasthash', 'replica.lasthash');
+    $self->get('/replica/{source}/lookup/{hash}', 'replica.hash');
+    $self->get('/replica/{source}/since/{hash}', 'replica.since');
+    $self->get('/replica/{source}/export', 'replica.export');
+    $self->get('/replica', 'replica.index');
+    $self->get('/', Index::class);
+    $self->get('', Index::class);
 });
 
 $app->get('/', function (RequestInterface $request, ResponseInterface $response, array $args = []): ResponseInterface {
+    /** @var \Slim\App $self */
+    $self = $this;
     /* UX enhancement: Automatically redirect to chronicle URI if client header is present: */
     if ($request instanceof \Slim\Http\Request && $response instanceof \Slim\Http\Response) {
         if ($request->hasHeader(Chronicle::CLIENT_IDENTIFIER_HEADER)) {
@@ -68,7 +74,11 @@ $app->get('/', function (RequestInterface $request, ResponseInterface $response,
         }
     }
     // Render index view
-    return $this->renderer->render($response, 'index.phtml', $args);
+    /** @var \Slim\Container $c */
+    $c = $self->getContainer();
+    /** @var \Slim\Views\PhpRenderer $renderer */
+    $renderer = $c->get('renderer');
+    return $renderer->render($response, 'index.phtml', $args);
 });
 
 $container[CheckClientSignature::class] = function () {
