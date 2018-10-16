@@ -1,7 +1,12 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\{Chronicle, Exception\FilesystemException, Exception\HashNotFound, HandlerInterface};
+use ParagonIE\Chronicle\{
+    Chronicle,
+    Exception\FilesystemException,
+    Exception\HashNotFound,
+    HandlerInterface
+};
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -33,6 +38,8 @@ class Lookup implements HandlerInterface
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     *
+     * @throws FilesystemException
      */
     public function __invoke(
         RequestInterface $request,
@@ -67,6 +74,8 @@ class Lookup implements HandlerInterface
      * Gets the entire Blakechain.
      *
      * @return ResponseInterface
+     *
+     * @throws FilesystemException
      */
     public function exportChain(): ResponseInterface
     {
@@ -131,6 +140,7 @@ class Lookup implements HandlerInterface
      * List the latest current hash and summary hash
      *
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      */
     public function getLastHash(): ResponseInterface

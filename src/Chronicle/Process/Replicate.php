@@ -73,6 +73,7 @@ class Replicate
      *
      * @param int $id
      * @return self
+     *
      * @throws ReplicationSourceNotFound
      */
     public static function byId(int $id): self
@@ -215,6 +216,7 @@ class Replicate
      *
      * @param string $lastHash
      * @return array
+     *
      * @throws GuzzleException
      * @throws InvalidMessageException
      */

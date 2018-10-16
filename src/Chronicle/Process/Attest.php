@@ -3,7 +3,10 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\Process;
 
 use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\FilesystemException;
+use ParagonIE\Chronicle\Exception\{
+    ChainAppendException,
+    FilesystemException
+};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 
 /**
@@ -29,6 +32,7 @@ class Attest
 
     /**
      * @return bool
+     *
      * @throws FilesystemException
      */
     public function isScheduled(): bool
@@ -57,8 +61,11 @@ class Attest
     }
 
     /**
-     * @throws FilesystemException
      * @return void
+     *
+     * @throws ChainAppendException
+     * @throws FilesystemException
+     * @throws \SodiumException
      */
     public function run()
     {
@@ -77,8 +84,9 @@ class Attest
 
     /**
      * @return array
+     *
+     * @throws ChainAppendException
      * @throws FilesystemException
-     * @throws \ParagonIE\Chronicle\Exception\ChainAppendException
      * @throws \SodiumException
      * @throws \TypeError
      */

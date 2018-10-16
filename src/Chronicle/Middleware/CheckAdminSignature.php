@@ -20,6 +20,7 @@ class CheckAdminSignature extends CheckClientSignature
      *
      * @param string $clientId
      * @return SigningPublicKey
+     *
      * @throws ClientNotFound
      */
     public function getPublicKey(string $clientId): SigningPublicKey

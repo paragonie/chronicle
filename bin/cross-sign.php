@@ -5,14 +5,16 @@ declare(strict_types=1);
  * This script sets up cross-signing to another Chronicle
  */
 
-use ParagonIE\EasyDB\EasyDB;
-use ParagonIE\EasyDB\Factory;
-use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
-use ParagonIE\ConstantTime\Base64UrlSafe;
 use Getopt\{
     Getopt,
     Option
 };
+use ParagonIE\EasyDB\{
+    EasyDB,
+    Factory
+};
+use ParagonIE\ConstantTime\Base64UrlSafe;
+use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */

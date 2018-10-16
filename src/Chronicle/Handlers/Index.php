@@ -2,7 +2,11 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\{Chronicle, Exception\FilesystemException, HandlerInterface};
+use ParagonIE\Chronicle\{
+    Chronicle,
+    Exception\FilesystemException,
+    HandlerInterface
+};
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -25,6 +29,7 @@ class Index implements HandlerInterface
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      */
     public function __invoke(

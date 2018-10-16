@@ -45,6 +45,7 @@ class Replica implements HandlerInterface
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      */
     public function __invoke(
@@ -95,6 +96,7 @@ class Replica implements HandlerInterface
      * Gets the entire Blakechain.
      *
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      */
     public function exportChain(): ResponseInterface
@@ -117,6 +119,7 @@ class Replica implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
+     *
      * @throws HashNotFound
      * @throws FilesystemException
      */
@@ -164,6 +167,7 @@ class Replica implements HandlerInterface
      * List the latest current hash and summary hash for this replica
      *
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      */
     public function getLastHash(): ResponseInterface
@@ -204,6 +208,7 @@ class Replica implements HandlerInterface
      * List all replicated Chronicles and their respective URIs
      *
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      */
     protected function getIndex(): ResponseInterface
@@ -256,6 +261,7 @@ class Replica implements HandlerInterface
      *
      * @param array $args
      * @return ResponseInterface
+     *
      * @throws FilesystemException
      * @throws HashNotFound
      */
@@ -348,6 +354,7 @@ class Replica implements HandlerInterface
      *
      * @param string $uniqueId
      * @return self
+     *
      * @throws ReplicationSourceNotFound
      */
     protected function selectReplication(string $uniqueId): self

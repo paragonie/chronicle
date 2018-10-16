@@ -91,6 +91,7 @@ class CrossSign
      *
      * @param int $id
      * @return self
+     *
      * @throws TargetNotFound
      */
     public static function byId(int $id): self
@@ -121,6 +122,7 @@ class CrossSign
      * Are we supposed to cross-sign our latest hash to this target?
      *
      * @return bool
+     *
      * @throws ConfigurationError
      */
     public function needsToCrossSign(): bool
@@ -170,6 +172,7 @@ class CrossSign
      * Finally, update the local metadata table.
      *
      * @return bool
+     *
      * @throws InvalidMessageException
      * @throws GuzzleException
      * @throws FilesystemException
@@ -193,6 +196,7 @@ class CrossSign
      *
      * @param array $message
      * @return ResponseInterface
+     *
      * @throws GuzzleException
      * @throws FilesystemException
      */

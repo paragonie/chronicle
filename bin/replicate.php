@@ -4,14 +4,16 @@ declare(strict_types=1);
 /**
  * This script sets up replication of another Chronicle
  */
-
-use ParagonIE\EasyDB\Factory;
-use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
-use ParagonIE\ConstantTime\Base64UrlSafe;
 use Getopt\{
     Getopt,
     Option
 };
+use ParagonIE\EasyDB\{
+    EasyDB,
+    Factory
+};
+use ParagonIE\ConstantTime\Base64UrlSafe;
+use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */
@@ -27,7 +29,7 @@ $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
-/** @var \ParagonIE\EasyDB\EasyDB $db */
+/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',

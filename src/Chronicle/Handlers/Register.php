@@ -1,16 +1,19 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
+use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Chronicle\{
     Chronicle,
     Exception\ChainAppendException,
     Exception\FilesystemException,
     Exception\SecurityViolation,
+    Exception\TargetNotFound,
     HandlerInterface,
     Scheduled
 };
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
+use ParagonIE\Sapient\Exception\InvalidMessageException;
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -34,8 +37,10 @@ class Register implements HandlerInterface
      *
      * @throws ChainAppendException
      * @throws FilesystemException
+     * @throws GuzzleException
+     * @throws InvalidMessageException
+     * @throws TargetNotFound
      * @throws \SodiumException
-     * @throws \TypeError
      */
     public function __invoke(
         RequestInterface $request,
@@ -154,6 +159,7 @@ class Register implements HandlerInterface
      *
      * @param array $post
      * @return string
+     *
      * @throws \PDOException
      * @throws \Exception
      */

@@ -2,10 +2,13 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle\Middleware;
 
-use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\ClientNotFound;
-use ParagonIE\Chronicle\Exception\SecurityViolation;
-use ParagonIE\Chronicle\MiddlewareInterface;
+use ParagonIE\Chronicle\{
+    Chronicle,
+    Exception\ClientNotFound,
+    Exception\FilesystemException,
+    Exception\SecurityViolation,
+    MiddlewareInterface
+};
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use Psr\Http\Message\{
     RequestInterface,
@@ -27,6 +30,7 @@ class CheckClientSignature implements MiddlewareInterface
     /**
      * @param RequestInterface $request
      * @return string
+     *
      * @throws ClientNotFound
      * @throws SecurityViolation
      */
@@ -47,7 +51,8 @@ class CheckClientSignature implements MiddlewareInterface
      * @param ResponseInterface $response
      * @param callable $next
      * @return ResponseInterface
-     * @throws ClientNotFound
+     *
+     * @throws FilesystemException
      */
     public function __invoke(
         RequestInterface $request,

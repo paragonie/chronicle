@@ -36,11 +36,14 @@ class Scheduled
      * Invoked by a CLI script, this runs all of the scheduled tasks.
      *
      * @return self
+     *
      * @throws Exception\FilesystemException
      * @throws Exception\ReplicationSourceNotFound
+     * @throws Exception\SecurityViolation
      * @throws Exception\TargetNotFound
      * @throws GuzzleException
      * @throws InvalidMessageException
+     * @throws \SodiumException
      */
     public function run(): self
     {
@@ -76,7 +79,12 @@ class Scheduled
      * Replicate any new records from the Chronicles we're mirroring
      *
      * @return self
+     *
      * @throws Exception\ReplicationSourceNotFound
+     * @throws Exception\SecurityViolation
+     * @throws GuzzleException
+     * @throws InvalidMessageException
+     * @throws \SodiumException
      */
     public function doReplication(): self
     {
@@ -89,6 +97,7 @@ class Scheduled
 
     /**
      * @return self
+     *
      * @throws Exception\FilesystemException
      */
     public function doAttestation(): self

@@ -19,8 +19,10 @@ use ParagonIE\Sapient\CryptographyKeys\{
     SigningSecretKey
 };
 use ParagonIE\Sapient\Sapient;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
 
 /**
  * Class Chronicle
@@ -52,6 +54,7 @@ class Chronicle
      * @param string $signature
      * @param SigningPublickey $publicKey
      * @return array<string, string>
+     *
      * @throws ChainAppendException
      */
     public static function extendBlakechain(
@@ -127,6 +130,8 @@ class Chronicle
      * @param string $errorMessage
      * @param int $errorCode
      * @return ResponseInterface
+     *
+     * @throws FilesystemException
      */
     public static function errorResponse(
         ResponseInterface $response,
@@ -167,6 +172,7 @@ class Chronicle
      *
      * @param string $clientId
      * @return SigningPublicKey
+     *
      * @throws ClientNotFound
      */
     public static function getClientsPublicKey(string $clientId): SigningPublicKey
@@ -218,6 +224,7 @@ class Chronicle
      * We should audit all calls to this method.
      *
      * @return SigningSecretKey
+     *
      * @throws FilesystemException
      */
     public static function getSigningKey(): SigningSecretKey
@@ -287,7 +294,11 @@ class Chronicle
         if (empty($json[$index])) {
             throw new TimestampNotProvided('Parameter "' . $index . '" not provided.', 401);
         }
-        $sent = new \DateTimeImmutable((string) ($json[$index]));
+        try {
+            $sent = new \DateTimeImmutable((string)($json[$index]));
+        } catch (\Exception $ex) {
+            throw new SecurityViolation('Request timestamp is invalid. Please resend.', 408);
+        }
         $expires = $sent->add(
             \DateInterval::createFromDateString(
                 (string) self::$settings['request-timeout']
