@@ -11,6 +11,7 @@
     <issueHandlers>
         <InvalidScope errorLevel="suppress" />
         <MissingClosureReturnType errorLevel="suppress" />
+        <RedundantConditionGivenDocblockType errorLevel="suppress" />
         <UndefinedConstant errorLevel="suppress" />
         <RedundantConditionGivenDocblockType errorLevel="info" />
     </issueHandlers>
