@@ -47,6 +47,20 @@ class CheckClientSignature implements MiddlewareInterface
     }
 
     /**
+     * Only selects a valid result if the client has isAdmin set to TRUE.
+     *
+     * @param string $clientId
+     * @return SigningPublicKey
+     *
+     * @throws ClientNotFound
+     */
+    public function getPublicKey(string $clientId): SigningPublicKey
+    {
+        // The second parameter gets overridden in CheckAdminSignature to TRUE:
+        return Chronicle::getClientsPublicKey($clientId, false);
+    }
+
+    /**
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param callable $next
@@ -69,15 +83,19 @@ class CheckClientSignature implements MiddlewareInterface
 
         try {
             /** @var SigningPublicKey $publicKey */
-            $publicKey = Chronicle::getClientsPublicKey($clientId);
+            $publicKey = $this->getPublicKey($clientId);
         } catch (ClientNotFound $ex) {
-            return Chronicle::errorResponse($response, 'Invalid client', 403);
+            return Chronicle::errorResponse($response, $ex->getMessage(), 403);
         }
 
         try {
-            $request = Chronicle::getSapient()->verifySignedRequest($request, $publicKey);
+            $request = Chronicle::getSapient()
+                ->verifySignedRequest($request, $publicKey);
+
             if ($request instanceof Request) {
-                $serverPublicKey = Chronicle::getSigningKey()->getPublicKey()->getString();
+                $serverPublicKey = Chronicle::getSigningKey()
+                    ->getPublicKey()
+                    ->getString();
                 if (\hash_equals($serverPublicKey, $publicKey->getString())) {
                     return Chronicle::errorResponse(
                         $response,

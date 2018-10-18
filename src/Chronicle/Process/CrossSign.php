@@ -20,6 +20,9 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class CrossSign
+ *
+ * Publish the latest hash onto another remote Chronicle instance.
+ *
  * @package ParagonIE\Chronicle\Process
  */
 class CrossSign

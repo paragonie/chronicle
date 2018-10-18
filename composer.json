@@ -18,7 +18,7 @@
         "ext-pdo": "*",
         "guzzlehttp/guzzle": "^6",
         "paragonie/blakechain": "^1",
-        "paragonie/easydb": "^2",
+        "paragonie/easydb": "^2.7",
         "paragonie/sapient": "^1",
         "paragonie/slim-sapient": "^1",
         "paragonie/sodium_compat": "^1.7",

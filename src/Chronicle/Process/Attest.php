@@ -11,6 +11,11 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
 
 /**
  * Class Attest
+ *
+ * This process publishes the latest hash of each replicated Chronicle
+ * onto the local instance, to create an immutable record of the replicated
+ * Chronicles and provide greater resilience against malicious tampering.
+ *
  * @package ParagonIE\Chronicle\Process
  */
 class Attest
@@ -31,6 +36,8 @@ class Attest
     }
 
     /**
+     * Do we need to run the attestation process?
+     *
      * @return bool
      *
      * @throws FilesystemException
@@ -97,7 +104,15 @@ class Attest
         foreach (Chronicle::getDatabase()->run('SELECT id, uniqueid FROM chronicle_replication_sources') as $row) {
             /** @var array<string, string> $latest */
             $latest = Chronicle::getDatabase()->row(
-                "SELECT currhash, summaryhash FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1",
+                "SELECT
+                     currhash,
+                     summaryhash
+                 FROM
+                     chronicle_replication_chain
+                 WHERE
+                     source = ?
+                 ORDER BY id DESC
+                 LIMIT 1",
                 $row['id']
             );
             $latest['source'] = $row['uniqueid'];

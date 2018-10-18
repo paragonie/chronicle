@@ -37,6 +37,7 @@ class Scheduled
      *
      * @return self
      *
+     * @throws Exception\ChainAppendException
      * @throws Exception\FilesystemException
      * @throws Exception\ReplicationSourceNotFound
      * @throws Exception\SecurityViolation
@@ -96,9 +97,13 @@ class Scheduled
     }
 
     /**
+     * Run the Attestation process (if it's scheduled).
+     *
      * @return self
      *
+     * @throws Exception\ChainAppendException
      * @throws Exception\FilesystemException
+     * @throws \SodiumException
      */
     public function doAttestation(): self
     {

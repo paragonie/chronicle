@@ -4,7 +4,6 @@ namespace ParagonIE\Chronicle\Middleware;
 
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\ClientNotFound;
-use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 
 /**
@@ -25,16 +24,6 @@ class CheckAdminSignature extends CheckClientSignature
      */
     public function getPublicKey(string $clientId): SigningPublicKey
     {
-        /** @var array<string, string> $sqlResult */
-        $sqlResult = Chronicle::getDatabase()->row(
-            "SELECT * FROM chronicle_clients WHERE publicid = ? AND isAdmin",
-            $clientId
-        );
-        if (empty($sqlResult)) {
-            throw new ClientNotFound('Client not found or is not an administrator.');
-        }
-        return new SigningPublicKey(
-            Base64UrlSafe::decode($sqlResult['publickey'])
-        );
+        return Chronicle::getClientsPublicKey($clientId, true);
     }
 }

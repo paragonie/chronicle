@@ -69,7 +69,10 @@ class Chronicle
         $db->beginTransaction();
         /** @var array<string, string> $lasthash */
         $lasthash = $db->row(
-            'SELECT currhash, hashstate FROM chronicle_chain ORDER BY id DESC LIMIT 1'
+            'SELECT currhash, hashstate 
+             FROM chronicle_chain 
+             ORDER BY id DESC 
+             LIMIT 1'
         );
 
         // Instantiate the Blakechain.
@@ -153,35 +156,29 @@ class Chronicle
     }
 
     /**
-     * If we're using SQLite, we need a 1 or a 0.
-     * Otherwise, TRUE/FALSE is fine.
-     *
-     * @param bool $value
-     * @return bool|int
-     */
-    public static function getDatabaseBoolean(bool $value)
-    {
-        if (self::$easyDb->getDriver() === 'sqlite') {
-            return $value ? 1 : 0;
-        }
-        return !empty($value);
-    }
-
-    /**
      * Given a clients Public ID, retrieve their Ed25519 public key.
      *
      * @param string $clientId
+     * @param bool $adminOnly
      * @return SigningPublicKey
      *
      * @throws ClientNotFound
      */
-    public static function getClientsPublicKey(string $clientId): SigningPublicKey
+    public static function getClientsPublicKey(string $clientId, bool $adminOnly = false): SigningPublicKey
     {
-        /** @var array<string, string> $sqlResult */
-        $sqlResult = static::$easyDb->row(
-            "SELECT * FROM chronicle_clients WHERE publicid = ?",
-            $clientId
-        );
+        if ($adminOnly) {
+            /** @var array<string, string> $sqlResult */
+            $sqlResult = static::$easyDb->row(
+                "SELECT * FROM chronicle_clients WHERE publicid = ? AND isAdmin",
+                $clientId
+            );
+        } else {
+            /** @var array<string, string> $sqlResult */
+            $sqlResult = static::$easyDb->row(
+                "SELECT * FROM chronicle_clients WHERE publicid = ?",
+                $clientId
+            );
+        }
         if (empty($sqlResult)) {
             throw new ClientNotFound('Client not found');
         }

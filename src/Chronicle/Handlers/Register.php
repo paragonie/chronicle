@@ -39,8 +39,9 @@ class Register implements HandlerInterface
      * @throws FilesystemException
      * @throws GuzzleException
      * @throws InvalidMessageException
-     * @throws TargetNotFound
+     * @throws SecurityViolation
      * @throws \SodiumException
+     * @throws TargetNotFound
      */
     public function __invoke(
         RequestInterface $request,
@@ -161,14 +162,18 @@ class Register implements HandlerInterface
      * @return string
      *
      * @throws \PDOException
-     * @throws \Exception
+     * @throws SecurityViolation
      */
     protected function createClient(array $post): string
     {
         $db = Chronicle::getDatabase();
         $now = (new \DateTime())->format(\DateTime::ATOM);
         do {
-            $clientId = Base64UrlSafe::encode(\random_bytes(24));
+            try {
+                $clientId = Base64UrlSafe::encode(\random_bytes(24));
+            } catch (\Throwable $ex) {
+                throw new SecurityViolation('CSPRNG is broken');
+            }
         } while ($db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $clientId));
 
         $db->beginTransaction();
@@ -178,7 +183,7 @@ class Register implements HandlerInterface
                 'publicid' => $clientId,
                 'publickey' => $post['publickey'],
                 'comment' => $post['comment'] ?? '',
-                'isAdmin' => Chronicle::getDatabaseBoolean(false),
+                'isAdmin' => false,
                 'created' => $now,
                 'modified' => $now
             ]

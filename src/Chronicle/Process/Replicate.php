@@ -19,6 +19,11 @@ use ParagonIE\Sapient\Sapient;
 
 /**
  * Class Replicate
+ *
+ * Maintain a replica (mirror) of another Chronicle instance.
+ * Unless Attestation is enabled, this doesn't affect the main
+ * Chronicle; mirroring is separate.
+ *
  * @package ParagonIE\Chronicle\Process
  */
 class Replicate
@@ -131,7 +136,15 @@ class Replicate
         $db->beginTransaction();
         /** @var array<string, string> $lasthash */
         $lasthash = $db->row(
-            'SELECT currhash, hashstate FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1',
+            'SELECT
+                 currhash,
+                 hashstate
+             FROM
+                 chronicle_replication_chain
+             WHERE
+                 source = ?
+             ORDER BY id DESC
+             LIMIT 1',
             $this->id
         );
 
@@ -157,7 +170,7 @@ class Replicate
         );
         if (!$sigMatches) {
             $db->rollBack();
-            throw new SecurityViolation('Invalid Ed25519 signature');
+            throw new SecurityViolation('Invalid Ed25519 signature provided by source Chronicle.');
         }
 
         /* Update the Blakechain */
@@ -202,7 +215,14 @@ class Replicate
     {
         /** @var string $last */
         $last = Chronicle::getDatabase()->cell(
-            "SELECT summaryhash FROM chronicle_replication_chain WHERE source = ? ORDER BY id DESC LIMIT 1",
+            "SELECT
+                 summaryhash
+             FROM
+                 chronicle_replication_chain
+             WHERE
+                 source = ?
+             ORDER BY id DESC
+             LIMIT 1",
             $this->id
         );
         if (empty($last)) {
