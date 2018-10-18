@@ -24,7 +24,8 @@ apt-get install php7.2 \
     php7.2-zip
 ```
 
-(Feel free to substitute `php7.2` with `php7.1` and `sqlite` with your preferred database driver.)
+(Feel free to substitute `php7.2` with `php7.1` and `sqlite` with your preferred database driver.
+Keep in mind there is no `php7.1-sodium` package.)
 
 Next, you'll need to install Caddy, Apache, nginx, or some other webserver.
 
