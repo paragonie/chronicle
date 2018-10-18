@@ -13,7 +13,7 @@ CREATE INDEX chronicle_clients_clientid_idx ON chronicle_clients(publicid);
 CREATE TABLE chronicle_chain (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   data TEXT,
-  prevhash TEXT,
+  prevhash TEXT NULL,
   currhash TEXT,
   hashstate TEXT,
   summaryhash TEXT,

@@ -38,6 +38,9 @@
             "Tests\\": "tests/"
         }
     },
+    "config": {
+        "process-timeout": 0
+    },
 	"scripts": {
         "start": "php -S 0.0.0.0:8080 -t public public/index.php",
         "static-analysis": "psalm",

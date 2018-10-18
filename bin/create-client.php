@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Getopt\{
-    Getopt,
+use GetOpt\{
+    GetOpt,
     Option
 };
 use ParagonIE\EasyDB\{
@@ -56,6 +56,12 @@ $publicKey = $getopt->getOption('publickey');
 $comment = $getopt->getOption('comment') ?? '';
 /** @var bool $admin */
 $admin = $getopt->getOption('administrator') ?? false;
+
+if (empty($publicKey)) {
+    echo 'Usage:', PHP_EOL, "\t",
+        'php create-client.php -p publickeygoeshere [-c comment] [--administrator]', PHP_EOL, PHP_EOL;
+    exit(1);
+}
 
 /** @var SigningPublicKey $publicKeyObj */
 // Make sure it's a valid public key:

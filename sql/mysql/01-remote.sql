@@ -20,7 +20,7 @@ CREATE TABLE chronicle_replication_chain (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   source BIGINT UNSIGNED REFERENCES chronicle_replication_sources(id),
   data TEXT,
-  prevhash TEXT,
+  prevhash TEXT NULL,
   currhash TEXT,
   hashstate TEXT,
   summaryhash TEXT,

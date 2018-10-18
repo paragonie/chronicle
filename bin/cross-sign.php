@@ -5,8 +5,8 @@ declare(strict_types=1);
  * This script sets up cross-signing to another Chronicle
  */
 
-use Getopt\{
-    Getopt,
+use GetOpt\{
+    GetOpt,
     Option
 };
 use ParagonIE\EasyDB\{

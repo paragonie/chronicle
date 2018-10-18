@@ -78,7 +78,7 @@ class Chronicle
         // Instantiate the Blakechain.
         $blakechain = new Blakechain();
         if (empty($lasthash)) {
-            $prevhash = '';
+            $prevhash = null;
         } else {
             $prevhash = $lasthash['currhash'];
             $blakechain->setFirstPrevHash(

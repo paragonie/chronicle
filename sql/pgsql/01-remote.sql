@@ -20,7 +20,7 @@ CREATE TABLE chronicle_replication_chain (
   id BIGSERIAL PRIMARY KEY,
   source BIGINT REFERENCES chronicle_replication_sources(id),
   data TEXT,
-  prevhash TEXT,
+  prevhash TEXT NULL,
   currhash TEXT,
   hashstate TEXT,
   summaryhash TEXT,

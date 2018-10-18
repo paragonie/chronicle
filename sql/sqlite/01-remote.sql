@@ -20,7 +20,7 @@ CREATE TABLE chronicle_replication_chain (
   id INTEGER PRIMARY KEY ASC,
   source INTEGER,
   data TEXT,
-  prevhash TEXT,
+  prevhash TEXT NULL,
   currhash TEXT,
   hashstate TEXT,
   summaryhash TEXT,

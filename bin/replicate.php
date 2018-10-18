@@ -4,8 +4,8 @@ declare(strict_types=1);
 /**
  * This script sets up replication of another Chronicle
  */
-use Getopt\{
-    Getopt,
+use GetOpt\{
+    GetOpt,
     Option
 };
 use ParagonIE\EasyDB\{
