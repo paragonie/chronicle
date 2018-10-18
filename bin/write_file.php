@@ -22,12 +22,6 @@ if ($argc < 2) {
     exit(1);
 }
 
-/*
-Future Genesis blocks will have a NULL prevhash, thereby allowing UNIQUE
-FOREIGN KEY constraints to be created on prevhash pointing to a previous
-row's currahsh.
- */
-
 /** @var string $filePath */
 $filePath = (string) $v[1];
 /** @var string $keyFilePath */
@@ -79,13 +73,6 @@ $signature = \sodium_crypto_sign_detached(
     $fileContents,
     Base64UrlSafe::decode($keyFile['secret-key'])
 );
-
-/*
-{
-    "secret-key": "GzEQe7YbPL2CIca7I_Tg0c4DAAyvPB_Bt6m2y4jdQwUtkB_wW5Duwv54fDPWL0XD5f5xkzeRktSeE54CK67GDQ==",
-    "public-key": "LZAf8FuQ7sL-eHwz1i9Fw-X-cZM3kZLUnhOeAiuuxg0="
-}
-*/
 
 \ParagonIE\Chronicle\Chronicle::extendBlakechain(
     $fileContents,
