@@ -9,21 +9,22 @@ apt-get install software-properties-common
 add-apt-repository ppa:ondrej/php
 ```
 
-Next, choose whether you want PHP 7.0 or 7.1:
+Next, choose whether you want PHP 7.1 or 7.2:
 
 ```bash
 apt-get update
-apt-get install php7.1 \
-    php7.1-common \
-    php7.1-dev \
-    php7.1-fpm \
-    php7.1-mbstring \
-    php7.1-sqlite \
-    php7.1-xml \
-    php7.1-zip
+apt-get install php7.2 \
+    php7.2-common \
+    php7.2-dev \
+    php7.2-fpm \
+    php7.2-mbstring \
+    php7.2-sodium \
+    php7.2-sqlite \
+    php7.2-xml \
+    php7.2-zip
 ```
 
-(Feel free to substitute `php7.1` with `php7.0` and `sqlite` with your preferred database driver.)
+(Feel free to substitute `php7.2` with `php7.1` and `sqlite` with your preferred database driver.)
 
 Next, you'll need to install Caddy, Apache, nginx, or some other webserver.
 
@@ -39,7 +40,7 @@ if you're using a version of PHP earlier than 7.2.
 Once you have a working webserver configuration, you can begin to setup Chronicle.
 
 ```bash
-LATESTVERSION="v1.0.0"
+LATESTVERSION="v1.0.4"
 cd /var/www
 
 # If our GPG key is already imported, do nothing
