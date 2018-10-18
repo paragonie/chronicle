@@ -27,7 +27,9 @@ CREATE TABLE chronicle_replication_chain (
   publickey TEXT,
   signature TEXT,
   created TIMESTAMP,
-  replicated TIMESTAMP
+  replicated TIMESTAMP,
+  FOREIGN KEY (currhash) REFERENCES chronicle_replication_chain(prevhash),
+  UNIQUE(source, prevhash)
 );
 
 CREATE INDEX chronicle_replication_chain_prevhash_idx ON chronicle_replication_chain(source, prevhash);
