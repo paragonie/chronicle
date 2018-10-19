@@ -42,7 +42,7 @@ $db = Factory::create(
  *
  * This defines the Command Line options.
  */
-$getopt = new Getopt([
+$getopt = new GetOpt([
     new Option(null, 'url', Getopt::REQUIRED_ARGUMENT),
     new Option(null, 'publickey', Getopt::REQUIRED_ARGUMENT),
     new Option(null, 'name', Getopt::REQUIRED_ARGUMENT),
