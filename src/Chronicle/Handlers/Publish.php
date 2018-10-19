@@ -86,8 +86,11 @@ class Publish implements HandlerInterface
          */
         list($publicKey, $signature) = $this->getHeaderData($request);
 
+        $requestBody = (string) $request->getBody();
+        $this->throwIfUnsafe($requestBody);
+
         $result = Chronicle::extendBlakechain(
-            (string) $request->getBody(),
+            $requestBody,
             $signature,
             $publicKey
         );
@@ -136,5 +139,20 @@ class Publish implements HandlerInterface
             ];
         }
         throw new ClientNotFound('Could not find the correct client');
+    }
+
+    /**
+     * @param string $data
+     * @throws ChainAppendException
+     */
+    public function throwIfUnsafe(string $data)
+    {
+        $encoded = json_encode(['data' => $data]);
+        if (!\is_string($encoded)) {
+            throw new ChainAppendException(
+                'Stored data cannot safely be returned in our JSON API: ' .
+                \json_last_error_msg()
+            );
+        }
     }
 }
