@@ -8,8 +8,8 @@ use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\EasyDB\Factory;
 use ParagonIE\Sapient\Adapter\Guzzle;
 use ParagonIE\Sapient\Sapient;
-use tflori\Getopt\{
-    Getopt,
+use GetOpt\{
+    GetOpt,
     Option
 };
 
@@ -36,12 +36,12 @@ $db = Factory::create(
 Chronicle::setDatabase($db);
 
 /**
- * @var Getopt
+ * @var GetOpt
  *
  * This defines the Command Line options.
  */
-$getopt = new Getopt([
-    new Option(null, 'base-url', Getopt::REQUIRED_ARGUMENT)
+$getopt = new GetOpt([
+    new Option(null, 'base-url', GetOpt::REQUIRED_ARGUMENT)
 ]);
 $getopt->parse();
 $baseUrl = $getopt->getOption('base-url') ?? 'http://localhost:8080';
