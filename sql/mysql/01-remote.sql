@@ -27,7 +27,7 @@ CREATE TABLE chronicle_replication_chain (
   `publickey` TEXT,
   `signature` TEXT,
   `created` TIMESTAMP,
-  `replicated` TIMESTAMP,
+  `replicated` TIMESTAMP NULL,
   -- FOREIGN KEY (`currhash`) REFERENCES chronicle_replication_chain(`prevhash`),
   UNIQUE(`source`, `prevhash`)
 );
