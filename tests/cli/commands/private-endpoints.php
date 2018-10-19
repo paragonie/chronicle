@@ -5,6 +5,8 @@ namespace ParagonIE\Chronicle\CliTests;
 use GuzzleHttp\Client;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\ConstantTime\Base64UrlSafe;
+use ParagonIE\Sapient\CryptographyKeys\SealingPublicKey;
+use ParagonIE\Sapient\CryptographyKeys\SealingSecretKey;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 use ParagonIE\Sapient\Sapient;
@@ -52,6 +54,33 @@ $request = $sapient->createSignedJsonRequest(
 );
 $response = $sapient->decodeSignedJsonResponse(
     $http->send($request),
+    $serverPublicKey
+);
+if ($response['status'] !== 'OK') {
+    var_dump($response);
+    exit(255);
+}
+
+$sealingData = \json_decode(\file_get_contents(dirname(__DIR__) . '/sealing.json'), true);
+$sealing = [
+    'secret-key' => new SealingSecretKey(Base64UrlSafe::decode($sealingData['secret-key'])),
+    'public-key' => new SealingPublicKey(Base64UrlSafe::decode($sealingData['public-key']))
+];
+$request = $sapient->createSealedJsonRequest(
+    'POST',
+    $baseUrl . '/chronicle/publish',
+    [
+        'now' => (new \DateTime())->format(\DateTime::ATOM),
+        'test' => 'This is a test entry. DELETE ME AFTER. ' . Base64UrlSafe::encode(random_bytes(33))
+    ],
+    $sealing['public-key'],
+    [
+        Chronicle::CLIENT_IDENTIFIER_HEADER => 'CLI-testing-user'
+    ]
+);
+$signed = $sapient->signRequest($request, $client['secret-key']);
+$response = $sapient->decodeSignedJsonResponse(
+    $http->send($signed),
     $serverPublicKey
 );
 if ($response['status'] !== 'OK') {

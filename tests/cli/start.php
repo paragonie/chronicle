@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\CliTests;
 
 use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Sapient\CryptographyKeys\SealingSecretKey;
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 
 if (file_exists(__DIR__ . '/client.json')) {
@@ -50,6 +51,17 @@ $ret = \file_put_contents(
     \json_encode([
         'secret-key' => $signingKey->getString(),
         'public-key' => $signingKey->getPublickey()->getString()
+    ])
+);
+
+$sealingKey = SealingSecretKey::generate();
+$publicKey = $sealingKey->getPublickey()->getString();
+
+$ret = \file_put_contents(
+    __DIR__ . '/sealing.json',
+    \json_encode([
+        'secret-key' => $sealingKey->getString(),
+        'public-key' => $sealingKey->getPublickey()->getString()
     ])
 );
 
