@@ -12,13 +12,13 @@ CREATE INDEX chronicle_clients_clientid_idx ON chronicle_clients(`publicid`);
 
 CREATE TABLE chronicle_chain (
   `id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  `data` TEXT,
+  `data` TEXT NOT NULL,
   `prevhash` VARCHAR(128) NULL,
   `currhash` VARCHAR(128) NOT NULL,
-  `hashstate` TEXT,
-  `summaryhash` VARCHAR(128),
-  `publickey` TEXT,
-  `signature` TEXT,
+  `hashstate` TEXT NOT NULL,
+  `summaryhash` VARCHAR(128) NOT NULL,
+  `publickey` TEXT NOT NULL,
+  `signature` TEXT NOT NULL,
   `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
   INDEX(`prevhash`),
   INDEX(`currhash`),
