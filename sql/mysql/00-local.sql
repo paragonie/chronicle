@@ -26,3 +26,17 @@ CREATE TABLE chronicle_chain (
   FOREIGN KEY (`prevhash`) REFERENCES chronicle_chain(`currhash`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   UNIQUE(`prevhash`)
 );
+
+-- Prevent all types of update to all fields on the chain
+
+CREATE TRIGGER chronicle_chain_trigger
+BEFORE UPDATE ON chronicle_chain 
+FOR EACH ROW SET  NEW.id = OLD.id,
+                  NEW.data = OLD.data,
+                  NEW.prevhash = OLD.prevhash,
+                  NEW.currhash = OLD.currhash,
+                  NEW.hashstate = OLD.hashstate,
+                  NEW.summaryhash = OLD.summaryhash,
+                  NEW.publickey = OLD.publickey,
+                  NEW.signature = OLD.signature,
+                  NEW.created = OLD.created;
