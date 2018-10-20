@@ -18,19 +18,19 @@ CREATE TABLE chronicle_replication_sources (
 
 CREATE TABLE chronicle_replication_chain (
   `id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  `source` BIGINT UNSIGNED REFERENCES chronicle_replication_sources(`id`),
+  `source` BIGINT UNSIGNED REFERENCES chronicle_replication_sources(`id`) ON DELETE RESTRICT,
   `data` TEXT,
-  `prevhash` VARCHAR(128) NULL,
-  `currhash` VARCHAR(128),
+  `prevhash` VARCHAR(128) NOT NULL,
+  `currhash` VARCHAR(128) NOT NULL,
   `hashstate` TEXT,
   `summaryhash` VARCHAR(128),
   `publickey` TEXT,
   `signature` TEXT,
-  `created` TIMESTAMP,
+  `created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `replicated` TIMESTAMP NULL,
   INDEX(`prevhash`),
   INDEX(`currhash`),
-  FOREIGN KEY (`currhash`) REFERENCES chronicle_replication_chain(`prevhash`),
+  FOREIGN KEY (`currhash`) REFERENCES chronicle_replication_chain(`prevhash`) ON DELETE RESTRICT,
   UNIQUE(`source`, `prevhash`)
 );
 

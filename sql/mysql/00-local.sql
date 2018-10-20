@@ -4,8 +4,8 @@ CREATE TABLE chronicle_clients (
   `publickey` TEXT,
   `isAdmin` BOOLEAN NOT NULL DEFAULT FALSE,
   `comment` TEXT,
-  `created` DATETIME,
-  `modified` DATETIME
+  `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `modified` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE NOW()
 );
 
 CREATE INDEX chronicle_clients_clientid_idx ON chronicle_clients(`publicid`);
@@ -13,14 +13,16 @@ CREATE INDEX chronicle_clients_clientid_idx ON chronicle_clients(`publicid`);
 CREATE TABLE chronicle_chain (
   `id` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   `data` TEXT,
-  `prevhash` VARCHAR(128) NULL,
-  `currhash` VARCHAR(128),
+  `prevhash` VARCHAR(128) NOT NULL,
+  `currhash` VARCHAR(128) NOT NULL,
   `hashstate` TEXT,
   `summaryhash` VARCHAR(128),
   `publickey` TEXT,
   `signature` TEXT,
-  `created` DATETIME,
-  FOREIGN KEY (`currhash`) REFERENCES chronicle_chain(`prevhash`),
+  `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX(`prevhash`),
+  INDEX(`currhash`),
+  FOREIGN KEY (`currhash`) REFERENCES chronicle_chain(`prevhash`) ON DELETE RESTRICT,
   UNIQUE(`prevhash`)
 );
 
