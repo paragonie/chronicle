@@ -110,6 +110,9 @@ class Chronicle
             'created' => $currentTime
         ];
 
+        // normalize data fields based on database type
+        self::normalize($fields);
+
         // Insert new row into the database:
         $db->insert('chronicle_chain', $fields);
         if (!$db->commit()) {
@@ -123,6 +126,25 @@ class Chronicle
             'summaryhash' => $fields['summaryhash'],
             'created' => $currentTime
         ];
+    }
+
+    /**
+     * Normalize the data before it goes to database, because every database
+     * has its own system.
+     *
+     * @param array &$data
+     * @return void
+     *
+     * @throws OutOfBoundsException
+     */
+    public static function normalize(
+        array &$data
+    ): void {
+        // detect database type
+        list($database_type, $null) = explode(':', self::getSettings()['settings']['database']['dsn']);
+        if(strtolower($database_type) == 'mysql'){
+            unset($data['created']); // ignore this, it will be set by the database system automatically.
+        }
     }
 
     /**
