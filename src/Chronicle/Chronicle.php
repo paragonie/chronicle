@@ -111,7 +111,7 @@ class Chronicle
         ];
 
         // normalize data fields based on database type
-        self::normalize($fields);
+        self::normalize($db->getDriver(), $fields);
 
         // Insert new row into the database:
         $db->insert('chronicle_chain', $fields);
@@ -132,21 +132,20 @@ class Chronicle
      * Normalize the data before it goes to database, because every database
      * has its own system.
      *
+     * @param string $databaseType
      * @param array &$data
      * @return void
      *
      * @throws InvalidArrayOffset
      */
     public static function normalize(
+        $databaseType,
         array &$data
     ): void {
         // detect database type
-        try{
-            list($database_type, $null) = explode(':', self::getSettings()['settings']['database']['dsn']);
-            if(strtolower($database_type) == 'mysql'){
-                unset($data['created']); // ignore this, it will be set by the database system automatically.
-            }
-        }catch(\Exception $ignored){}
+        if(strtolower($databaseType) == 'mysql'){
+            unset($data['created']); // ignore this, it will be set by the database system automatically.
+        }
     }
 
     /**
