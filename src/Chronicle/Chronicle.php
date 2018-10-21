@@ -122,9 +122,9 @@ class Chronicle
 
         // This data is returned to the publisher:
         return [
-            'currhash' => $fields['currhash'],
-            'summaryhash' => $fields['summaryhash'],
-            'created' => $currentTime
+            'currhash' => (string) $fields['currhash'],
+            'summaryhash' => (string) $fields['summaryhash'],
+            'created' => (string) $currentTime
         ];
     }
 
