@@ -136,7 +136,6 @@ class Chronicle
      * @param array &$data
      * @return void
      *
-     * @throws InvalidArrayOffset
      */
     public static function normalize(
         $databaseType,
