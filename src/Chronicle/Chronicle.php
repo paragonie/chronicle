@@ -135,16 +135,18 @@ class Chronicle
      * @param array &$data
      * @return void
      *
-     * @throws OutOfBoundsException
+     * @throws InvalidArrayOffset
      */
     public static function normalize(
         array &$data
     ): void {
         // detect database type
-        list($database_type, $null) = explode(':', self::getSettings()['settings']['database']['dsn']);
-        if(strtolower($database_type) == 'mysql'){
-            unset($data['created']); // ignore this, it will be set by the database system automatically.
-        }
+        try{
+            list($database_type, $null) = explode(':', self::getSettings()['settings']['database']['dsn']);
+            if(strtolower($database_type) == 'mysql'){
+                unset($data['created']); // ignore this, it will be set by the database system automatically.
+            }
+        }catch(\Exception $ignored){}
     }
 
     /**
