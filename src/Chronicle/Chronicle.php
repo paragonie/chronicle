@@ -110,6 +110,9 @@ class Chronicle
             'created' => $currentTime
         ];
 
+        // normalize data fields based on database type
+        self::normalize($db->getDriver(), $fields);
+
         // Insert new row into the database:
         $db->insert('chronicle_chain', $fields);
         if (!$db->commit()) {
@@ -119,10 +122,29 @@ class Chronicle
 
         // This data is returned to the publisher:
         return [
-            'currhash' => $fields['currhash'],
-            'summaryhash' => $fields['summaryhash'],
-            'created' => $currentTime
+            'currhash' => (string) $fields['currhash'],
+            'summaryhash' => (string) $fields['summaryhash'],
+            'created' => (string) $currentTime
         ];
+    }
+
+    /**
+     * Normalize the data before it goes to database, because every database
+     * has its own system.
+     *
+     * @param string $databaseType
+     * @param array &$data
+     * @return void
+     *
+     */
+    public static function normalize(
+        $databaseType,
+        array &$data
+    ): void {
+        // detect database type
+        if(strtolower($databaseType) == 'mysql'){
+            unset($data['created']); // ignore this, it will be set by the database system automatically.
+        }
     }
 
     /**
