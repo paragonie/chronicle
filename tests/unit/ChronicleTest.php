@@ -71,6 +71,55 @@ class ChronicleTest extends TestCase
     }
 
     /**
+     * @covers Chronicle::normalize()
+     * @dataProvider normalizeTestProvider
+     *
+     * @param array $expected
+     * @param array $actual
+     * @param string $driver
+     * @param string $fail_msg
+     */
+    public function testNormalize($expected, $actual, $driver, $fail_msg = '')
+    {
+        $normal = $actual;
+        Chronicle::normalize($driver, $normal);
+        $this->assertSame($expected, $normal, $fail_msg);
+    }
+
+    /**
+     * @return array
+     */
+    public function normalizeTestProvider()
+    {
+        $tests = [];
+        $tests[] = [
+            'expected' => ['test' => true],
+            'actual' => ['test' => true, 'created' => '2018-10-23'],
+            'driver' => 'mysql',
+            'fail_msg' => 'Chronicle::normalize() error.'
+        ];
+        $tests[] = [
+            'expected' => ['test' => true],
+            'actual' => ['test' => true],
+            'driver' => 'mysql',
+            'fail_msg' => 'Chronicle::normalize() error.'
+        ];
+        $tests[] = [
+            'expected' => ['test' => true, 'created' => '2018-10-23'],
+            'actual' => ['test' => true, 'created' => '2018-10-23'],
+            'driver' => 'pgsql',
+            'fail_msg' => 'Chronicle::normalize() error.'
+        ];
+        $tests[] = [
+            'expected' => ['test' => true, 'created' => '2018-10-23'],
+            'actual' => ['test' => true, 'created' => '2018-10-23'],
+            'driver' => 'sqlite',
+            'fail_msg' => 'Chronicle::normalize() error.'
+        ];
+        return $tests;
+    }
+
+    /**
      * @covers Chronicle::getSigningKey()
      */
     public function testSigningKey()

@@ -2,8 +2,10 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
 
 /**
  * Interface HandlerInterface

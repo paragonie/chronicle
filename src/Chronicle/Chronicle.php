@@ -44,7 +44,7 @@ class Chronicle
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
     /* This constant denotes the Chronicle version running, server-side */
-    const VERSION = '1.0.x';
+    const VERSION = '1.1.x';
 
     /**
      * This extends the Blakechain with an arbitrary message, signature, and
@@ -56,6 +56,7 @@ class Chronicle
      * @return array<string, string>
      *
      * @throws ChainAppendException
+     * @throws \SodiumException
      */
     public static function extendBlakechain(
         string $body,
@@ -110,7 +111,7 @@ class Chronicle
             'created' => $currentTime
         ];
 
-        // normalize data fields based on database type
+        // Normalize data fields based on database type
         self::normalize($db->getDriver(), $fields);
 
         // Insert new row into the database:
@@ -137,14 +138,16 @@ class Chronicle
      * @return void
      *
      */
-    public static function normalize(
-        $databaseType,
-        array &$data
-    ) {
-        // detect database type
-        if(strtolower($databaseType) == 'mysql'){
-            unset($data['created']); // ignore this, it will be set by the database system automatically.
+    public static function normalize(string $databaseType, array &$data)
+    {
+        // Detect database type
+        if (\strtolower($databaseType) === 'mysql') {
+            // Ignore this; it will be set by the database system automatically.
+            if (isset($data['created'])) {
+                unset($data['created']);
+            }
         }
+        // We don't return anything here.
     }
 
     /**
@@ -186,8 +189,10 @@ class Chronicle
      *
      * @throws ClientNotFound
      */
-    public static function getClientsPublicKey(string $clientId, bool $adminOnly = false): SigningPublicKey
-    {
+    public static function getClientsPublicKey(
+        string $clientId,
+        bool $adminOnly = false
+    ): SigningPublicKey {
         if ($adminOnly) {
             /** @var array<string, string> $sqlResult */
             $sqlResult = static::$easyDb->row(
@@ -318,6 +323,7 @@ class Chronicle
         } catch (\Exception $ex) {
             throw new SecurityViolation('Request timestamp is invalid. Please resend.', 408);
         }
+
         $expires = $sent->add(
             \DateInterval::createFromDateString(
                 (string) self::$settings['request-timeout']

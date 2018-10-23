@@ -17,7 +17,7 @@
         "ext-json": "*",
         "ext-pdo": "*",
         "guzzlehttp/guzzle": "^6",
-        "paragonie/blakechain": "^1",
+        "paragonie/blakechain": ">= 1.0.2",
         "paragonie/easydb": "^2.7",
         "paragonie/sapient": "^1",
         "paragonie/slim-sapient": "^1",
@@ -29,7 +29,7 @@
         "roave/security-advisories": "dev-master"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6",
+        "phpunit/phpunit": "^6|^7",
         "vimeo/psalm": "^2"
     },
     "autoload-dev": {
