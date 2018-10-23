@@ -147,7 +147,7 @@ class Publish implements HandlerInterface
      *
      * @throws ChainAppendException
      */
-    public function throwIfUnsafe(string $data) : void
+    public function throwIfUnsafe(string $data)
     {
         $encoded = json_encode(['data' => $data]);
         if (!\is_string($encoded)) {

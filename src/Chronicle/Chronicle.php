@@ -140,7 +140,7 @@ class Chronicle
     public static function normalize(
         $databaseType,
         array &$data
-    ): void {
+    ) {
         // detect database type
         if(strtolower($databaseType) == 'mysql'){
             unset($data['created']); // ignore this, it will be set by the database system automatically.
