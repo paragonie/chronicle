@@ -8,3 +8,4 @@ successfully.
 ## Contents
 
 * [Design Philosophy](01-design-philosophy.md)
+* [SQL Tables](02-sql-tables.md)
