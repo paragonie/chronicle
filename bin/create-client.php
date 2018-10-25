@@ -80,7 +80,7 @@ try {
             'data' => [
                 'trace' => $ex->getTrace()
             ]
-        ]);
+        ]), PHP_EOL;
     } else {
         echo $ex->getMessage(), PHP_EOL;
     }
@@ -128,9 +128,9 @@ if ($db->commit()) {
             'status' => false,
             'message' => $errorInfo[0],
             'data' => []
-        ]);
-        exit(1);
+        ]), PHP_EOL;
+    } else {
+        echo $errorInfo[0], PHP_EOL;
     }
-    echo $errorInfo[0], PHP_EOL;
     exit(1);
 }
