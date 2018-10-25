@@ -8,6 +8,7 @@
 * [Mostly Centralized](#mostly-centralized)
 * [Cryptographic Design](#cryptographic-design)
   * [Why Implement a Hash Chain Instead of a Merkle Tree?](#why-implement-a-hash-chain-instead-of-a-merkle-tree)
+  * [Hash-Chain Pseudo-Code](#hash-chain-pseudo-code)
 
 ## Chronicle Explained
 
@@ -120,3 +121,26 @@ In short: Our hash-chain data structure affords us the same relevant
 security properties you'd expect of an equivalent system implemented
 with Merkle trees, while being **significantly faster** with large
 histories.
+
+### Hash-Chain Pseudo-Code
+
+```php
+<?php
+/**
+ * @var int $n
+ * @var string $message
+ * @var string[] $currHash
+ * @var string[] $summaryHashState 
+ */
+$currHash[$n] = sodium_crypto_generichash(
+    $message,
+    $currHash[$n - 1]
+);
+
+$summaryHashState[$n] = $summaryHashState[$n - 1];
+sodium_crypto_generichash_update(
+    $summaryHashState[$n],
+    $message
+);
+$summaryHash[$n] = sodium_crypto_generichash_final($summaryHashState[$n]);
+``` 
