@@ -76,6 +76,11 @@ This table contains the configuration for cross-signing.
 
 ### chronicle_replication_sources
 
+This table defines the other Chronicle instances that we are
+replicating locally.
+
+#### Fields
+
 * **`id`**: Primary key. Should be an unsigned big integer (or equivalent).
 * **`uniqueid`**: Random string. Used as an API parameter for the REST API.
 * **`name`**: A human-readable name for this target server.
@@ -83,6 +88,11 @@ This table contains the configuration for cross-signing.
 * **`publickey`**: The remote Chronicle's public key.
 
 ### chronicle_replication_chain
+
+This contains the actual hash-chain data structure contents
+of the Chronicles we are replicating.
+
+#### Fields
 
 * **`id`**: Primary key. Should be an unsigned big integer (or equivalent).
 * **`source`**: See `chronicle_replication_sources.id`
