@@ -73,7 +73,17 @@ try {
         Base64UrlSafe::decode($publicKey)
     );
 } catch (\Throwable $ex) {
-    echo $ex->getMessage(), PHP_EOL;
+    if ($json) {
+        echo json_encode([
+            'status' => false,
+            'message' => $ex->getMessage(),
+            'data' => [
+                'trace' => $ex->getTrace()
+            ]
+        ]);
+    } else {
+        echo $ex->getMessage(), PHP_EOL;
+    }
     exit(1);
 }
 
