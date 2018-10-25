@@ -67,7 +67,7 @@ $app->get('/', function (RequestInterface $request, ResponseInterface $response,
     /** @var \Slim\App|\Slim\Container $self */
     $self = $this;
     /* UX enhancement: Automatically redirect to chronicle URI if client header is present: */
-    if ($request instanceof \Slim\Http\Request && $response instanceof \Slim\Http\Response) {
+    if ($request instanceof \Slim\Http\Request) {
         if ($request->hasHeader(Chronicle::CLIENT_IDENTIFIER_HEADER)) {
             \header("Location: /chronicle");
             exit;

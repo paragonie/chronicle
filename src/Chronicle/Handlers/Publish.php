@@ -43,6 +43,7 @@ class Publish implements HandlerInterface
      * @throws SecurityViolation
      * @throws TargetNotFound
      * @throws GuzzleException
+     * @throws \SodiumException
      */
     public function __invoke(
         RequestInterface $request,
