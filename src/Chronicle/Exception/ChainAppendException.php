@@ -6,7 +6,7 @@ namespace ParagonIE\Chronicle\Exception;
  * Class ChainAppendException
  * @package ParagonIE\Chronicle\Exception
  */
-class ChainAppendException extends \Exception
+class ChainAppendException extends BaseException
 {
 
 }

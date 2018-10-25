@@ -168,17 +168,21 @@ class Register implements HandlerInterface
     {
         $db = Chronicle::getDatabase();
         $now = (new \DateTime())->format(\DateTime::ATOM);
+        $queryString = 'SELECT count(id) FROM ' .
+            Chronicle::getTableName('clients') .
+            ' WHERE publicid = ?';
+
         do {
             try {
                 $clientId = Base64UrlSafe::encode(\random_bytes(24));
             } catch (\Throwable $ex) {
                 throw new SecurityViolation('CSPRNG is broken');
             }
-        } while ($db->exists('SELECT count(id) FROM chronicle_clients WHERE publicid = ?', $clientId));
+        } while ($db->exists($queryString, $clientId));
 
         $db->beginTransaction();
         $db->insert(
-            'chronicle_clients',
+            Chronicle::getTableName('clients'),
             [
                 'publicid' => $clientId,
                 'publickey' => $post['publickey'],

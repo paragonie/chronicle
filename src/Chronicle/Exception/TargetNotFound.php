@@ -9,7 +9,7 @@ namespace ParagonIE\Chronicle\Exception;
  *
  * @package ParagonIE\Chronicle\Exception
  */
-class TargetNotFound extends \Exception
+class TargetNotFound extends BaseException
 {
 
 }

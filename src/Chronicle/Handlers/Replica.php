@@ -136,7 +136,7 @@ class Replica implements HandlerInterface
                  publickey,
                  signature
              FROM
-                 chronicle_replication_chain
+                 " . Chronicle::getTableName('replication_chain') . "
              WHERE
                  source = ? AND (
                      currhash = ?
@@ -178,7 +178,7 @@ class Replica implements HandlerInterface
                  currhash,
                  summaryhash
              FROM
-                 chronicle_replication_chain
+                 ' . Chronicle::getTableName('replication_chain') . '
              WHERE
                  source = ?
              ORDER BY
@@ -221,7 +221,7 @@ class Replica implements HandlerInterface
                 name,
                 publickey AS serverPublicKey
              FROM
-                chronicle_replication_sources"
+                " . Chronicle::getTableName('replication_sources')
         );
         /**
          * @var int $idx
@@ -272,7 +272,7 @@ class Replica implements HandlerInterface
             "SELECT
                  id
              FROM
-                 chronicle_replication_chain
+                 " . Chronicle::getTableName('replication_chain') . "
              WHERE
                  source = ? AND (
                      currhash = ?
@@ -298,7 +298,7 @@ class Replica implements HandlerInterface
                  publickey,
                  signature
              FROM
-                 chronicle_replication_chain
+                 " . Chronicle::getTableName('replication_chain') . "
              WHERE
                  source = ? AND
                  id > ?
@@ -330,7 +330,7 @@ class Replica implements HandlerInterface
         $chain = [];
         /** @var array<int, array<string, string>> $rows */
         $rows = Chronicle::getDatabase()->run(
-            "SELECT * FROM chronicle_replication_chain WHERE source = ? ORDER BY id ASC",
+            "SELECT * FROM " . Chronicle::getTableName('replication_chain') . " WHERE source = ? ORDER BY id ASC",
             $this->source
         );
         /** @var array<string, string> $row */
@@ -361,7 +361,7 @@ class Replica implements HandlerInterface
     {
         /** @var int $source */
         $source = Chronicle::getDatabase()->cell(
-            "SELECT id FROM chronicle_replication_sources WHERE uniqueid = ?",
+            "SELECT id FROM " . Chronicle::getTableName('replication_sources') . " WHERE uniqueid = ?",
             $uniqueId
         );
         if (!$source) {

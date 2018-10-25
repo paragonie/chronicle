@@ -9,7 +9,7 @@ namespace ParagonIE\Chronicle\Exception;
  *
  * @package ParagonIE\Chronicle\Exception
  */
-class SecurityViolation extends \Exception
+class SecurityViolation extends BaseException
 {
 
 }

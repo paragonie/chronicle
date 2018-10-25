@@ -113,7 +113,7 @@ class Lookup implements HandlerInterface
                  publickey,
                  signature
              FROM
-                 chronicle_chain
+                 " . Chronicle::getTableName('chain') . "
              WHERE
                  currhash = ?
                  OR summaryhash = ?
@@ -182,7 +182,7 @@ class Lookup implements HandlerInterface
             "SELECT
                  id
              FROM
-                 chronicle_chain
+                 " . Chronicle::getTableName('chain') . "
              WHERE
                  currhash = ?
                  OR summaryhash = ?
@@ -205,7 +205,7 @@ class Lookup implements HandlerInterface
                  publickey,
                  signature
              FROM
-                 chronicle_chain
+                 " . Chronicle::getTableName('chain') . "
              WHERE
                  id > ?
             ",
@@ -233,7 +233,9 @@ class Lookup implements HandlerInterface
     {
         $chain = [];
         /** @var array<int, array<string, string>> $rows */
-        $rows = Chronicle::getDatabase()->run("SELECT * FROM chronicle_chain ORDER BY id ASC");
+        $rows = Chronicle::getDatabase()->run(
+            "SELECT * FROM " . Chronicle::getTableName('chain') . " ORDER BY id ASC"
+        );
         /** @var array<string, string> $row */
         foreach ($rows as $row) {
             $chain[] = [

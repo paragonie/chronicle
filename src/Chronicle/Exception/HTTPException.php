@@ -6,7 +6,7 @@ namespace ParagonIE\Chronicle\Exception;
  * Class HTTPException
  * @package ParagonIE\Chronicle\Exception
  */
-class HTTPException extends \Exception
+class HTTPException extends BaseException
 {
 
 }

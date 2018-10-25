@@ -86,7 +86,7 @@ class Revoke implements HandlerInterface
 
         /** @var bool $found */
         $found = $db->exists(
-            'SELECT count(id) FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
+            'SELECT count(id) FROM ' . Chronicle::getTableName('clients') . ' WHERE publicid = ? AND publickey = ?',
             $post['clientid'],
             $post['publickey']
         );
@@ -99,7 +99,7 @@ class Revoke implements HandlerInterface
         }
         /** @var bool $isAdmin */
         $isAdmin = $db->cell(
-            'SELECT isAdmin FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
+            'SELECT isAdmin FROM ' . Chronicle::getTableName('clients') . ' WHERE publicid = ? AND publickey = ?',
             $post['clientid'],
             $post['publickey']
         );
@@ -112,7 +112,7 @@ class Revoke implements HandlerInterface
         }
 
         $db->delete(
-            'chronicle_clients',
+            Chronicle::getTableName('clients'),
             [
                 'publicid' => $post['clientid'],
                 'publickey' => $post['publickey'],
@@ -123,7 +123,9 @@ class Revoke implements HandlerInterface
             // Confirm deletion:
             $result = [
                 'deleted' => !$db->exists(
-                    'SELECT count(id) FROM chronicle_clients WHERE publicid = ? AND publickey = ?',
+                    'SELECT count(id) FROM ' .
+                    Chronicle::getTableName('clients') .
+                    ' WHERE publicid = ? AND publickey = ?',
                     $post['clientid'],
                     $post['publickey']
                 )

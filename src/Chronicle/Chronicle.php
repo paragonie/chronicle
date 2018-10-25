@@ -4,10 +4,13 @@ namespace ParagonIE\Chronicle;
 
 use ParagonIE\Blakechain\Blakechain;
 use ParagonIE\Chronicle\Exception\{
+    BaseException,
     ChainAppendException,
     ClientNotFound,
     FilesystemException,
     HTTPException,
+    InstanceNotFoundException,
+    InvalidInstanceException,
     SecurityViolation,
     TimestampNotProvided
 };
@@ -39,12 +42,37 @@ class Chronicle
     /** @var SigningSecretKey $signingKey */
     protected static $signingKey;
 
+    /** @var string $tablePrefix */
+    protected static $tablePrefix = '';
+
     /* This constant is the name of the header used to find the
        corresponding public key: */
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
     /* This constant denotes the Chronicle version running, server-side */
     const VERSION = '1.1.x';
+
+    /**
+     * @param string $name
+     * @return string
+     * @throws InvalidInstanceException
+     */
+    public static function getTableName(string $name)
+    {
+        if (empty(self::$tablePrefix)) {
+            return self::$easyDb->escapeIdentifier(
+                'chronicle_' . $name
+            );
+        }
+        if (self::$tablePrefix === 'replication') {
+            throw new InvalidInstanceException(
+                'The name "replication" is a reserved name.'
+            );
+        }
+        return self::$easyDb->escapeIdentifier(
+            'chronicle_' . self::$tablePrefix . '_' . $name
+        );
+    }
 
     /**
      * This extends the Blakechain with an arbitrary message, signature, and
@@ -55,7 +83,7 @@ class Chronicle
      * @param SigningPublickey $publicKey
      * @return array<string, string>
      *
-     * @throws ChainAppendException
+     * @throws BaseException
      * @throws \SodiumException
      */
     public static function extendBlakechain(
@@ -71,7 +99,7 @@ class Chronicle
         /** @var array<string, string> $lasthash */
         $lasthash = $db->row(
             'SELECT currhash, hashstate 
-             FROM chronicle_chain 
+             FROM ' . self::getTableName('chain') . ' 
              ORDER BY id DESC 
              LIMIT 1'
         );
@@ -115,7 +143,7 @@ class Chronicle
         self::normalize($db->getDriver(), $fields);
 
         // Insert new row into the database:
-        $db->insert('chronicle_chain', $fields);
+        $db->insert(self::getTableName('chain'), $fields);
         if (!$db->commit()) {
             $db->rollBack();
             throw new ChainAppendException('Could not commit new hash to database');
@@ -187,7 +215,7 @@ class Chronicle
      * @param bool $adminOnly
      * @return SigningPublicKey
      *
-     * @throws ClientNotFound
+     * @throws BaseException
      */
     public static function getClientsPublicKey(
         string $clientId,
@@ -196,13 +224,13 @@ class Chronicle
         if ($adminOnly) {
             /** @var array<string, string> $sqlResult */
             $sqlResult = static::$easyDb->row(
-                "SELECT * FROM chronicle_clients WHERE publicid = ? AND isAdmin",
+                "SELECT * FROM " . self::getTableName('clients') . " WHERE publicid = ? AND isAdmin",
                 $clientId
             );
         } else {
             /** @var array<string, string> $sqlResult */
             $sqlResult = static::$easyDb->row(
-                "SELECT * FROM chronicle_clients WHERE publicid = ?",
+                "SELECT * FROM " . self::getTableName('clients') . " WHERE publicid = ?",
                 $clientId
             );
         }
@@ -286,6 +314,24 @@ class Chronicle
     public static function storeSettings(array $settings)
     {
         self::$settings = $settings;
+    }
+
+    /**
+     * @param string $prefix
+     * @return void
+     *
+     * @throws InstanceNotFoundException
+     */
+    public static function setTablePrefix(string $prefix)
+    {
+        /** @var array<string, string> $instances */
+        $instances = self::$settings['instances'];
+        if (!\in_array($prefix, $instances, true)) {
+            throw new InstanceNotFoundException(
+                'Instance ' . $prefix . ' not found in settings'
+            );
+        }
+        self::$tablePrefix = $prefix;
     }
 
     /**

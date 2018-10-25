@@ -6,7 +6,7 @@ namespace ParagonIE\Chronicle\Exception;
  * Class HashNotFound
  * @package ParagonIE\Chronicle\Exception
  */
-class HashNotFound extends \Exception
+class HashNotFound extends BaseException
 {
 
 }

@@ -43,7 +43,7 @@ Chronicle::setDatabase($db);
 $getopt = new GetOpt([
     new Option(null, 'base-url', GetOpt::REQUIRED_ARGUMENT)
 ]);
-$getopt->parse();
+$getopt->process();
 $baseUrl = $getopt->getOption('base-url') ?? 'http://localhost:8080';
 
 $http = new Client();

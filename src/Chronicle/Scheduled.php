@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle;
 
 use GuzzleHttp\Exception\GuzzleException;
+use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 use ParagonIE\Chronicle\Process\{
     Attest,
     CrossSign,
@@ -48,6 +49,36 @@ class Scheduled
      */
     public function run(): self
     {
+        /** @var array<string, string> $instances */
+        $instances = $this->settings['instances'];
+        if (!empty($instances)) {
+            // Do all of the instances:
+            foreach ($instances as $instance => $prefix) {
+                try {
+                    Chronicle::setTablePrefix($prefix);
+                    $this->runAll();
+                } catch (InstanceNotFoundException $ex) {
+                    // Skip this one. It might not be created yed.
+                }
+            }
+            return $this;
+        }
+        return $this->runAll();
+    }
+
+    /**
+     * @return Scheduled
+     * @throws Exception\ChainAppendException
+     * @throws Exception\FilesystemException
+     * @throws Exception\ReplicationSourceNotFound
+     * @throws Exception\SecurityViolation
+     * @throws Exception\TargetNotFound
+     * @throws GuzzleException
+     * @throws InvalidMessageException
+     * @throws \SodiumException
+     */
+    public function runAll(): self
+    {
         return $this
             ->doCrossSigns()
             ->doReplication()
@@ -89,8 +120,9 @@ class Scheduled
      */
     public function doReplication(): self
     {
+        $query = 'SELECT id FROM ' . Chronicle::getTableName('replication_sources');
         /** @var array<string, int> $row */
-        foreach (Chronicle::getDatabase()->run('SELECT id FROM chronicle_replication_sources') as $row) {
+        foreach (Chronicle::getDatabase()->run($query) as $row) {
             Replicate::byId((int) $row['id'])->replicate();
         }
         return $this;

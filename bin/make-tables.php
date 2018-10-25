@@ -1,6 +1,13 @@
 <?php
 declare(strict_types=1);
 
+use GetOpt\{
+    GetOpt,
+    Option
+};
+use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
+
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */
 require_once $root . '/cli-autoload.php';
@@ -29,6 +36,7 @@ if (\is_readable($root . '/local/settings.json')) {
     echo 'Please run install.php first.', PHP_EOL;
     exit(1);
 }
+Chronicle::storeSettings($settings);
 
 if (empty($settings['database'])) {
     echo "Please defined a database in local/settings.json. For example:\n\n";
@@ -54,10 +62,57 @@ $db = ParagonIE\EasyDB\Factory::create(
     $settings['database']['options'] ?? []
 );
 
+Chronicle::setDatabase($db);
+
+/**
+ * @var GetOpt $getopt
+ *
+ * This defines the Command Line options.
+ */
+$getopt = new GetOpt([
+    new Option('i', 'instance', GetOpt::OPTIONAL_ARGUMENT),
+]);
+$getopt->process();
+
+
+/** @var string $instance */
+$instance = $getopt->getOption('instance') ?? '';
+
+try {
+    if (!empty($instance)) {
+        /** @var array<string, string> $instances */
+        $instances = $settings['instances'];
+        if (!\array_key_exists($instance, $instances)) {
+            throw new InstanceNotFoundException(
+                'Instance ' . $instance . ' not found'
+            );
+        }
+        Chronicle::setTablePrefix($instances[$instance]);
+    }
+} catch (InstanceNotFoundException $ex) {
+    echo $ex->getMessage(), PHP_EOL;
+    exit(1);
+}
+
 $scripts = [];
 foreach (\glob($root . '/sql/' . $db->getDriver() . '/*.sql') as $file) {
     echo $file . PHP_EOL;
-    $scripts[] = \file_get_contents($file);
+    /** @var string $contents */
+    $contents =  \file_get_contents($file);
+
+    // Process the table name
+    $contents = \preg_replace_callback(
+        '#chronicle_([A-Za-z0-9_]+)#',
+        /**
+         * @param array<int, string> $matches
+         * @return string
+         */
+        function ($matches) {
+            return \str_replace('"', '', Chronicle::getTableName($matches[1]));
+        },
+        $contents
+    );
+    $scripts[] = $contents;
 }
 
 $db->beginTransaction();

@@ -6,7 +6,7 @@ namespace ParagonIE\Chronicle\Exception;
  * Class ClientNotFound
  * @package ParagonIE\Chronicle\Exception
  */
-class ClientNotFound extends \Exception
+class ClientNotFound extends BaseException
 {
 
 }

@@ -44,7 +44,9 @@ class Attest
      */
     public function isScheduled(): bool
     {
-        if (!Chronicle::getDatabase()->exists('SELECT count(id) FROM chronicle_replication_sources')) {
+        /** @var string $query */
+        $query = 'SELECT count(id) FROM ' . Chronicle::getTableName('replication_sources');
+        if (!Chronicle::getDatabase()->exists($query)) {
             return false;
         }
         if (!isset($this->settings['scheduled-attestation'])) {
@@ -100,15 +102,18 @@ class Attest
     public function attestAll(): array
     {
         $hashes = [];
+        $db = Chronicle::getDatabase();
+        /** @var array<int, array<string, string>> $rows */
+        $rows = $db->run('SELECT id, uniqueid FROM ' . Chronicle::getTableName('replication_sources'));
         /** @var array<string, string> $row */
-        foreach (Chronicle::getDatabase()->run('SELECT id, uniqueid FROM chronicle_replication_sources') as $row) {
+        foreach ($rows as $row) {
             /** @var array<string, string> $latest */
-            $latest = Chronicle::getDatabase()->row(
+            $latest = $db->row(
                 "SELECT
                      currhash,
                      summaryhash
                  FROM
-                     chronicle_replication_chain
+                     " . Chronicle::getTableName('replication_chain') . "
                  WHERE
                      source = ?
                  ORDER BY id DESC
