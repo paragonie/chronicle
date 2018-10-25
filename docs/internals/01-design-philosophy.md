@@ -22,7 +22,7 @@ the central hub.
 
 Any attempt to turn Chronicle into a cryptocurrency will be rejected.
 
-In a similar vein, any proposals to mak Chronicle "trust-less" or have
+In a similar vein, any proposals to make Chronicle "trust-less" or have
 multiple branching paths will most likely not be considered.
 
 ### What Chronicle Is
@@ -93,7 +93,7 @@ Merkle trees (i.e. domain separation for leaf nodes to prevent duplicate
 record injection, or double-spending attacks in cryptocurrency) forces writers
 to rehash up to half the entire history in order to calculate the Merkle root.
 
-()This assumes that the child node of the first half of the history is cached
+(This assumes that the child node of the first half of the history is cached
 for performance purposes. If it's not, you have to rehash the entire history
 every time you append a record.)
 
