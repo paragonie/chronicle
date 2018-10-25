@@ -46,6 +46,7 @@ $db = Factory::create(
 $getopt = new Getopt([
     new Option('p', 'publickey', Getopt::REQUIRED_ARGUMENT),
     new Option('c', 'comment', Getopt::OPTIONAL_ARGUMENT),
+    new Option('j', 'json', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'administrator', Getopt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->parse();
@@ -56,6 +57,8 @@ $publicKey = $getopt->getOption('publickey');
 $comment = $getopt->getOption('comment') ?? '';
 /** @var bool $admin */
 $admin = $getopt->getOption('administrator') ?? false;
+/** @var bool $json */
+$json = $getopt->getOption('json') ?? false;
 
 if (empty($publicKey)) {
     echo 'Usage:', PHP_EOL, "\t",
@@ -88,8 +91,19 @@ $db->insert(
     ]
 );
 if ($db->commit()) {
+    if ($json) {
+        echo json_encode([
+            'status' => true,
+            'message' => 'Client successfully created!',
+            'data' => [
+                'publicId' => $newPublicId,
+                'administrator' => !empty($admin)
+            ]
+        ]);
+        exit(0);
+    }
     // Success.
-    if (!empty($isAdmin)) {
+    if (!empty($admin)) {
         echo "\t" . 'Client (' . $newPublicId . ') created successfully with administrative privileges!', PHP_EOL;
     } else {
         echo "\t" . 'Client (' . $newPublicId . ') created successfully!', PHP_EOL;
@@ -98,6 +112,15 @@ if ($db->commit()) {
     $db->rollBack();
     /** @var array<int, string> $errorInfo */
     $errorInfo = $db->errorInfo();
+
+    if ($json) {
+        echo json_encode([
+            'status' => false,
+            'message' => $errorInfo[0],
+            'data' => []
+        ]);
+        exit(1);
+    }
     echo $errorInfo[0], PHP_EOL;
     exit(1);
 }
