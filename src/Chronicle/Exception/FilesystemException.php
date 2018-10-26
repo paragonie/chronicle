@@ -6,7 +6,7 @@ namespace ParagonIE\Chronicle\Exception;
  * Class FilesystemException
  * @package ParagonIE\Chronicle\Exception
  */
-class FilesystemException extends \Exception
+class FilesystemException extends BaseException
 {
 
 }

@@ -6,7 +6,7 @@ namespace ParagonIE\Chronicle\Exception;
  * Class AccessDenied
  * @package ParagonIE\Chronicle\Exception
  */
-class AccessDenied extends \Exception
+class AccessDenied extends BaseException
 {
 
 }

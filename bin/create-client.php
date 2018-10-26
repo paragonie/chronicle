@@ -9,6 +9,8 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
+use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 
@@ -48,8 +50,9 @@ $getopt = new Getopt([
     new Option('c', 'comment', Getopt::OPTIONAL_ARGUMENT),
     new Option('j', 'json', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'administrator', Getopt::OPTIONAL_ARGUMENT),
+    new Option('i', 'instance', Getopt::OPTIONAL_ARGUMENT),
 ]);
-$getopt->parse();
+$getopt->process();
 
 /** @var string $publicKey */
 $publicKey = $getopt->getOption('publickey');
@@ -59,6 +62,22 @@ $comment = $getopt->getOption('comment') ?? '';
 $admin = $getopt->getOption('administrator') ?? false;
 /** @var bool $json */
 $json = $getopt->getOption('json') ?? false;
+/** @var string $instance */
+$instance = $getopt->getOption('instance') ?? '';
+
+try {
+    if (!empty($instance)) {
+        if (!\array_key_exists($instance, $settings['instances'])) {
+            throw new InstanceNotFoundException(
+                'Instance ' . $instance . ' not found'
+            );
+        }
+        Chronicle::setTablePrefix($settings['instances'][$instance]);
+    }
+} catch (InstanceNotFoundException $ex) {
+    echo $ex->getMessage(), PHP_EOL;
+    exit(1);
+}
 
 if (empty($publicKey)) {
     echo 'Usage:', PHP_EOL, "\t",
@@ -93,7 +112,7 @@ $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
 $db->beginTransaction();
 $db->insert(
-    'chronicle_clients',
+    Chronicle::getTableName('clients'),
     [
         'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,

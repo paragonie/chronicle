@@ -13,6 +13,8 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
+use ParagonIE\Chronicle\Chronicle;
+use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 
@@ -39,19 +41,20 @@ $db = Factory::create(
 );
 
 /**
- * @var Getopt $getopt
+ * @var GetOpt $getopt
  *
  * This defines the Command Line options.
  */
-$getopt = new Getopt([
+$getopt = new GetOpt([
     new Option(null, 'url', Getopt::REQUIRED_ARGUMENT),
     new Option(null, 'publickey', Getopt::REQUIRED_ARGUMENT),
     new Option(null, 'clientid', Getopt::REQUIRED_ARGUMENT),
     new Option(null, 'push-after', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'push-days', Getopt::OPTIONAL_ARGUMENT),
     new Option(null, 'name', Getopt::OPTIONAL_ARGUMENT),
+    new Option('i', 'instance', Getopt::OPTIONAL_ARGUMENT),
 ]);
-$getopt->parse();
+$getopt->process();
 
 /** @var string $url */
 $url = $getopt->getOption('url');
@@ -65,6 +68,24 @@ $pushAfter = $getopt->getOption('push-after') ?? null;
 $pushDays = $getopt->getOption('push-days') ?? null;
 /** @var string $name */
 $name = $getopt->getOption('name') ?? (new DateTime())->format(DateTime::ATOM);
+/** @var string $instance */
+$instance = $getopt->getOption('instance') ?? '';
+
+try {
+    if (!empty($instance)) {
+        /** @var array<string, string> $instances */
+        $instances = $settings['instances'];
+        if (!\array_key_exists($instance, $instances)) {
+            throw new InstanceNotFoundException(
+                'Instance ' . $instance . ' not found'
+            );
+        }
+        Chronicle::setTablePrefix($instances[$instance]);
+    }
+} catch (InstanceNotFoundException $ex) {
+    echo $ex->getMessage(), PHP_EOL;
+    exit(1);
+}
 
 /** @var array<string, string> $fields */
 $fields = [];
@@ -101,9 +122,11 @@ if (is_string($publicKey)) {
 $fields['clientid'] = $clientId;
 
 $db->beginTransaction();
-if ($db->exists('SELECT * FROM chronicle_xsign_targets WHERE name = ?', $name)) {
+/** @var string $table */
+$table = Chronicle::getTableName('xsign_targets');
+if ($db->exists('SELECT * FROM ' . $table . ' WHERE name = ?', $name)) {
     // Update an existing cross-sign target
-    $db->update('chronicle_xsign_targets', $fields, ['name' => $name]);
+    $db->update($table, $fields, ['name' => $name]);
 } else {
     // Create a new cross-sign target
     if (empty($url) || empty($publicKey)) {
@@ -112,7 +135,7 @@ if ($db->exists('SELECT * FROM chronicle_xsign_targets WHERE name = ?', $name)) 
         exit(1);
     }
     $fields['name'] = $name;
-    $db->insert('chronicle_xsign_targets', $fields);
+    $db->insert($table, $fields);
 }
 
 if (!$db->commit()) {

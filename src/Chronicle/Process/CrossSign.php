@@ -101,7 +101,7 @@ class CrossSign
     {
         $db = Chronicle::getDatabase();
         /** @var array<string, string> $data */
-        $data = $db->row('SELECT * FROM chronicle_xsign_targets WHERE id = ?', $id);
+        $data = $db->row('SELECT * FROM ' . Chronicle::getTableName('xsign_targets') . ' WHERE id = ?', $id);
         if (empty($data)) {
             throw new TargetNotFound('Cross-sign target not found');
         }
@@ -140,7 +140,7 @@ class CrossSign
 
         if (isset($this->policy['push-after'])) {
             /** @var int $head */
-            $head = $db->cell('SELECT MAX(id) FROM chronicle_chain');
+            $head = $db->cell('SELECT MAX(id) FROM ' . Chronicle::getTableName('chain'));
             // Only run if we've had more than N entries
             if (($head - (int) ($this->lastRun['id'])) >= $this->policy['push-after']) {
                 return true;
@@ -233,7 +233,7 @@ class CrossSign
     protected function getEndOfChain(EasyDB $db): array
     {
         /** @var array<string, string> $last */
-        $last = $db->row('SELECT * FROM chronicle_chain ORDER BY id DESC LIMIT 1');
+        $last = $db->row('SELECT * FROM ' . Chronicle::getTableName('chain') . ' ORDER BY id DESC LIMIT 1');
         if (empty($last)) {
             return [];
         }
@@ -253,7 +253,7 @@ class CrossSign
     {
         $db->beginTransaction();
         $db->update(
-            'chronicle_xsign_targets',
+            Chronicle::getTableName('xsign_targets'),
             [
                 'lastrun' => \json_encode([
                     'id' => $message['id'],

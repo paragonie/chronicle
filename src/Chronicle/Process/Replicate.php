@@ -85,7 +85,7 @@ class Replicate
     {
         /** @var array<string, string> $row */
         $row = Chronicle::getDatabase()->row(
-            "SELECT * FROM chronicle_replication_sources WHERE id = ?",
+            "SELECT * FROM " . Chronicle::getTableName('replication_sources') . " WHERE id = ?",
             $id
         );
         if (empty($row)) {
@@ -140,7 +140,7 @@ class Replicate
                  currhash,
                  hashstate
              FROM
-                 chronicle_replication_chain
+                 ' . Chronicle::getTableName('replication_chain') . '
              WHERE
                  source = ?
              ORDER BY id DESC
@@ -191,7 +191,7 @@ class Replicate
         }
 
         /* Enter the new row to the replication table */
-        $db->insert('chronicle_replication_chain', [
+        $db->insert(Chronicle::getTableName('replication_chain'), [
             'source' => $this->id,
             'data' => $entry['contents'],
             'prevhash' => $prevhash,
@@ -218,7 +218,7 @@ class Replicate
             "SELECT
                  summaryhash
              FROM
-                 chronicle_replication_chain
+                 " . Chronicle::getTableName('replication_chain') . "
              WHERE
                  source = ?
              ORDER BY id DESC

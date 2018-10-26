@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace ParagonIE\Chronicle\Exception;
 
 /**
- * Class ReplicationSourceNotFound
+ * Class InstanceNotFoundException
  * @package ParagonIE\Chronicle\Exception
  */
-class ReplicationSourceNotFound extends BaseException
+class InstanceNotFoundException extends \Exception
 {
 
 }
