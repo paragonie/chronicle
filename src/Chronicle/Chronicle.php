@@ -296,6 +296,17 @@ class Chronicle
     }
 
     /**
+     * Is this a valid name for an instance?
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function isValidInstanceName(string $name): bool
+    {
+        return (bool) \preg_match('#^[A-Za-z0-9_\-]+$#', $name);
+    }
+
+    /**
      * Store the database object in the Chronicle class.
      *
      * @param EasyDB $db

@@ -25,8 +25,10 @@ if (!empty($_GET['instance'])) {
     if (\is_string($_GET['instance'])) {
         /** @var string $instance */
         $instance = $_GET['instance'];
-        if (\array_key_exists($instance, $settings['instances'])) {
-            Chronicle::setTablePrefix($settings['instances'][$instance]);
+        if (Chronicle::isValidInstanceName($instance)) {
+            if (\array_key_exists($instance, $settings['instances'])) {
+                Chronicle::setTablePrefix($settings['instances'][$instance]);
+            }
         }
     }
 }
