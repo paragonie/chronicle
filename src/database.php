@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 
 if (!\is_readable(CHRONICLE_APP_ROOT . '/local/settings.json')) {
     echo 'Settings are not loaded.', PHP_EOL;
@@ -23,17 +22,12 @@ $db = \ParagonIE\EasyDB\Factory::create(
 );
 
 if (!empty($_GET['instance'])) {
-    try {
-        if (\is_string($_GET['instance'])) {
-            /** @var string $instance */
-            $instance = $_GET['instance'];
-            if (\array_key_exists($instance, $settings['instances'])) {
-                Chronicle::setTablePrefix($settings['instances'][$instance]);
-            }
+    if (\is_string($_GET['instance'])) {
+        /** @var string $instance */
+        $instance = $_GET['instance'];
+        if (\array_key_exists($instance, $settings['instances'])) {
+            Chronicle::setTablePrefix($settings['instances'][$instance]);
         }
-    } catch (InstanceNotFoundException $ex) {
-        echo $ex->getMessage(), PHP_EOL;
-        exit(1);
     }
 }
 
