@@ -1,4 +1,7 @@
 <?php
+use ParagonIE\Chronicle\Chronicle;
+use Slim\App;
+
 if (PHP_SAPI == 'cli-server') {
     // To help the built-in PHP dev server, check if the request was actually for
     // something which should probably be served as a static file
@@ -15,8 +18,8 @@ session_start();
 
 // Instantiate the app
 $settings = require CHRONICLE_APP_ROOT . '/src/settings.php';
-\ParagonIE\Chronicle\Chronicle::storeSettings($settings['settings'] ?? []);
-$app = new \Slim\App($settings);
+Chronicle::storeSettings($settings['settings'] ?? []);
+$app = new App($settings);
 
 // Set up dependencies
 require CHRONICLE_APP_ROOT . '/src/dependencies.php';
