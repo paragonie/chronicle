@@ -7,10 +7,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Blakechain\Blakechain;
 use ParagonIE\Chronicle\Chronicle;
-use ParagonIE\Chronicle\Exception\{
-    ReplicationSourceNotFound,
-    SecurityViolation
-};
+use ParagonIE\Chronicle\Exception\{InvalidInstanceException, ReplicationSourceNotFound, SecurityViolation};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\Adapter\Guzzle;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
@@ -128,6 +125,7 @@ class Replicate
      * @return bool
      *
      * @throws SecurityViolation
+     * @throws InvalidInstanceException
      * @throws \SodiumException
      */
     protected function appendToChain(array $entry): bool
@@ -182,7 +180,7 @@ class Replicate
         );
 
         /* If the summary hash we calculated doesn't match what was given, abort */
-        if (!\hash_equals($entry['summaryhash'], $blakechain->getSummaryHash())) {
+        if (!\hash_equals($entry['summary'], $blakechain->getSummaryHash())) {
             $db->rollBack();
             throw new SecurityViolation(
                 'Invalid summary hash. Expected ' . $entry['summary'] .
