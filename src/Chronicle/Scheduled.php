@@ -40,6 +40,7 @@ class Scheduled
      *
      * @throws Exception\ChainAppendException
      * @throws Exception\FilesystemException
+     * @throws Exception\InvalidInstanceException
      * @throws Exception\ReplicationSourceNotFound
      * @throws Exception\SecurityViolation
      * @throws Exception\TargetNotFound
@@ -70,6 +71,7 @@ class Scheduled
      * @return Scheduled
      * @throws Exception\ChainAppendException
      * @throws Exception\FilesystemException
+     * @throws Exception\InvalidInstanceException
      * @throws Exception\ReplicationSourceNotFound
      * @throws Exception\SecurityViolation
      * @throws Exception\TargetNotFound
@@ -112,6 +114,7 @@ class Scheduled
      *
      * @return self
      *
+     * @throws Exception\InvalidInstanceException
      * @throws Exception\ReplicationSourceNotFound
      * @throws Exception\SecurityViolation
      * @throws GuzzleException
