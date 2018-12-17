@@ -38,6 +38,7 @@ $db = Factory::create(
     $settings['database']['password'] ?? '',
     $settings['database']['options'] ?? []
 );
+Chronicle::setDatabase($db);
 
 /**
  * @var Getopt
