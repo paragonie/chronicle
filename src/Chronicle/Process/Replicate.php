@@ -189,7 +189,7 @@ class Replicate
         }
 
         /* Enter the new row to the replication table */
-        $db->insert(Chronicle::getTableName('replication_chain'), [
+        $db->insert(Chronicle::getTableName('replication_chain', true), [
             'source' => $this->id,
             'data' => $entry['contents'],
             'prevhash' => $prevhash,
@@ -208,6 +208,7 @@ class Replicate
      * Get the latest summary hash from this replica.
      *
      * @return string
+     * @throws InvalidInstanceException
      */
     protected function getLatestSummaryHash(): string
     {

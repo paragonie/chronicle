@@ -2,13 +2,12 @@
 declare(strict_types=1);
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\{
-    Chronicle,
+use ParagonIE\Chronicle\{Chronicle,
     Exception\FilesystemException,
+    Exception\InvalidInstanceException,
     Exception\ReplicationSourceNotFound,
     Exception\HashNotFound,
-    HandlerInterface
-};
+    HandlerInterface};
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -122,6 +121,7 @@ class Replica implements HandlerInterface
      *
      * @throws HashNotFound
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     public function getByHash(array $args = []): ResponseInterface
     {
@@ -169,6 +169,7 @@ class Replica implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     public function getLastHash(): ResponseInterface
     {
@@ -210,6 +211,7 @@ class Replica implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     protected function getIndex(): ResponseInterface
     {
@@ -264,6 +266,7 @@ class Replica implements HandlerInterface
      *
      * @throws FilesystemException
      * @throws HashNotFound
+     * @throws InvalidInstanceException
      */
     public function getSince(array $args = []): ResponseInterface
     {
@@ -324,6 +327,7 @@ class Replica implements HandlerInterface
      * Export an entire replicated chain, as-is.
      *
      * @return array
+     * @throws InvalidInstanceException
      */
     protected function getFullChain(): array
     {
@@ -356,6 +360,7 @@ class Replica implements HandlerInterface
      * @return self
      *
      * @throws ReplicationSourceNotFound
+     * @throws InvalidInstanceException
      */
     protected function selectReplication(string $uniqueId): self
     {
