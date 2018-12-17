@@ -54,12 +54,16 @@ class Chronicle
 
     /**
      * @param string $name
+     * @param bool $dontEscape
      * @return string
      * @throws InvalidInstanceException
      */
-    public static function getTableName(string $name)
+    public static function getTableName(string $name, bool $dontEscape = false)
     {
         if (empty(self::$tablePrefix)) {
+            if ($dontEscape) {
+                return 'chronicle_' . $name;
+            }
             return self::$easyDb->escapeIdentifier(
                 'chronicle_' . $name
             );
@@ -68,6 +72,9 @@ class Chronicle
             throw new InvalidInstanceException(
                 'The name "replication" is a reserved name.'
             );
+        }
+        if ($dontEscape) {
+            return 'chronicle_' . self::$tablePrefix . '_' . $name;
         }
         return self::$easyDb->escapeIdentifier(
             'chronicle_' . self::$tablePrefix . '_' . $name
