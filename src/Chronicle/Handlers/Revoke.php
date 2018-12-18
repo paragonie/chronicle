@@ -2,11 +2,11 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use ParagonIE\Chronicle\{
-    Chronicle,
+use ParagonIE\Chronicle\{Chronicle,
     Exception\AccessDenied,
-    Exception\ChainAppendException,
+    Exception\BaseException,
     Exception\FilesystemException,
+    Exception\InvalidInstanceException,
     Exception\TargetNotFound,
     HandlerInterface,
     Scheduled};
@@ -34,12 +34,13 @@ class Revoke implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws AccessDenied
-     * @throws ChainAppendException
+     * @throws BaseException
      * @throws FilesystemException
      * @throws GuzzleException
+     * @throws InvalidInstanceException
      * @throws InvalidMessageException
-     * @throws \SodiumException
      * @throws TargetNotFound
+     * @throws \SodiumException
      */
     public function __invoke(
         RequestInterface $request,
@@ -134,7 +135,11 @@ class Revoke implements HandlerInterface
             if (!$result['deleted']) {
                 $result['reason'] = 'Delete operation was unsuccessful due to unknown reasons.';
             }
-            $now = (new \DateTime())->format(\DateTime::ATOM);
+            try {
+                $now = (new \DateTime())->format(\DateTime::ATOM);
+            } catch (\Exception $ex) {
+                return Chronicle::errorResponse($response, $ex->getMessage(), 500);
+            }
 
             $settings = Chronicle::getSettings();
             if (!empty($settings['publish-revoked-clients'])) {

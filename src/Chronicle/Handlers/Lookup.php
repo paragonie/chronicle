@@ -1,12 +1,11 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\{
-    Chronicle,
+use ParagonIE\Chronicle\{Chronicle,
     Exception\FilesystemException,
     Exception\HashNotFound,
-    HandlerInterface
-};
+    Exception\InvalidInstanceException,
+    HandlerInterface};
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
@@ -75,7 +74,10 @@ class Lookup implements HandlerInterface
      *
      * @return ResponseInterface
      *
+     * @throws \Exception
+     * @return ResponseInterface
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     public function exportChain(): ResponseInterface
     {
@@ -97,6 +99,7 @@ class Lookup implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      * @throws HashNotFound
      */
@@ -172,8 +175,10 @@ class Lookup implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      * @throws HashNotFound
+     * @throws InvalidInstanceException
      */
     public function getSince(array $args = []): ResponseInterface
     {
@@ -228,6 +233,7 @@ class Lookup implements HandlerInterface
      * Get the entire chain, as-is, as of the time of the request.
      *
      * @return array
+     * @throws InvalidInstanceException
      */
     protected function getFullChain(): array
     {

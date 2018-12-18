@@ -2,16 +2,15 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use ParagonIE\Chronicle\{
-    Chronicle,
+use ParagonIE\Chronicle\{Chronicle,
+    Exception\BaseException,
     Exception\ChainAppendException,
     Exception\ClientNotFound,
     Exception\FilesystemException,
     Exception\SecurityViolation,
     Exception\TargetNotFound,
     HandlerInterface,
-    Scheduled
-};
+    Scheduled};
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\Exception\InvalidMessageException;
 use ParagonIE\Sapient\Sapient;
@@ -36,6 +35,7 @@ class Publish implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws BaseException
      * @throws ChainAppendException
      * @throws ClientNotFound
      * @throws FilesystemException
@@ -99,11 +99,17 @@ class Publish implements HandlerInterface
         // If we need to do a cross-sign, do it now:
         (new Scheduled())->doCrossSigns();
 
+        try {
+            $now = (new \DateTime())->format(\DateTime::ATOM);
+        } catch (\Exception $ex) {
+            return Chronicle::errorResponse($response, $ex->getMessage(), 500);
+        }
+
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
                 'version' => Chronicle::VERSION,
-                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+                'datetime' => $now,
                 'status' => 'OK',
                 'results' => $result
             ],
@@ -119,6 +125,7 @@ class Publish implements HandlerInterface
      * @param RequestInterface $request
      * @return array
      *
+     * @throws BaseException
      * @throws SecurityViolation
      * @throws ClientNotFound
      */

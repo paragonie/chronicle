@@ -45,6 +45,7 @@ class Replica implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      */
     public function __invoke(
@@ -96,6 +97,7 @@ class Replica implements HandlerInterface
      *
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      */
     public function exportChain(): ResponseInterface
@@ -119,6 +121,7 @@ class Replica implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws HashNotFound
      * @throws FilesystemException
      * @throws InvalidInstanceException
@@ -210,6 +213,7 @@ class Replica implements HandlerInterface
      *
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      * @throws InvalidInstanceException
      */
@@ -264,6 +268,7 @@ class Replica implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      * @throws HashNotFound
      * @throws InvalidInstanceException

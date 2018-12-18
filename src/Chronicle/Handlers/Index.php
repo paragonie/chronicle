@@ -30,6 +30,7 @@ class Index implements HandlerInterface
      * @param array $args
      * @return ResponseInterface
      *
+     * @throws \Exception
      * @throws FilesystemException
      */
     public function __invoke(
