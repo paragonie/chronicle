@@ -2,7 +2,8 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use ParagonIE\Chronicle\{Chronicle,
+use ParagonIE\Chronicle\{
+    Chronicle,
     Exception\BaseException,
     Exception\ChainAppendException,
     Exception\ClientNotFound,
@@ -10,7 +11,8 @@ use ParagonIE\Chronicle\{Chronicle,
     Exception\SecurityViolation,
     Exception\TargetNotFound,
     HandlerInterface,
-    Scheduled};
+    Scheduled
+};
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\Exception\InvalidMessageException;
 use ParagonIE\Sapient\Sapient;

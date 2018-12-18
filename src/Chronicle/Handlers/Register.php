@@ -2,15 +2,16 @@
 namespace ParagonIE\Chronicle\Handlers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use ParagonIE\Chronicle\{Chronicle,
+use ParagonIE\Chronicle\{
+    Chronicle,
     Exception\BaseException,
-    Exception\ChainAppendException,
     Exception\FilesystemException,
     Exception\InvalidInstanceException,
     Exception\SecurityViolation,
     Exception\TargetNotFound,
     HandlerInterface,
-    Scheduled};
+    Scheduled
+};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 use ParagonIE\Sapient\Exception\InvalidMessageException;

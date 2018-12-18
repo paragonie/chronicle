@@ -1,11 +1,13 @@
 <?php
 namespace ParagonIE\Chronicle\Handlers;
 
-use ParagonIE\Chronicle\{Chronicle,
+use ParagonIE\Chronicle\{
+    Chronicle,
     Exception\FilesystemException,
     Exception\HashNotFound,
     Exception\InvalidInstanceException,
-    HandlerInterface};
+    HandlerInterface
+};
 use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
