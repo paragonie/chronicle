@@ -112,7 +112,7 @@ class Revoke implements HandlerInterface
         }
 
         $db->delete(
-            Chronicle::getTableName('clients'),
+            Chronicle::getTableName('clients', true),
             [
                 'publicid' => $post['clientid'],
                 'publickey' => $post['publickey'],

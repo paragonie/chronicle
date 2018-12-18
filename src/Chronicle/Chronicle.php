@@ -150,7 +150,7 @@ class Chronicle
         self::normalize($db->getDriver(), $fields);
 
         // Insert new row into the database:
-        $db->insert(self::getTableName('chain'), $fields);
+        $db->insert(self::getTableName('chain', true), $fields);
         if (!$db->commit()) {
             $db->rollBack();
             throw new ChainAppendException('Could not commit new hash to database');
