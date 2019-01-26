@@ -170,6 +170,13 @@ class Replicate
             $db->rollBack();
             throw new SecurityViolation('Invalid Ed25519 signature provided by source Chronicle.');
         }
+        if (!isset($entry['summaryhash'])) {
+            if (!isset($entry['summary'])) {
+                $db->rollBack();
+                throw new SecurityViolation('No summary hash provided');
+            }
+            $entry['summaryhash'] =& $entry['summary'];
+        }
 
         /* Update the Blakechain */
         $blakechain->appendData(
@@ -180,7 +187,7 @@ class Replicate
         );
 
         /* If the summary hash we calculated doesn't match what was given, abort */
-        if (!\hash_equals($entry['summary'], $blakechain->getSummaryHash())) {
+        if (!\hash_equals($entry['summaryhash'], $blakechain->getSummaryHash())) {
             $db->rollBack();
             throw new SecurityViolation(
                 'Invalid summary hash. Expected ' . $entry['summary'] .
