@@ -36,6 +36,9 @@ $db = Factory::create(
     $settings['database']['options'] ?? []
 );
 
+/** Pass database instance to Chronicle **/
+Chronicle::setDatabase($db);
+
 /**
  * @var Getopt $getopt
  *
@@ -112,7 +115,7 @@ $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
 $db->beginTransaction();
 $db->insert(
-    Chronicle::getTableName('clients'),
+    Chronicle::getTableName('clients', true),
     [
         'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,
