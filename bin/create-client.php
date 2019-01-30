@@ -114,7 +114,8 @@ try {
 $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
 // disable escaping for SQLite
-$isSQLite = strpos($settings['database']['dsn'], 'sqlite:') !== false;
+$dns = $settings['database']['dsn'];
+$isSQLite = strpos($dns, 'sqlite:') !== false;
 
 $db->beginTransaction();
 $db->insert(
