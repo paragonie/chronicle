@@ -36,6 +36,9 @@ $db = Factory::create(
     $settings['database']['options'] ?? []
 );
 
+// Pass database instance to Chronicle
+Chronicle::setDatabase($db);
+
 /**
  * @var Getopt $getopt
  *
@@ -110,9 +113,13 @@ try {
 /** @var string $newPublicId */
 $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
+// Disable escaping for SQLite
+/** @var boolean $isSQLite */
+$isSQLite = strpos($settings['database']['dsn'] ?? '', 'sqlite:') !== false;
+
 $db->beginTransaction();
 $db->insert(
-    Chronicle::getTableName('clients'),
+    Chronicle::getTableName('clients', $isSQLite),
     [
         'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,
