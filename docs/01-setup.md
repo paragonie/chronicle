@@ -28,6 +28,14 @@ except with information pertinent to your instance and your public key:
 
 ### MySQL
 
+To generate MySQL config simply do the following:
+
+```shell
+php bin/install.php --mysql
+```
+
+The output will be like this:
+
 ```json
 {
   "database": {
@@ -38,7 +46,34 @@ except with information pertinent to your instance and your public key:
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
 }
 ```
+
+There are many available options:
+
+```shell
+php bin/install.php --mysql \
+                    --host localhost \
+                    --port 3306 \
+                    --database chronicle \
+                    --username mysql_user \
+                    --password mysql_password
+```
+
+Short format options:
+
+```shell
+php bin/install.php --mysql -h localhost --port 3306 \
+                            -d chronicle -u mysql_user -p mysql_password
+```
+
 ### PostgreSQL
+
+To generate PostgreSQL config simply do the following:
+
+```shell
+php bin/install.php --pgsql
+```
+
+The output will be like this:
 
 ```json
 {
@@ -51,7 +86,33 @@ except with information pertinent to your instance and your public key:
 }
 ```
 
+There are many available options:
+
+```shell
+php bin/install.php --pgsql \
+                    --host localhost \
+                    --port 5432 \
+                    --database chronicle \
+                    --username pgsql_user \
+                    --password pgsql_password
+```
+
+Short format options:
+
+```shell
+php bin/install.php --pgsql -h localhost --port 5432 \
+                            -d chronicle -u pgsql_user -p mysql_password
+```
+
 ### SQLite
+
+To generate SQLite config simply do the following:
+
+```shell
+php bin/install.php
+```
+
+The output will be like this:
 
 ```json
 {
@@ -60,6 +121,17 @@ except with information pertinent to your instance and your public key:
   },
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
 }
+```
+There are many available options:
+
+```shell
+php bin/install.php --sqlite --database live --extension db
+```
+
+Short format options:
+
+```shell
+php bin/install.php --sqlite -d live -e db
 ```
 
 
