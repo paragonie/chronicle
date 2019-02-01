@@ -238,17 +238,44 @@ class Lookup implements HandlerInterface
     }
 
     /**
-     * Get the entire chain, as-is, as of the time of the request.
+     * Get the paginated chain, as-is, as of the time of the request.
+     *
+     * @param int $page
+     * @param int $perPage
      *
      * @return array
      * @throws InvalidInstanceException
      */
-    protected function getFullChain(): array
+    protected function getFullChain(int $page = 1, int $perPage = 5): array
     {
         $chain = [];
+
+        /** @var int $currentPage */
+        $currentPage = (int) ($_GET['page'] ?? $page ?? 1);
+
+        /** @var array<int, array<string, string>> $total */
+        $statistic = Chronicle::getDatabase()->row(
+            "SELECT COUNT(*) as total
+             FROM " . Chronicle::getTableName('chain')
+        );
+
+        // Calculate Limit and Offset ranges
+        /** 
+        * @var int $totalRows
+        * @var int $offset
+        * @var int $totalPages
+        */
+        $totalRows = (int) ($statistic['total'] ?? 0);
+        $offset = ($currentPage - 1) * $perPage;
+        $totalPages = ceil($totalRows / $perPage);
+
         /** @var array<int, array<string, string>> $rows */
         $rows = Chronicle::getDatabase()->run(
-            "SELECT * FROM " . Chronicle::getTableName('chain') . " ORDER BY id ASC"
+            "SELECT *
+             FROM " . Chronicle::getTableName('chain') . "
+             ORDER BY id ASC
+             LIMIT {$offset}, {$perPage}
+            "
         );
         /** @var array<string, string> $row */
         foreach ($rows as $row) {
@@ -262,6 +289,14 @@ class Lookup implements HandlerInterface
                 'signature' => $row['signature']
             ];
         }
-        return $chain;
+        return [
+            'data' => $chain,
+            'meta' => [
+                'current_page' => $currentPage ?: 1,
+                'per_page' => $perPage,
+                'total_pages' => $totalPages,
+                'total_rows' => $totalRows,
+            ],
+        ];
     }
 }
