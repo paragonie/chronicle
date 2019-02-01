@@ -253,7 +253,7 @@ class Lookup implements HandlerInterface
         /** @var int $currentPage */
         $currentPage = (int) ($_GET['page'] ?? $page ?? 1);
 
-        /** @var array<int, array<string, string>> $total */
+        /** @var array<int, array<string, string>> $statistic */
         $statistic = Chronicle::getDatabase()->row(
             "SELECT COUNT(*) as total
              FROM " . Chronicle::getTableName('chain')
