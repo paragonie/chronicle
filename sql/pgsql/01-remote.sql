@@ -21,14 +21,14 @@ CREATE TABLE chronicle_replication_chain (
   source BIGINT REFERENCES chronicle_replication_sources(id),
   data TEXT,
   prevhash TEXT NULL,
-  currhash TEXT,
+  currhash TEXT REFERENCES chronicle_replication_chain(prevhash),
   hashstate TEXT,
   summaryhash TEXT,
   publickey TEXT,
   signature TEXT,
-  created TIMESTAMP,
-  replicated TIMESTAMP,
-  FOREIGN KEY (currhash) REFERENCES chronicle_replication_chain(prevhash),
+  created TIMESTAMP default current_timestamp,
+  replicated TIMESTAMP default current_timestamp,
+  UNIQUE(prevhash),
   UNIQUE(source, prevhash)
 );
 

@@ -113,13 +113,9 @@ try {
 /** @var string $newPublicId */
 $newPublicId = Base64UrlSafe::encode(\random_bytes(24));
 
-// Disable escaping for SQLite
-/** @var boolean $isSQLite */
-$isSQLite = strpos($settings['database']['dsn'] ?? '', 'sqlite:') !== false;
-
 $db->beginTransaction();
 $db->insert(
-    Chronicle::getTableName('clients', $isSQLite),
+    Chronicle::getTableName('clients', true),
     [
         'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,

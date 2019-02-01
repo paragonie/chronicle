@@ -269,13 +269,24 @@ class Lookup implements HandlerInterface
         $offset = ($currentPage - 1) * $perPage;
         $totalPages = ceil($totalRows / $perPage);
 
+        if($offset < 0){
+            $offset = 0;
+        }
+
+        // PostreSQL has a different structure for Pagination.
+        // But, MySQL and SQLite behave similar to each other.
+        /** @var string $paginationCondition */
+        $paginationCondition = Chronicle::getDatabase()->getDriver() === 'pgsql' ?
+            "LIMIT {$perPage} OFFSET {$offset}"
+            :
+            "LIMIT {$offset}, {$perPage}";
+
         /** @var array<int, array<string, string>> $rows */
         $rows = Chronicle::getDatabase()->run(
             "SELECT *
              FROM " . Chronicle::getTableName('chain') . "
              ORDER BY id ASC
-             LIMIT {$offset}, {$perPage}
-            "
+            " . $paginationCondition
         );
         /** @var array<string, string> $row */
         foreach ($rows as $row) {
