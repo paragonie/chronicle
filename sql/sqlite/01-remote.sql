@@ -1,35 +1,37 @@
 CREATE TABLE chronicle_xsign_targets (
-  id INTEGER PRIMARY KEY ASC,
-  name TEXT,
-  url TEXT,
-  clientid TEXT,
-  publickey TEXT,
-  policy TEXT,
-  lastrun TEXT
+  id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+  name TEXT NOT NULL,
+  url TEXT NOT NULL,
+  clientid TEXT NOT NULL,
+  publickey TEXT NOT NULL,
+  policy TEXT NOT NULL,
+  lastrun TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE chronicle_replication_sources (
-  id INTEGER PRIMARY KEY ASC,
-  uniqueid TEXT,
-  name TEXT,
-  url TEXT,
-  publickey TEXT
+  id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+  uniqueid TEXT NOT NULL,
+  name TEXT NOT NULL,
+  url TEXT NOT NULL,
+  publickey TEXT NOT NULL
 );
 
 CREATE TABLE chronicle_replication_chain (
-  id INTEGER PRIMARY KEY ASC,
-  source INTEGER,
-  data TEXT,
+  id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
+  source INTEGER NOT NULL,
+  data TEXT NOT NULL,
   prevhash TEXT NULL,
-  currhash TEXT,
-  hashstate TEXT,
-  summaryhash TEXT,
-  publickey TEXT,
-  signature TEXT,
-  created TEXT,
-  replicated TEXT,
-  FOREIGN KEY (currhash) REFERENCES chronicle_replication_chain(prevhash),
-  UNIQUE(source, prevhash)
+  currhash TEXT NOT NULL,
+  hashstate TEXT NOT NULL,
+  summaryhash TEXT NOT NULL,
+  publickey TEXT NOT NULL,
+  signature TEXT NOT NULL,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  replicated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(currhash),
+  UNIQUE(source, prevhash),
+  FOREIGN KEY (source) REFERENCES chronicle_replication_sources(id),
+  FOREIGN KEY (prevhash) REFERENCES chronicle_replication_chain(currhash)
 );
 
 CREATE INDEX chronicle_replication_chain_prevhash_idx ON chronicle_replication_chain(source, prevhash);
