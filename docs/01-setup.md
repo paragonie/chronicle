@@ -9,10 +9,10 @@ General process:
 1. Clone this repository: `git clone https://github.com/paragonie/chronicle.git`
 2. Run `composer install`
    * If you don't have Composer, [go here for **Composer installation** instructions](https://getcomposer.org/download/).
-3. Run `bin/install.php` to generate a keypair and basic configuration file.
+3. Run `php bin/install.php` to generate a keypair and basic configuration file.
 4. Edit `local/settings.json` to configure your Chronicle. For example, you
    can choose a MySQL, PostgreSQL, or SQLite backend. [See below](#configuring-localsettingsjson).
-5. Run `bin/make-tables.php` to setup the database tables 
+5. Run `php bin/make-tables.php` to setup the database tables 
 6. Configure a new virtual host for Apache/nginx/etc. to point to the `public`
    directory, **OR** run `composer start` to launch the built-in web server.
 
