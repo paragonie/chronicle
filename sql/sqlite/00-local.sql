@@ -20,7 +20,8 @@ CREATE TABLE chronicle_chain (
   publickey TEXT,
   signature TEXT,
   created TEXT,
-  FOREIGN KEY (currhash) REFERENCES chronicle_chain(prevhash),
+  FOREIGN KEY (prevhash) REFERENCES chronicle_chain(currhash),
+  UNIQUE(currhash),
   UNIQUE(prevhash)
 );
 
