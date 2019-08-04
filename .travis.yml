@@ -12,12 +12,31 @@ matrix:
   allow_failures:
     - php: "nightly"
 
+services:
+    - mysql
+    - postgresql
+
+before_install:
+    - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+    - psql -c 'create database travis_ci_test;' -U postgres
+
 install:
     - composer self-update
     - composer update
-    - php bin/install.php
-    - php bin/make-tables.php
 
 script:
+    # Test SQLite
+    - php bin/install.php
+    - php bin/make-tables.php
+    - composer test
+    - composer static-analysis
+    # Test MySQL
+    - php bin/install.php --mysql --host 127.0.0.1 -u root --database test
+    - php bin/make-tables.php
+    - composer test
+    - composer static-analysis
+    # Test PostgreSQL
+    - php bin/install.php --pgsql -u postgres --database travis_ci_test
+    - php bin/make-tables.php
     - composer test
     - composer static-analysis

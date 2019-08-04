@@ -69,7 +69,7 @@ $extension = $getopt->getOption('extension') ?? 'db';
 /** @var string $username */
 $username = $getopt->getOption('username') ?? ($mysql ? 'mysqluser' : ($pgsql ? 'pgsqluser' : ''));
 /** @var string $password */
-$password = $getopt->getOption('password') ?? 'correct horse battery staple';
+$password = $getopt->getOption('password') ?? '';
 
 // default SQLite
 $databaseConfig = [
