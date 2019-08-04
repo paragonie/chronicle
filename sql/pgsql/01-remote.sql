@@ -1,34 +1,35 @@
 CREATE TABLE chronicle_xsign_targets (
   id BIGSERIAL PRIMARY KEY,
-  name TEXT,
-  url TEXT,
-  clientid TEXT,
-  publickey TEXT,
-  policy TEXT,
+  name TEXT NOT NULL,
+  url TEXT NOT NULL,
+  clientid TEXT NOT NULL,
+  publickey TEXT NOT NULL,
+  policy TEXT NOT NULL,
   lastrun TEXT
 );
 
 CREATE TABLE chronicle_replication_sources (
   id BIGSERIAL PRIMARY KEY,
-  uniqueid TEXT,
-  name TEXT,
-  url TEXT,
-  publickey TEXT
+  uniqueid TEXT NOT NULL,
+  name TEXT NOT NULL,
+  url TEXT NOT NULL,
+  publickey TEXT NOT NULL
 );
 
 CREATE TABLE chronicle_replication_chain (
   id BIGSERIAL PRIMARY KEY,
-  source BIGINT REFERENCES chronicle_replication_sources(id),
-  data TEXT,
+  source BIGINT NOT NULL REFERENCES chronicle_replication_sources(id),
+  data TEXT NOT NULL,
   prevhash TEXT NULL,
-  currhash TEXT,
-  hashstate TEXT,
-  summaryhash TEXT,
-  publickey TEXT,
-  signature TEXT,
+  currhash TEXT NOT NULL,
+  hashstate TEXT NOT NULL,
+  summaryhash TEXT NOT NULL,
+  publickey TEXT NOT NULL,
+  signature TEXT NOT NULL,
   created TIMESTAMP,
   replicated TIMESTAMP,
-  FOREIGN KEY (currhash) REFERENCES chronicle_replication_chain(prevhash),
+  UNIQUE(currhash),
+  UNIQUE(prevhash),
   UNIQUE(source, prevhash)
 );
 

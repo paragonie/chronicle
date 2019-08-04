@@ -9,10 +9,10 @@ General process:
 1. Clone this repository: `git clone https://github.com/paragonie/chronicle.git`
 2. Run `composer install`
    * If you don't have Composer, [go here for **Composer installation** instructions](https://getcomposer.org/download/).
-3. Run `bin/install.php` to generate a keypair and basic configuration file.
+3. Run `php bin/install.php` to generate a keypair and basic configuration file.
 4. Edit `local/settings.json` to configure your Chronicle. For example, you
    can choose a MySQL, PostgreSQL, or SQLite backend. [See below](#configuring-localsettingsjson).
-5. Run `bin/make-tables.php` to setup the database tables 
+5. Run `php bin/make-tables.php` to setup the database tables 
 6. Configure a new virtual host for Apache/nginx/etc. to point to the `public`
    directory, **OR** run `composer start` to launch the built-in web server.
 
@@ -28,6 +28,14 @@ except with information pertinent to your instance and your public key:
 
 ### MySQL
 
+To generate MySQL config simply do the following:
+
+```shell
+php bin/install.php --mysql
+```
+
+The output will be like this:
+
 ```json
 {
   "database": {
@@ -38,7 +46,34 @@ except with information pertinent to your instance and your public key:
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
 }
 ```
+
+There are many available options:
+
+```shell
+php bin/install.php --mysql \
+                    --host localhost \
+                    --port 3306 \
+                    --database chronicle \
+                    --username mysql_user \
+                    --password mysql_password
+```
+
+Short format options:
+
+```shell
+php bin/install.php --mysql -h localhost --port 3306 \
+                            -d chronicle -u mysql_user -p mysql_password
+```
+
 ### PostgreSQL
+
+To generate PostgreSQL config simply do the following:
+
+```shell
+php bin/install.php --pgsql
+```
+
+The output will be like this:
 
 ```json
 {
@@ -51,7 +86,33 @@ except with information pertinent to your instance and your public key:
 }
 ```
 
+There are many available options:
+
+```shell
+php bin/install.php --pgsql \
+                    --host localhost \
+                    --port 5432 \
+                    --database chronicle \
+                    --username pgsql_user \
+                    --password pgsql_password
+```
+
+Short format options:
+
+```shell
+php bin/install.php --pgsql -h localhost --port 5432 \
+                            -d chronicle -u pgsql_user -p mysql_password
+```
+
 ### SQLite
+
+To generate SQLite config simply do the following:
+
+```shell
+php bin/install.php
+```
+
+The output will be like this:
 
 ```json
 {
@@ -60,6 +121,17 @@ except with information pertinent to your instance and your public key:
   },
   "signing-public-key": "gIQOvAxVbF2zLeanIZDQe7S2gBsabfxM3vP8sjBI_08="
 }
+```
+There are many available options:
+
+```shell
+php bin/install.php --sqlite --database live --extension db
+```
+
+Short format options:
+
+```shell
+php bin/install.php --sqlite -d live -e db
 ```
 
 

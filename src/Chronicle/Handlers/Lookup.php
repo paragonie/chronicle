@@ -142,7 +142,7 @@ class Lookup implements HandlerInterface
     }
 
     /**
-     * List the latest current hash and summary hash
+     * List the latest current record
      *
      * @return ResponseInterface
      *
@@ -150,9 +150,20 @@ class Lookup implements HandlerInterface
      */
     public function getLastHash(): ResponseInterface
     {
-        /** @var array<string, string> $lasthash */
-        $lasthash = Chronicle::getDatabase()->row(
-            'SELECT currhash, summaryhash FROM chronicle_chain ORDER BY id DESC LIMIT 1'
+        /** @var array<string, string> $record */
+        $record = Chronicle::getDatabase()->run(
+            "SELECT
+                 data AS contents,
+                 prevhash,
+                 currhash,
+                 summaryhash,
+                 created,
+                 publickey,
+                 signature
+             FROM
+                 " . Chronicle::getTableName('chain') . "
+             ORDER BY id DESC LIMIT 1
+            "
         );
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
@@ -160,12 +171,7 @@ class Lookup implements HandlerInterface
                 'version' => Chronicle::VERSION,
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
-                'results' => [
-                    'current-hash' =>
-                        $lasthash['currhash'],
-                    'summary-hash' =>
-                        $lasthash['summaryhash']
-                ]
+                'results' => $record,
             ],
             Chronicle::getSigningKey()
         );

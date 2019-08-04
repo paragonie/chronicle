@@ -30,6 +30,10 @@ as part of our continued efforts to make the Internet more secure.
 * [How to write (publish) to your  Chronicle](docs/02-publish.md)
 * [How to setup cross-signing to other Chronicles](docs/03-cross-signing.md)
 * [How to replicate other Chronicles](docs/04-replication.md)
+* [Concurrent Instances](docs/05-instances.md)
+* [Internal Developer Documentation](docs/internals)
+    * [Design Philosophy](docs/internals/01-design-philosophy.md)
+    * [SQL Tables](docs/internals/02-sql-tables.md)
 
 ### Client-Side Software that Interacts with Chronicle
 
