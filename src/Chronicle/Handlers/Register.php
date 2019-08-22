@@ -185,7 +185,7 @@ class Register implements HandlerInterface
 
         $db->beginTransaction();
         $db->insert(
-            Chronicle::getTableName('clients', true),
+            Chronicle::getTableNameUnquoted('clients', true),
             [
                 'publicid' => $clientId,
                 'publickey' => $post['publickey'],

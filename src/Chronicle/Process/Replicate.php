@@ -53,6 +53,7 @@ class Replicate
      * @param string $name
      * @param string $url
      * @param SigningPublicKey $publicKey
+     * @throws \Exception
      */
     public function __construct(
         int $id,
@@ -76,6 +77,7 @@ class Replicate
      * @param int $id
      * @return self
      *
+     * @throws InvalidInstanceException
      * @throws ReplicationSourceNotFound
      */
     public static function byId(int $id): self
@@ -104,6 +106,7 @@ class Replicate
      * @return void
      *
      * @throws GuzzleException
+     * @throws InvalidInstanceException
      * @throws InvalidMessageException
      * @throws SecurityViolation
      * @throws \SodiumException
@@ -196,7 +199,7 @@ class Replicate
         }
 
         /* Enter the new row to the replication table */
-        $db->insert(Chronicle::getTableName('replication_chain', true), [
+        $db->insert(Chronicle::getTableNameUnquoted('replication_chain', true), [
             'source' => $this->id,
             'data' => $entry['contents'],
             'prevhash' => $prevhash,
