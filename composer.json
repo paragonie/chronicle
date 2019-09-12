@@ -21,7 +21,7 @@
         "paragonie/easydb": "^2.7",
         "paragonie/sapient": "^1",
         "paragonie/slim-sapient": "^1",
-        "paragonie/sodium_compat": "^1.7",
+        "paragonie/sodium_compat": "^1.11",
         "slim/slim": "^3.8",
         "slim/php-view": "^2.0",
         "ulrichsg/getopt-php": "^3",
