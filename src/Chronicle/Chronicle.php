@@ -103,6 +103,7 @@ class Chronicle
      *
      * @throws BaseException
      * @throws \SodiumException
+     * @psalm-suppress MixedTypeCoercion
      */
     public static function extendBlakechain(
         string $body,
