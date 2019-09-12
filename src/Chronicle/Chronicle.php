@@ -82,6 +82,17 @@ class Chronicle
     }
 
     /**
+     * @param string $name
+     * @param bool $dontEscape
+     * @return string
+     * @throws InvalidInstanceException
+     */
+    public static function getTableNameUnquoted(string $name, bool $dontEscape = false)
+    {
+        return trim(self::getTableName($name, $dontEscape), '"');
+    }
+
+    /**
      * This extends the Blakechain with an arbitrary message, signature, and
      * public key.
      *
@@ -92,6 +103,7 @@ class Chronicle
      *
      * @throws BaseException
      * @throws \SodiumException
+     * @psalm-suppress MixedTypeCoercion
      */
     public static function extendBlakechain(
         string $body,
@@ -150,7 +162,7 @@ class Chronicle
         self::normalize($db->getDriver(), $fields);
 
         // Insert new row into the database:
-        $db->insert(self::getTableName('chain', true), $fields);
+        $db->insert(self::getTableNameUnquoted('chain', true), $fields);
         if (!$db->commit()) {
             $db->rollBack();
             throw new ChainAppendException('Could not commit new hash to database');

@@ -119,7 +119,7 @@ $isSQLite = strpos($settings['database']['dsn'] ?? '', 'sqlite:') !== false;
 
 $db->beginTransaction();
 $db->insert(
-    Chronicle::getTableName('clients', $isSQLite),
+    Chronicle::getTableNameUnquoted('clients', $isSQLite),
     [
         'isAdmin' => !empty($admin),
         'publicid' => $newPublicId,

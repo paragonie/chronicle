@@ -6,10 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Error\ConfigurationError;
-use ParagonIE\Chronicle\Exception\{
-    FilesystemException,
-    TargetNotFound
-};
+use ParagonIE\Chronicle\Exception\{FilesystemException, InvalidInstanceException, TargetNotFound};
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Sapient\Adapter\Guzzle;
@@ -67,6 +64,7 @@ class CrossSign
      * @param SigningPublicKey $publicKey
      * @param array $policy
      * @param array<string, string> $lastRun
+     * @throws \Exception
      */
     public function __construct(
         int $id,
@@ -95,6 +93,7 @@ class CrossSign
      * @param int $id
      * @return self
      *
+     * @throws InvalidInstanceException
      * @throws TargetNotFound
      */
     public static function byId(int $id): self
@@ -127,6 +126,7 @@ class CrossSign
      * @return bool
      *
      * @throws ConfigurationError
+     * @throws InvalidInstanceException
      */
     public function needsToCrossSign(): bool
     {
@@ -179,6 +179,7 @@ class CrossSign
      * @throws InvalidMessageException
      * @throws GuzzleException
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     public function performCrossSign(): bool
     {
@@ -229,6 +230,7 @@ class CrossSign
      *
      * @param EasyDB $db
      * @return array<string, string>
+     * @throws InvalidInstanceException
      */
     protected function getEndOfChain(EasyDB $db): array
     {
@@ -248,12 +250,13 @@ class CrossSign
      * @param array $response
      * @param array $message
      * @return bool
+     * @throws InvalidInstanceException
      */
     protected function updateLastRun(EasyDB $db, array $response, array $message): bool
     {
         $db->beginTransaction();
         $db->update(
-            Chronicle::getTableName('xsign_targets'),
+            Chronicle::getTableNameUnquoted('xsign_targets'),
             [
                 'lastrun' => \json_encode([
                     'id' => $message['id'],
