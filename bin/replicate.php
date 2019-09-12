@@ -94,7 +94,7 @@ try {
 }
 
 $db->beginTransaction();
-$db->insert(Chronicle::getTableName('replication_sources', true), [
+$db->insert(Chronicle::getTableNameUnquoted('replication_sources', true), [
     'name' => $name,
     'uniqueid' => Base64UrlSafe::encode(random_bytes(33)),
     'publickey' => $publicKey,

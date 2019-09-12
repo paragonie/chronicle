@@ -166,6 +166,8 @@ class Register implements HandlerInterface
      * @throws \Exception
      * @throws InvalidInstanceException
      * @throws SecurityViolation
+     *
+     * @psalm-suppress MixedTypeCoercion
      */
     protected function createClient(array $post): string
     {
@@ -185,11 +187,11 @@ class Register implements HandlerInterface
 
         $db->beginTransaction();
         $db->insert(
-            Chronicle::getTableName('clients', true),
+            Chronicle::getTableNameUnquoted('clients', true),
             [
                 'publicid' => $clientId,
                 'publickey' => $post['publickey'],
-                'comment' => $post['comment'] ?? '',
+                'comment' => (string) ($post['comment'] ?? ''),
                 'isAdmin' => false,
                 'created' => $now,
                 'modified' => $now
