@@ -58,6 +58,7 @@ $app->group('/chronicle', function () {
     $self->get('/replica/{source}/lookup/{hash}', 'replica.hash');
     $self->get('/replica/{source}/since/{hash}', 'replica.since');
     $self->get('/replica/{source}/export', 'replica.export');
+    $self->get('/replica/{source}', 'replica.subindex');
     $self->get('/replica', 'replica.index');
     $self->get('/', Index::class);
     $self->get('', Index::class);
@@ -127,4 +128,7 @@ $container['replica.export'] = function () {
 };
 $container['replica.index'] = function () {
     return new Replica('index');
+};
+$container['replica.subindex'] = function () {
+    return new Replica('subindex');
 };

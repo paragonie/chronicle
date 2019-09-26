@@ -78,6 +78,8 @@ class Replica implements HandlerInterface
                         return $this->getByHash($args);
                     }
                     break;
+                case 'subindex':
+                    return $this->getSubIndex((string) $args['source']);
                 case 'since':
                     if (!empty($args['hash'])) {
                         return $this->getSince($args);
@@ -259,6 +261,41 @@ class Replica implements HandlerInterface
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => $replicationSources
+            ],
+            Chronicle::getSigningKey()
+        );
+    }
+
+    /**
+     * Sub-index of the /replica/{identifier} request
+     *
+     * @param string $replica
+     * @return ResponseInterface
+     * @throws FilesystemException
+     */
+    protected function getSubIndex(string $replica): ResponseInterface
+    {
+        return Chronicle::getSapient()->createSignedJsonResponse(
+            200,
+            [
+                'version' => Chronicle::VERSION,
+                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+                'status' => 'OK',
+                'results' => [
+                    [
+                        'uri' => '/replica/' . $replica . '/lasthash',
+                        'description' => 'Get information about the latest entry in this replicated Chronicle'
+                    ], [
+                        'uri' => '/replica/' . $replica . '/lookup/{hash}',
+                        'description' => 'Lookup the information for the given hash in this replicated Chronicle'
+                    ], [
+                        'uri' => '/replica/' . $replica . '/since/{hash}',
+                        'description' => 'List all new entries since a given hash in this replicated Chronicle'
+                    ], [
+                        'uri' => '/replica/' . $replica. '/export',
+                        'description' => 'Export the entire replicated Chronicle'
+                    ]
+                ]
             ],
             Chronicle::getSigningKey()
         );
