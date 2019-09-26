@@ -238,6 +238,7 @@ class Replica implements HandlerInterface
          * @var array<string, string> $row
          */
         foreach ($replicationSources as $idx => $row) {
+            $replicationSources[$idx]['index'] = '/replica/' . $row['uniqueid'];
             $replicationSources[$idx]['urls'] = [
                 [
                     'uri' => '/replica/' . $row['uniqueid'] . '/lasthash',

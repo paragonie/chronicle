@@ -213,6 +213,7 @@ class Chronicle
         string $errorMessage,
         int $errorCode = 400
     ): ResponseInterface {
+        $response = $response->withAddedHeader('Content-Type', 'application/json');
         return static::getSapient()->createSignedJsonResponse(
             $errorCode,
             [
