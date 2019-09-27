@@ -58,6 +58,7 @@ class Chronicle
 
     /**
      * @return ResponseCache|null
+     * @throws Exception\CacheMisuseException
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public static function getResponseCache()
