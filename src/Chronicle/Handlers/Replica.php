@@ -142,13 +142,13 @@ class Replica implements HandlerInterface
 
             $page = (int) ($args['page'] ?? 1);
             if ($page > 1) {
-                $response['prev'] = '/export/' . ($page - 1);
+                $response['prev'] = '/replica/' . (string) ($args['source']) . '/export/' . ($page - 1);
             }
             if ($offset + $limit <= $total) {
                 if ($page < 1) {
                     $page = 1;
                 }
-                $response['next'] = '/export/' . ($page + 1);
+                $response['next'] = '/replica/' . (string) ($args['source']) . '/export/' . ($page + 1);
             }
             $response['results'] = $this->getPartialChain($offset, $limit);
         } else {
@@ -480,13 +480,17 @@ class Replica implements HandlerInterface
             $response['paginated'] = true;
             $page = (int) ($args['page'] ?? 1);
             if ($page > 1) {
-                $response['prev'] = '/since/' . (string)($args['hash']) . '/' . ($page - 1);
+                $response['prev'] = '/replica/' . (string) ($args['source']) .
+                    '/since/' . (string)($args['hash']) .
+                    '/' . ($page - 1);
             }
             if ($offset + $limit <= $total) {
                 if ($page < 1) {
                     $page = 1;
                 }
-                $response['next'] = '/since/' .  (string) ($args['hash']) . '/' . ($page + 1);
+                $response['next'] = '/replica/' . (string) ($args['source']) .
+                    '/since/' . (string)($args['hash']) .
+                    '/' . ($page + 1);
             }
             $response['total'] = $total;
         } else {
