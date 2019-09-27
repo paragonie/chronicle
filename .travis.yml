@@ -18,7 +18,6 @@ services:
     - postgresql
 
 before_install:
-    - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
     - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
     - psql -c 'create database travis_ci_test;' -U postgres
 
@@ -27,6 +26,10 @@ install:
     - composer update
 
 script:
+    #######################
+    # Test without caching
+    #######################
+
     # Test SQLite
     - php bin/install.php
     - php bin/make-tables.php
@@ -40,5 +43,25 @@ script:
     # Test PostgreSQL
     - php bin/install.php --pgsql -u postgres --database travis_ci_test
     - php bin/make-tables.php
+    - composer test
+    - composer static-analysis
+
+    #####################
+    # Test with caching
+    #####################
+
+    # Enable Cache
+    - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+    # Test SQLite
+    - php bin/install.php
+    - composer test
+    - composer static-analysis
+    # Test MySQL
+    - php bin/install.php --mysql --host 127.0.0.1 -u root --database test
+    - composer test
+    - composer static-analysis
+    # Test PostgreSQL
+    - php bin/install.php --pgsql -u postgres --database travis_ci_test
     - composer test
     - composer static-analysis
