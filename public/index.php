@@ -14,8 +14,6 @@ if (PHP_SAPI == 'cli-server') {
 
 require dirname(__DIR__) . '/cli-autoload.php';
 
-session_start();
-
 // Instantiate the app
 $settings = require CHRONICLE_APP_ROOT . '/src/settings.php';
 Chronicle::storeSettings($settings['settings'] ?? []);
