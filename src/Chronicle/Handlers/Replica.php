@@ -448,7 +448,7 @@ class Replica implements HandlerInterface
                 "SELECT 
                     count(id)
                  FROM
-                     " . Chronicle::getTableName('chain') . "
+                     " . Chronicle::getTableName('replication_chain') . "
                  WHERE
                     source = ? AND id > ?",
                 $this->source,
