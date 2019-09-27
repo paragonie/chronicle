@@ -98,6 +98,71 @@ class Replica implements HandlerInterface
         return Chronicle::errorResponse($response, 'Unknown URI', 404);
     }
 
+
+    /**
+     * Gets the entire Blakechain.
+     *
+     * @param array $args
+     * @return ResponseInterface
+     *
+     * @throws \Exception
+     * @return ResponseInterface
+     * @throws FilesystemException
+     * @throws InvalidInstanceException
+     */
+    public function exportChain(array $args = []): ResponseInterface
+    {
+        /** @var bool $paginated */
+        $paginated = Chronicle::shouldPaginate();
+        /** @var int $total */
+        $total = 0;
+        /** @var int $offset */
+        $offset = 0;
+        /** @var int $limit */
+        $limit = 0;
+        $response = [
+            'version' => Chronicle::VERSION,
+            'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+            'status' => 'OK',
+        ];
+        if ($paginated) {
+            $response['paginated'] = true;
+            $total = (int) Chronicle::getDatabase()->cell(
+                "SELECT 
+                    count(id)
+                 FROM
+                     " . Chronicle::getTableName('replication_chain') . "
+                 WHERE source = ?",
+                $this->source
+            );
+            /** @var int $offset */
+            $offset = (int) $this->getOffset((string) ($args['page'] ?? ''));
+            /** @var int $limit */
+            $limit = Chronicle::getPageSize();
+
+            $page = (int) ($args['page'] ?? 1);
+            if ($page > 1) {
+                $response['prev'] = '/export/' . ($page - 1);
+            }
+            if ($offset + $limit <= $total) {
+                if ($page < 1) {
+                    $page = 1;
+                }
+                $response['next'] = '/export/' . ($page + 1);
+            }
+            $response['results'] = $this->getPartialChain($offset, $limit);
+        } else {
+            $fullChain = $this->getFullChain();
+            $response['total'] = count($fullChain);
+            $response['results'] = $fullChain;
+        }
+        return Chronicle::getSapient()->createSignedJsonResponse(
+            200,
+            $response,
+            Chronicle::getSigningKey()
+        );
+    }
+
     /**
      * Gets the entire Blakechain.
      *
@@ -106,7 +171,7 @@ class Replica implements HandlerInterface
      * @throws \Exception
      * @throws FilesystemException
      */
-    public function exportChain(): ResponseInterface
+    public function exportChainLegacy(): ResponseInterface
     {
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
@@ -334,6 +399,15 @@ class Replica implements HandlerInterface
      */
     public function getSince(array $args = []): ResponseInterface
     {
+        /** @var bool $paginated */
+        $paginated = Chronicle::shouldPaginate();
+        /** @var int $total */
+        $total = 0;
+        /** @var int $offset */
+        $offset = 0;
+        /** @var int $limit */
+        $limit = 0;
+
         /** @var int $id */
         $id = Chronicle::getDatabase()->cell(
             "SELECT
@@ -354,53 +428,118 @@ class Replica implements HandlerInterface
         if (!$id) {
             throw new HashNotFound('No record found matching this hash.');
         }
+        /** @var string $sinceQuery */
+        $sinceQuery = "SELECT
+             data AS contents,
+             prevhash,
+             currhash,
+             summaryhash,
+             created,
+             publickey,
+             signature
+         FROM
+             " . Chronicle::getTableName('replication_chain') . "
+         WHERE
+             source = ? AND id > ?";
+
+        // Append an offset and limit to the query string if applicable
+        if ($paginated) {
+            $total = (int) Chronicle::getDatabase()->cell(
+                "SELECT 
+                    count(id)
+                 FROM
+                     " . Chronicle::getTableName('chain') . "
+                 WHERE
+                    source = ? AND id > ?",
+                $this->source,
+                $id
+            );
+            /** @var int $offset */
+            $offset = (int) $this->getOffset((string) ($args['page'] ?? ''));
+            /** @var int $limit */
+            $limit = Chronicle::getPageSize();
+            $sinceQuery .= $this->formatOffsetSuffix($offset, $limit);
+        }
+
+        // Fetch the results
         /** @var array<int, array<string, string>> $since */
-        $since = Chronicle::getDatabase()->run(
-            "SELECT
-                 data AS contents,
-                 prevhash,
-                 currhash,
-                 summaryhash,
-                 created,
-                 publickey,
-                 signature
-             FROM
-                 " . Chronicle::getTableName('replication_chain') . "
-             WHERE
-                 source = ? AND
-                 id > ?
-            ",
-            $this->source,
-            $id
-        );
+        $since = Chronicle::getDatabase()->run($sinceQuery, $this->source, $id);
+        if (!$total) {
+            $total = count($since);
+        }
+
+        // Process the response
+        $response = [
+            'version' => Chronicle::VERSION,
+            'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+            'status' => 'OK'
+        ];
+
+        // Add total and optional 'next' URL
+        if ($paginated) {
+            $response['paginated'] = true;
+            $page = (int) ($args['page'] ?? 1);
+            if ($page > 1) {
+                $response['prev'] = '/since/' . (string)($args['hash']) . '/' . ($page - 1);
+            }
+            if ($offset + $limit <= $total) {
+                if ($page < 1) {
+                    $page = 1;
+                }
+                $response['next'] = '/since/' .  (string) ($args['hash']) . '/' . ($page + 1);
+            }
+            $response['total'] = $total;
+        } else {
+            $response['total'] = count($since);
+        }
+        $response['results'] = $since;
 
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
-            [
-                'version' => Chronicle::VERSION,
-                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
-                'status' => 'OK',
-                'notice' => static::NOTICE,
-                'results' => $since
-            ],
+            $response,
             Chronicle::getSigningKey()
         );
     }
 
+
     /**
-     * Export an entire replicated chain, as-is.
+     * Get a subset of the total chain.
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     * @throws InvalidInstanceException
+     */
+    protected function getPartialChain(int $offset, int $limit): array
+    {
+        return $this->getChain(
+            "SELECT * FROM " . Chronicle::getTableName('replication_chain') . " WHERE source = ? ORDER BY id ASC" .
+            $this->formatOffsetSuffix($offset, $limit)
+        );
+    }
+
+    /**
+     * Get the entire chain, as-is, as of the time of the request.
      *
      * @return array
      * @throws InvalidInstanceException
      */
     protected function getFullChain(): array
     {
+        return $this->getChain(
+            "SELECT * FROM " . Chronicle::getTableName('replication_chain') . " WHERE source = ? ORDER BY id ASC"
+        );
+    }
+
+    /**
+     * @param string $queryString
+     * @return array
+     */
+    protected function getChain(string $queryString): array
+    {
         $chain = [];
         /** @var array<int, array<string, string>> $rows */
-        $rows = Chronicle::getDatabase()->run(
-            "SELECT * FROM " . Chronicle::getTableName('replication_chain') . " WHERE source = ? ORDER BY id ASC",
-            $this->source
-        );
+        $rows = Chronicle::getDatabase()->run($queryString, $this->source);
         /** @var array<string, string> $row */
         foreach ($rows as $row) {
             $chain[] = [

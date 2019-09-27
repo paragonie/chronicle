@@ -318,6 +318,9 @@ class Lookup implements HandlerInterface
                 }
                 $response['next'] = '/since/' .  (string) ($args['hash']) . '/' . ($page + 1);
             }
+            $response['total'] = $total;
+        } else {
+            $response['total'] = count($since);
         }
         $response['results'] = $since;
 
