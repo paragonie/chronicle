@@ -54,7 +54,7 @@ class Lookup implements HandlerInterface
             // Whitelist of acceptable methods:
             switch ($this->method) {
                 case 'export':
-                    return $this->exportChain();
+                    return $this->exportChain($args);
                 case 'lasthash':
                     return $this->getLastHash();
                 case 'hash':
@@ -77,6 +77,7 @@ class Lookup implements HandlerInterface
     /**
      * Gets the entire Blakechain.
      *
+     * @param array $args
      * @return ResponseInterface
      *
      * @throws \Exception
@@ -84,16 +85,54 @@ class Lookup implements HandlerInterface
      * @throws FilesystemException
      * @throws InvalidInstanceException
      */
-    public function exportChain(): ResponseInterface
+    public function exportChain(array $args = []): ResponseInterface
     {
+        /** @var bool $paginated */
+        $paginated = Chronicle::shouldPaginate();
+        /** @var int $total */
+        $total = 0;
+        /** @var int $offset */
+        $offset = 0;
+        /** @var int $limit */
+        $limit = 0;
+        $response = [
+            'version' => Chronicle::VERSION,
+            'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+            'status' => 'OK',
+        ];
+        if ($paginated) {
+            $response['paginated'] = true;
+            $total = (int) Chronicle::getDatabase()->cell(
+                "SELECT 
+                    count(id)
+                 FROM
+                     " . Chronicle::getTableName('chain') . "
+                 "
+            );
+            /** @var int $offset */
+            $offset = (int) $this->getOffset((string) ($args['page'] ?? ''));
+            /** @var int $limit */
+            $limit = Chronicle::getPageSize();
+
+            $page = (int) ($args['page'] ?? 1);
+            if ($page > 1) {
+                $response['prev'] = '/export/' . ($page - 1);
+            }
+            if ($offset + $limit <= $total) {
+                if ($page < 1) {
+                    $page = 1;
+                }
+                $response['next'] = '/export/' . ($page + 1);
+            }
+            $response['results'] = $this->getPartialChain($offset, $limit);
+        } else {
+            $fullChain = $this->getFullChain();
+            $response['total'] = count($fullChain);
+            $response['results'] = $fullChain;
+        }
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
-            [
-                'version' => Chronicle::VERSION,
-                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
-                'status' => 'OK',
-                'results' => $this->getFullChain()
-            ],
+            $response,
             Chronicle::getSigningKey()
         );
     }
@@ -290,6 +329,22 @@ class Lookup implements HandlerInterface
     }
 
     /**
+     * Get a subset of the total chain.
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     * @throws InvalidInstanceException
+     */
+    protected function getPartialChain(int $offset, int $limit): array
+    {
+        return $this->getChain(
+            "SELECT * FROM " . Chronicle::getTableName('chain') . " ORDER BY id ASC" .
+            $this->formatOffsetSuffix($offset, $limit)
+        );
+    }
+
+    /**
      * Get the entire chain, as-is, as of the time of the request.
      *
      * @return array
@@ -297,11 +352,20 @@ class Lookup implements HandlerInterface
      */
     protected function getFullChain(): array
     {
-        $chain = [];
-        /** @var array<int, array<string, string>> $rows */
-        $rows = Chronicle::getDatabase()->run(
+        return $this->getChain(
             "SELECT * FROM " . Chronicle::getTableName('chain') . " ORDER BY id ASC"
         );
+    }
+
+    /**
+     * @param string $queryString
+     * @return array
+     */
+    protected function getChain(string $queryString): array
+    {
+        $chain = [];
+        /** @var array<int, array<string, string>> $rows */
+        $rows = Chronicle::getDatabase()->run($queryString);
         /** @var array<string, string> $row */
         foreach ($rows as $row) {
             $chain[] = [
