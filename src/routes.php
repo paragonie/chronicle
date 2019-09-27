@@ -52,11 +52,15 @@ $app->group('/chronicle', function () {
     // Public:
     $self->get('/lasthash', 'lookup.lasthash');
     $self->get('/lookup/{hash}', 'lookup.hash');
+    $self->get('/since/{hash}/{page:[0-9]+}', 'lookup.since');
     $self->get('/since/{hash}', 'lookup.since');
+    $self->get('/export/{page:[0-9]+}', 'lookup.export');
     $self->get('/export', 'lookup.export');
     $self->get('/replica/{source}/lasthash', 'replica.lasthash');
     $self->get('/replica/{source}/lookup/{hash}', 'replica.hash');
+    $self->get('/replica/{source}/since/{hash}/{page:[0-9]+}', 'replica.since');
     $self->get('/replica/{source}/since/{hash}', 'replica.since');
+    $self->get('/replica/{source}/export/{page:[0-9]+}', 'replica.export');
     $self->get('/replica/{source}/export', 'replica.export');
     $self->get('/replica/{source}', 'replica.subindex');
     $self->get('/replica', 'replica.index');

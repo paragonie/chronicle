@@ -6,7 +6,8 @@ use ParagonIE\Chronicle\{
     Exception\FilesystemException,
     Exception\HashNotFound,
     Exception\InvalidInstanceException,
-    HandlerInterface
+    HandlerInterface,
+    Pagination
 };
 use Psr\Http\Message\{
     RequestInterface,
@@ -19,6 +20,8 @@ use Psr\Http\Message\{
  */
 class Lookup implements HandlerInterface
 {
+    use Pagination;
+
     /** @var string */
     protected $method = 'index';
 
@@ -147,6 +150,7 @@ class Lookup implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     public function getLastHash(): ResponseInterface
     {
@@ -190,6 +194,15 @@ class Lookup implements HandlerInterface
      */
     public function getSince(array $args = []): ResponseInterface
     {
+        /** @var bool $paginated */
+        $paginated = Chronicle::shouldPaginate();
+        /** @var int $total */
+        $total = 0;
+        /** @var int $offset */
+        $offset = 0;
+        /** @var int $limit */
+        $limit = 0;
+
         /** @var int $id */
         $id = Chronicle::getDatabase()->cell(
             "SELECT
@@ -207,32 +220,71 @@ class Lookup implements HandlerInterface
         if (!$id) {
             throw new HashNotFound('No record found matching this hash.');
         }
+        /** @var string $sinceQuery */
+        $sinceQuery = "SELECT
+             data AS contents,
+             prevhash,
+             currhash,
+             summaryhash,
+             created,
+             publickey,
+             signature
+         FROM
+             " . Chronicle::getTableName('chain') . "
+         WHERE
+             id > ?";
+
+        // Append an offset and limit to the query string if applicable
+        if ($paginated) {
+            $total = (int) Chronicle::getDatabase()->cell(
+                "SELECT 
+                    count(id)
+                 FROM
+                     " . Chronicle::getTableName('chain') . "
+                 WHERE
+                    id > ?",
+                $id
+            );
+            /** @var int $offset */
+            $offset = (int) $this->getOffset((string) ($args['page'] ?? ''));
+            /** @var int $limit */
+            $limit = Chronicle::getPageSize();
+            $sinceQuery .= $this->formatOffsetSuffix($offset, $limit);
+        }
+
+        // Fetch the results
         /** @var array<int, array<string, string>> $since */
-        $since = Chronicle::getDatabase()->run(
-            "SELECT
-                 data AS contents,
-                 prevhash,
-                 currhash,
-                 summaryhash,
-                 created,
-                 publickey,
-                 signature
-             FROM
-                 " . Chronicle::getTableName('chain') . "
-             WHERE
-                 id > ?
-            ",
-            $id
-        );
+        $since = Chronicle::getDatabase()->run($sinceQuery, $id);
+        if (!$total) {
+            $total = count($since);
+        }
+
+        // Process the response
+        $response = [
+            'version' => Chronicle::VERSION,
+            'datetime' => (new \DateTime())->format(\DateTime::ATOM),
+            'status' => 'OK'
+        ];
+
+        // Add total and optional 'next' URL
+        if ($paginated) {
+            $response['paginated'] = true;
+            $page = (int) ($args['page'] ?? 1);
+            if ($page > 1) {
+                $response['prev'] = '/since/' . (string)($args['hash']) . '/' . ($page - 1);
+            }
+            if ($offset + $limit <= $total) {
+                if ($page < 1) {
+                    $page = 1;
+                }
+                $response['next'] = '/since/' .  (string) ($args['hash']) . '/' . ($page + 1);
+            }
+        }
+        $response['results'] = $since;
 
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
-            [
-                'version' => Chronicle::VERSION,
-                'datetime' => (new \DateTime())->format(\DateTime::ATOM),
-                'status' => 'OK',
-                'results' => $since
-            ],
+            $response,
             Chronicle::getSigningKey()
         );
     }

@@ -50,7 +50,7 @@ class Chronicle
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
     /* This constant denotes the Chronicle version running, server-side */
-    const VERSION = '1.1.x';
+    const VERSION = '1.2.x';
 
     /**
      * @param string $name
@@ -327,6 +327,14 @@ class Chronicle
     }
 
     /**
+     * @return int
+     */
+    public static function getPageSize(): int
+    {
+        return (int) self::$settings['paginate-export'];
+    }
+
+    /**
      * Store the database object in the Chronicle class.
      *
      * @param EasyDB $db
@@ -336,6 +344,14 @@ class Chronicle
     {
         self::$easyDb = $db;
         return self::$easyDb;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function shouldPaginate(): bool
+    {
+        return !empty(self::$settings['paginate-export']);
     }
 
     /**

@@ -8,7 +8,8 @@ use ParagonIE\Chronicle\{
     Exception\InvalidInstanceException,
     Exception\ReplicationSourceNotFound,
     Exception\HashNotFound,
-    HandlerInterface
+    HandlerInterface,
+    Pagination
 };
 use Psr\Http\Message\{
     RequestInterface,
@@ -21,6 +22,7 @@ use Psr\Http\Message\{
  */
 class Replica implements HandlerInterface
 {
+    use Pagination;
     const NOTICE = 'This is replicated data from another Chronicle.';
 
     /** @var string */
