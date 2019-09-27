@@ -5,6 +5,7 @@ namespace ParagonIE\Chronicle;
 use Cache\Adapter\Memcached\MemcachedCachePool;
 use ParagonIE\Chronicle\Exception\CacheMisuseException;
 use ParagonIE\ConstantTime\Base32;
+use Psr\Cache\CacheItemInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Slim\Http\Headers;
@@ -18,7 +19,7 @@ use Slim\Http\Stream;
 class ResponseCache
 {
     /** @var string $cacheKey */
-    private $cacheKey;
+    private $cacheKey = '';
 
     /** @var int|null $lifetime */
     private $lifetime;
@@ -53,18 +54,20 @@ class ResponseCache
      */
     public function loadCacheKey()
     {
-        if (isset($this->cacheKey)) {
+        if (!empty($this->cacheKey)) {
             return $this->cacheKey;
         }
         if ($this->memcached->hasItem('ChronicleCacheKey')) {
+            /** @var CacheItemInterface $item */
             $item = $this->memcached->getItem('ChronicleCacheKey');
-            return $item->get();
+            return (string) $item->get();
         }
         try {
             $key = sodium_crypto_shorthash_keygen();
         } catch (\Throwable $ex) {
             throw new CacheMisuseException('CSPRNG failure', 0, $ex);
         }
+        /** @var CacheItemInterface $item */
         $item = $this->memcached->getItem('ChronicleCacheKey');
         $item->set($key);
         $item->expiresAfter(null);
@@ -107,7 +110,9 @@ class ResponseCache
         if (!$this->memcached->hasItem($key)) {
             return null;
         }
+        /** @var CacheItemInterface $item */
         $item = $this->memcached->getItem($key);
+        /** @var string|null $cached */
         $cached = $item->get();
         if (!is_string($cached)) {
             return null;
@@ -118,6 +123,7 @@ class ResponseCache
     /**
      * @param string $uri
      * @param ResponseInterface $response
+     * @return void
      * @throws CacheMisuseException
      * @throws \Psr\Cache\InvalidArgumentException
      * @throws \SodiumException
@@ -125,6 +131,7 @@ class ResponseCache
     public function saveResponse(string $uri, ResponseInterface $response)
     {
         $key = $this->getCacheKey($uri);
+        /** @var CacheItemInterface $item */
         $item = $this->memcached->getItem($key);
         $item->set($this->serializeResponse($response));
         $item->expiresAfter($this->lifetime);
@@ -137,11 +144,17 @@ class ResponseCache
      */
     public function deserializeResponse(string $serialized): Response
     {
+        /** @var array<string, string|array|int> $decoded */
         $decoded = json_decode($serialized, true);
+        $status = (int) $decoded['status'];
+        $headers = (array) $decoded['headers'];
+        /** @var string $body */
+        $body = $decoded['body'];
+
         return new Response(
-            (int) $decoded['status'],
-            new Headers($decoded['headers']),
-            self::fromString($decoded['body'])
+            $status,
+            new Headers($headers),
+            self::fromString($body)
         );
     }
 

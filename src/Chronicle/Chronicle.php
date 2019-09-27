@@ -26,6 +26,7 @@ use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
 };
+use Slim\Http\Response;
 
 /**
  * Class Chronicle
@@ -93,19 +94,21 @@ class Chronicle
     }
 
     /**
-     * @param RequestInterface|null $request
+     * @param RequestInterface $request
      * @return ResponseInterface|null
      *
      * @throws \Exception
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public static function getFromCache(RequestInterface $request = null)
+    public static function getFromCache(RequestInterface $request)
     {
         $cache = self::getResponseCache();
         if (empty($cache)) {
             return null;
         }
-        return $cache->loadResponse((string) $request->getUri());
+        /** @var Response $response */
+        $response = $cache->loadResponse((string) $request->getUri());
+        return $response;
     }
 
     /**
