@@ -2,6 +2,8 @@
 
 ## Pagination
 
+Pagination was implemented since version 1.2.0.
+
 To enable pagination, edit `local/settings.json` and set `"paginate-export"`
 to an integer value greater than 0.
 
