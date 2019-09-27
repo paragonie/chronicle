@@ -12,6 +12,7 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
+use GuzzleHttp\Client;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
@@ -83,6 +84,26 @@ if (!isset($url, $publicKey, $name)) {
     "\t--url\n";
     exit(1);
 }
+
+// Retrieve public key from remote server.
+/** @var array<string, string> $response */
+$response = json_decode(
+    (string) (new Client())
+        ->get($url)
+        ->getBody()
+        ->getContents(),
+    true
+);
+
+// Make sure the server's public key matches.
+if (!hash_equals($response['public-key'], $publicKey)) {
+    echo 'ERROR: Server\'s public key does not match the one you provided!', PHP_EOL;
+    echo '- ' . $publicKey . PHP_EOL;
+    echo '+ ' . $response['public-key'] . PHP_EOL;
+    exit(4);
+}
+
+// Write to database...
 
 try {
     $publicKeyObj = new SigningPublicKey(

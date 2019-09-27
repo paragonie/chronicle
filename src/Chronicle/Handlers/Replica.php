@@ -277,6 +277,7 @@ class Replica implements HandlerInterface
      */
     protected function getSubIndex(string $replica): ResponseInterface
     {
+        /** @var array<string, string> $source */
         $source = Chronicle::getDatabase()->row(
             "SELECT 
                 uniqueid,

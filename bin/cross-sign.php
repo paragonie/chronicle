@@ -13,6 +13,7 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
+use GuzzleHttp\Client;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
@@ -106,6 +107,9 @@ if (empty($policy)) {
 $fields['policy'] = \json_encode($policy);
 if ($url) {
     $fields['url'] = $url;
+} else {
+    echo "URL must be specified.\n";
+    exit(2);
 }
 if (is_string($publicKey)) {
     try {
@@ -121,6 +125,53 @@ if (is_string($publicKey)) {
 }
 $fields['clientid'] = $clientId;
 
+// Retrieve public key from remote server.
+/** @var array<string, string> $response */
+$response = json_decode(
+    (string) (new Client())
+        ->get($url)
+        ->getBody()
+        ->getContents(),
+    true
+);
+
+// If we were passed a public key, make sure it matches. Otherwise, TOFU.
+if (isset($fields['publickey'])) {
+    if (!hash_equals($response['public-key'], $fields['publickey'])) {
+        echo 'ERROR: Server\'s public key does not match the one you provided!', PHP_EOL;
+        echo '- ' . $fields['publickey'] . PHP_EOL;
+        echo '+ ' . $response['public-key'] . PHP_EOL;
+        exit(4);
+    }
+} else {
+    try {
+        /** @var SigningPublicKey $publicKeyObj */
+        $publicKeyObj = new SigningPublicKey(
+            Base64UrlSafe::decode($response['public-key'])
+        );
+    } catch (\Throwable $ex) {
+        echo $ex->getMessage(), PHP_EOL;
+        exit(1);
+    }
+    /** @var string $accept */
+    $accept = prompt(
+        "The public key we retrieved from the server is {$response['public-key']}.\n" .
+        "Are you sure you trust this public key? (y/N)"
+    );
+    switch (trim(strtolower($accept))) {
+        case 'y':
+        case 'yes':
+            // Okay
+            break;
+        default:
+            // NOT Okay. Abort.
+            echo 'Aborted.', PHP_EOL;
+            exit(1);
+    }
+    $fields['publickey'] = $response['public-key'];
+}
+
+// Write to database...
 $db->beginTransaction();
 /** @var string $table */
 $table = Chronicle::getTableName('xsign_targets');
