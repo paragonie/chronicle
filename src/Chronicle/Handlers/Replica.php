@@ -273,9 +273,20 @@ class Replica implements HandlerInterface
      * @param string $replica
      * @return ResponseInterface
      * @throws FilesystemException
+     * @throws InvalidInstanceException
      */
     protected function getSubIndex(string $replica): ResponseInterface
     {
+        $source = Chronicle::getDatabase()->cell(
+            "SELECT 
+                uniqueid,
+                url AS canonical,
+                name,
+                publickey AS serverPublicKey
+            FROM " . Chronicle::getTableName('replication_sources') . " WHERE uniqueid = ?",
+            $replica
+        );
+
         return Chronicle::getSapient()->createSignedJsonResponse(
             200,
             [
@@ -283,18 +294,23 @@ class Replica implements HandlerInterface
                 'datetime' => (new \DateTime())->format(\DateTime::ATOM),
                 'status' => 'OK',
                 'results' => [
-                    [
-                        'uri' => '/replica/' . $replica . '/lasthash',
-                        'description' => 'Get information about the latest entry in this replicated Chronicle'
-                    ], [
-                        'uri' => '/replica/' . $replica . '/lookup/{hash}',
-                        'description' => 'Lookup the information for the given hash in this replicated Chronicle'
-                    ], [
-                        'uri' => '/replica/' . $replica . '/since/{hash}',
-                        'description' => 'List all new entries since a given hash in this replicated Chronicle'
-                    ], [
-                        'uri' => '/replica/' . $replica. '/export',
-                        'description' => 'Export the entire replicated Chronicle'
+                    'uniqueid' => $source['uniqueid'],
+                    'serverPublicKey' => $source['serverPublicKey'],
+                    'canonical' => $source['canonical'],
+                    'urls' => [
+                        [
+                            'uri' => '/replica/' . $replica . '/lasthash',
+                            'description' => 'Get information about the latest entry in this replicated Chronicle'
+                        ], [
+                            'uri' => '/replica/' . $replica . '/lookup/{hash}',
+                            'description' => 'Lookup the information for the given hash in this replicated Chronicle'
+                        ], [
+                            'uri' => '/replica/' . $replica . '/since/{hash}',
+                            'description' => 'List all new entries since a given hash in this replicated Chronicle'
+                        ], [
+                            'uri' => '/replica/' . $replica. '/export',
+                            'description' => 'Export the entire replicated Chronicle'
+                        ]
                     ]
                 ]
             ],
