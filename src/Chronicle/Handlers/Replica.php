@@ -72,7 +72,7 @@ class Replica implements HandlerInterface
         try {
             switch ($this->method) {
                 case 'export':
-                    return $this->exportChain();
+                    return $this->exportChain($args);
                 case 'lasthash':
                     return $this->getLastHash();
                 case 'hash':
