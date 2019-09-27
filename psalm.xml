@@ -11,7 +11,9 @@
     <issueHandlers>
         <InvalidScope errorLevel="suppress" />
         <MissingClosureReturnType errorLevel="suppress" />
+        <PropertyNotSetInConstructor errorLevel="info" /> <!-- Memcached false positive -->
         <RedundantConditionGivenDocblockType errorLevel="suppress" />
+        <UndefinedClass errorLevel="info" /><!-- Memcached is optional (PECL) -->
         <UndefinedConstant errorLevel="suppress" />
     </issueHandlers>
 </psalm>

@@ -26,6 +26,7 @@ use Psr\Http\Message\{
     RequestInterface,
     ResponseInterface
 };
+use Slim\Http\Response;
 
 /**
  * Class Chronicle
@@ -33,6 +34,9 @@ use Psr\Http\Message\{
  */
 class Chronicle
 {
+    /** @var ResponseCache|null $cache */
+    protected static $cache;
+
     /** @var EasyDB $easyDb */
     protected static $easyDb;
 
@@ -51,6 +55,62 @@ class Chronicle
 
     /* This constant denotes the Chronicle version running, server-side */
     const VERSION = '1.2.x';
+
+    /**
+     * @return ResponseCache|null
+     * @throws Exception\CacheMisuseException
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public static function getResponseCache()
+    {
+        if (empty(self::$cache)) {
+            if (empty(self::$settings['cache'])) {
+                return null;
+            }
+            if (!ResponseCache::isAvailable()) {
+                return null;
+            }
+            self::$cache = new ResponseCache((int) self::$settings['cache']);
+        }
+        return self::$cache;
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     *
+     * @throws \Exception
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public static function cache(
+        RequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
+        $cache = self::getResponseCache();
+        if (!empty($cache)) {
+            $cache->saveResponse((string) $request->getUri(), $response);
+        }
+        return $response;
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return ResponseInterface|null
+     *
+     * @throws \Exception
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public static function getFromCache(RequestInterface $request)
+    {
+        $cache = self::getResponseCache();
+        if (empty($cache)) {
+            return null;
+        }
+        /** @var Response $response */
+        $response = $cache->loadResponse((string) $request->getUri());
+        return $response;
+    }
 
     /**
      * @param string $name

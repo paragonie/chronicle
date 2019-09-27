@@ -51,12 +51,17 @@ class Replica implements HandlerInterface
      *
      * @throws \Exception
      * @throws FilesystemException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function __invoke(
         RequestInterface $request,
         ResponseInterface $response,
         array $args = []
     ): ResponseInterface {
+        $cache = Chronicle::getFromCache($request);
+        if (!is_null($cache)) {
+            return $cache;
+        }
         if (!empty($args['source'])) {
             try {
                 $this->selectReplication((string) $args['source']);
