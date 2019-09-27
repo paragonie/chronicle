@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Cache\Adapter\Memcached\MemcachedCachePool;
 use Slim\Container;
 // DIC configuration
 

@@ -44,27 +44,32 @@ class Lookup implements HandlerInterface
      * @return ResponseInterface
      *
      * @throws FilesystemException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function __invoke(
         RequestInterface $request,
         ResponseInterface $response,
         array $args = []
     ): ResponseInterface {
+        $cache = Chronicle::getFromCache($request);
+        if (!is_null($cache)) {
+            return $cache;
+        }
         try {
             // Whitelist of acceptable methods:
             switch ($this->method) {
                 case 'export':
-                    return $this->exportChain($args);
+                    return Chronicle::cache($request, $this->exportChain($args));
                 case 'lasthash':
-                    return $this->getLastHash();
+                    return Chronicle::cache($request, $this->getLastHash());
                 case 'hash':
                     if (!empty($args['hash'])) {
-                        return $this->getByHash($args);
+                        return Chronicle::cache($request, $this->getByHash($args));
                     }
                     break;
                 case 'since':
                     if (!empty($args['hash'])) {
-                        return $this->getSince($args);
+                        return Chronicle::cache($request, $this->getSince($args));
                     }
                     break;
             }

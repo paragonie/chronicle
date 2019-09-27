@@ -16,6 +16,7 @@
         "php": "^7",
         "ext-json": "*",
         "ext-pdo": "*",
+        "cache/memcached-adapter": "^1",
         "guzzlehttp/guzzle": "^6",
         "paragonie/blakechain": ">= 1.0.2",
         "paragonie/easydb": "^2.7",
