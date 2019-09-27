@@ -16,6 +16,8 @@ $settings = [
     'displayErrorDetails' => false, // set to false in production
     'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
+    'paginate-export' => null,
+
     // Renderer settings
     'renderer' => [
         'template_path' => CHRONICLE_APP_ROOT . '/templates/',

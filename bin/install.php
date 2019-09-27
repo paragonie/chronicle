@@ -94,6 +94,7 @@ $localSettings = [
     'instances' => [
         '' => ''
     ],
+    'paginate-export' => null,
     'publish-new-clients' => true,
     'publish-revoked-clients' => true,
     // The maximum window of opportunity for replay attacks:

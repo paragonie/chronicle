@@ -113,11 +113,19 @@ class Replicate
      */
     public function replicate()
     {
-        $response = $this->getUpstream($this->getLatestSummaryHash());
-        /** @var array<string, string> $row */
-        foreach ($response['results'] as $row) {
-            $this->appendToChain($row);
-        }
+        do {
+            $response = $this->getUpstream($this->getLatestSummaryHash());
+            /** @var array<string, string> $row */
+            foreach ($response['results'] as $row) {
+                $this->appendToChain($row);
+            }
+            if (empty($response['paginated'])) {
+                return;
+            }
+            if (empty($response['total'])) {
+                return;
+            }
+        } while (!empty($response['next']));
     }
 
     /**
