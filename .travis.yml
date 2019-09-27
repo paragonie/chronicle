@@ -13,10 +13,13 @@ matrix:
     - php: "nightly"
 
 services:
+    - memcached
     - mysql
     - postgresql
 
 before_install:
+    - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - printf "\n" | pecl install -f memcached
     - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
     - psql -c 'create database travis_ci_test;' -U postgres
 
