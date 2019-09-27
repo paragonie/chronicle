@@ -347,6 +347,10 @@ class Chronicle
     }
 
     /**
+     * Should we enable pagination?
+     *
+     * Only returns true if "paginate-export" is greater than 0.
+     *
      * @return bool
      */
     public static function shouldPaginate(): bool

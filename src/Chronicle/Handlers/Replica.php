@@ -98,7 +98,6 @@ class Replica implements HandlerInterface
         return Chronicle::errorResponse($response, 'Unknown URI', 404);
     }
 
-
     /**
      * Gets the entire Blakechain.
      *
