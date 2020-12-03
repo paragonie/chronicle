@@ -15,8 +15,8 @@ require_once $root . '/cli-autoload.php';
 require_once $root . '/src/settings.php';
 
 /**
- * @global array $settings
- * @global \Slim\App $app
+ * @var array $settings
+ * @var \Slim\App $app
  */
 $app = new \Slim\App($settings);
 

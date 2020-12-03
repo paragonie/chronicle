@@ -15,7 +15,7 @@ class ResponseCacheTest extends TestCase
 {
     protected $cache;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!ResponseCache::isAvailable()) {
             $this->markTestSkipped('Memcached is not installed');

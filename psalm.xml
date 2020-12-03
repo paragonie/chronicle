@@ -15,5 +15,24 @@
         <RedundantConditionGivenDocblockType errorLevel="suppress" />
         <UndefinedClass errorLevel="info" /><!-- Memcached is optional (PECL) -->
         <UndefinedConstant errorLevel="suppress" />
+
+        <!-- Possibly Psalm false positives; deal with later. -->
+        <RedundantCastGivenDocblockType errorLevel="info" />
+        <InvalidThrow errorLevel="info" />
+        <DocblockTypeContradiction errorLevel="info" />
+        <PossiblyUndefinedArrayOffset errorLevel="info" />
+        <UnsafeInstantiation errorLevel="info" />
+        <MissingReturnType errorLevel="info" />
+        <RedundantCast errorLevel="suppress" />
+        <InvalidDocblock errorLevel="info" />
+        <MismatchingDocblockReturnType errorLevel="info" />
+        <MixedArgumentTypeCoercion errorLevel="info" />
+        <InvalidScalarArgument errorLevel="info" />
+        <InvalidArgument errorLevel="info" />
+        <MixedArgument errorLevel="info" />
+        <NullArgument errorLevel="info" />
+        <InvalidArrayOffset errorLevel="info" />
+        <TypeDoesNotContainNull errorLevel="info" />
+        <MixedArrayAccess errorLevel="info" />
     </issueHandlers>
 </psalm>

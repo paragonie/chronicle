@@ -16,7 +16,7 @@ class ChronicleTest extends TestCase
     /**
      * Setup the basic configuration for unit testing purposes.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->signingKey = SigningSecretKey::generate();
@@ -31,6 +31,7 @@ class ChronicleTest extends TestCase
 
     /**
      * @covers Chronicle::errorResponse()
+     * @throws \Exception
      */
     public function testErrorResponse()
     {

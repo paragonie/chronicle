@@ -17,7 +17,8 @@ interface HandlerInterface
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $args
-     * @return mixed
+     *
+     * @return ResponseInterface
      */
     public function __invoke(
         RequestInterface $request,

@@ -2,7 +2,9 @@
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\ConstantTime\Binary;
 
-define('CHRONICLE_APP_ROOT', __DIR__);
+if (!defined('CHRONICLE_APP_ROOT')) {
+    define('CHRONICLE_APP_ROOT', __DIR__);
+}
 require_once CHRONICLE_APP_ROOT . '/vendor/autoload.php';
 
 if (!\class_exists(Chronicle::class)) {
@@ -35,16 +37,18 @@ if (!\class_exists(Chronicle::class)) {
     }, false, true);
 }
 
-/**
- * @param $text
- * @return mixed
- */
-function prompt(string $text = ''): string
-{
-    static $fp = null;
-    if ($fp === null) {
-        $fp = \fopen('php://stdin', 'r');
+if (!function_exists('prompt')) {
+    /**
+     * @param $text
+     * @return mixed
+     */
+    function prompt(string $text = ''): string
+    {
+        static $fp = null;
+        if ($fp === null) {
+            $fp = \fopen('php://stdin', 'r');
+        }
+        echo $text, ': ';
+        return Binary::safeSubstr(\fgets($fp), 0, -1);
     }
-    echo $text, ': ';
-    return Binary::safeSubstr(\fgets($fp), 0, -1);
 }
