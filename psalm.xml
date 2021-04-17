@@ -34,5 +34,8 @@
         <InvalidArrayOffset errorLevel="info" />
         <TypeDoesNotContainNull errorLevel="info" />
         <MixedArrayAccess errorLevel="info" />
+        <UnnecessaryVarAnnotation errorLevel="info" />
+        <UnusedVariable errorLevel="info" />
+        <UnusedClosureParam errorLevel="info" />
     </issueHandlers>
 </psalm>

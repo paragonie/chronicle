@@ -1,0 +1,77 @@
+name: CI
+
+on: [push]
+
+jobs:
+  moderate:
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-latest']
+        php-versions: ['7.1', '7.2', '7.3']
+        phpunit-versions: ['latest']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl, sodium, sqlite
+          ini-values: post_max_size=256M, max_execution_time=180
+          tools: psalm, phpunit:${{ matrix.phpunit-versions }}
+
+      - name: Fix permissions
+        run: sudo chmod -R 0777 .
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Setup (keygen, etc.)
+        run: php bin/install.php; php bin/make-tables.php
+
+      - name: PHPUnit tests
+        uses: php-actions/phpunit@v2
+        timeout-minutes: 30
+        with:
+          memory_limit: 256M
+
+  modern:
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-latest']
+        php-versions: ['7.4', '8.0']
+        phpunit-versions: ['latest']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, intl, sodium, sqlite
+          ini-values: post_max_size=256M, max_execution_time=180
+          tools: psalm, phpunit:${{ matrix.phpunit-versions }}
+
+      - name: Fix permissions
+        run: sudo chmod -R 0777 .
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Setup (keygen, etc.)
+        run: php bin/install.php; php bin/make-tables.php
+
+      - name: PHPUnit tests
+        uses: php-actions/phpunit@v2
+        timeout-minutes: 30
+        with:
+          memory_limit: 256M
+
+      - name: Static Analysis
+        run: vendor/bin/psalm
