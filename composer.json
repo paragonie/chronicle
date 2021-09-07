@@ -2,7 +2,7 @@
     "name": "paragonie/chronicle",
     "description": "Public hash chain powered by Slim Framework, Sapient, and Blakechain",
     "keywords": ["sapient", "blakechain", "hash-chain", "security", "hash", "BLAKE2", "BLAKE2b", "append-only", "cryptography"],
-    "homepage": "http://github.com/paragonie/chronicle",
+    "homepage": "https://github.com/paragonie/chronicle",
     "license": "MIT",
     "type": "project",
     "authors": [
