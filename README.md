@@ -40,6 +40,9 @@ as part of our continued efforts to make the Internet more secure.
 
 #### PHP
 
+* [Gossamer](https://gossamer.tools) - PIE
+  * [gossamer-server](https://github.com/paragonie/gossamer-server)
+  * [libgossamer](https://github.com/paragonie/libgossamer) 
 * [Herd](https://github.com/paragonie/herd) - PIE
 * [Quill](https://github.com/paragonie/quill) - PIE
   * [Monolog-Quill](https://github.com/paragonie/monolog-quill) - PIE
