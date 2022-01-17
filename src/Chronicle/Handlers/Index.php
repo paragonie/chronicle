@@ -75,6 +75,9 @@ class Index implements HandlerInterface
                 'uri' => '/chronicle/export',
                 'description' => 'Export the entire Chronicle'
             ], [
+                'uri' => '/chronicle/mirrors',
+                'description' => 'Public list of Chronicles that replicate this instance'
+            ], [
                 'uri' => '/chronicle/replica',
                 'description' => 'List of Chronicles being replicated onto this one (and other options)'
             ], [

@@ -459,7 +459,7 @@ class Chronicle
     public static function validateTimestamps(
         RequestInterface $request,
         string $index = 'request-time'
-    ) {
+    ): void {
         if (empty(self::$settings['request-timeout'])) {
             return;
         }
