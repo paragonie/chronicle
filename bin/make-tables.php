@@ -64,11 +64,10 @@ $db = ParagonIE\EasyDB\Factory::create(
 Chronicle::setDatabase($db);
 
 /**
- * @var GetOpt $getopt
- *
  * This defines the Command Line options.
  */
 $getopt = new GetOpt([
+    new Option('f', 'file', GetOpt::OPTIONAL_ARGUMENT),
     new Option('i', 'instance', GetOpt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->process();
@@ -76,6 +75,8 @@ $getopt->process();
 
 /** @var string $instance */
 $instance = $getopt->getOption('instance') ?? '';
+/** @var ?string $desiredFile */
+$desiredFile = $getopt->getOption('file') ?? null;
 
 try {
     if (!empty($instance)) {
@@ -95,6 +96,11 @@ try {
 
 $scripts = [];
 foreach (\glob($root . '/sql/' . $db->getDriver() . '/*.sql') as $file) {
+    if (!empty($desiredFile)) {
+        if (strpos($desiredFile, $file) === false) {
+            continue;
+        }
+    }
     echo $file . PHP_EOL;
     /** @var string $contents */
     $contents =  \file_get_contents($file);
