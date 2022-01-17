@@ -1,10 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use ParagonIE\EasyDB\{
-    EasyDB,
-    Factory
-};
+use ParagonIE\EasyDB\Factory;
 
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */
@@ -21,7 +18,6 @@ $settings = \json_decode(
     true
 );
 
-/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',

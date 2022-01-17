@@ -42,8 +42,6 @@ $db = Factory::create(
 );
 
 /**
- * @var GetOpt $getopt
- *
  * This defines the Command Line options.
  */
 $getopt = new GetOpt([
@@ -113,7 +111,6 @@ if ($url) {
 }
 if (is_string($publicKey)) {
     try {
-        /** @var SigningPublicKey $publicKeyObj */
         $publicKeyObj = new SigningPublicKey(
             Base64UrlSafe::decode($publicKey)
         );
@@ -173,7 +170,6 @@ if (isset($fields['publickey'])) {
 
 // Write to database...
 $db->beginTransaction();
-/** @var string $table */
 $table = Chronicle::getTableName('xsign_targets');
 if ($db->exists('SELECT * FROM ' . $table . ' WHERE name = ?', $name)) {
     // Update an existing cross-sign target

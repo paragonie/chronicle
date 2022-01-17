@@ -13,11 +13,8 @@ use ParagonIE\EasyDB\{
     EasyDB,
     Factory
 };
-use GuzzleHttp\Client;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
-use ParagonIE\ConstantTime\Base64UrlSafe;
-use ParagonIE\Sapient\CryptographyKeys\SigningPublicKey;
 
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */
@@ -43,8 +40,6 @@ $db = Factory::create(
 Chronicle::setDatabase($db);
 
 /**
- * @var Getopt
- *
  * This defines the Command Line options.
  */
 $getopt = new GetOpt([

@@ -22,7 +22,6 @@ $settings = \json_decode(
     true
 );
 
-/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',

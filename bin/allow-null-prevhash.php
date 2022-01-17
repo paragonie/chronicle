@@ -25,7 +25,6 @@ $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
-/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',

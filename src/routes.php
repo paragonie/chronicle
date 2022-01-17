@@ -5,6 +5,7 @@ use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Handlers\{
     Index,
     Lookup,
+    Mirrors,
     Publish,
     Register,
     Replica,
@@ -56,6 +57,7 @@ $app->group('/chronicle', function () {
     $self->get('/since/{hash}', 'lookup.since');
     $self->get('/export/{page:[0-9]+}', 'lookup.export');
     $self->get('/export', 'lookup.export');
+    $self->get('/mirrors', 'mirrors');
     $self->get('/replica/{source}/lasthash', 'replica.lasthash');
     $self->get('/replica/{source}/lookup/{hash}', 'replica.hash');
     $self->get('/replica/{source}/since/{hash}/{page:[0-9]+}', 'replica.since');
@@ -117,6 +119,9 @@ $container['lookup.since'] = function () {
 };
 $container['lookup.export'] = function () {
     return new Lookup('export');
+};
+$container['mirrors'] = function () {
+    return new Mirrors();
 };
 $container['replica.lasthash'] = function () {
     return new Replica('lasthash');
