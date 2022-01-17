@@ -1,18 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
-/**
- * This script sets up replication of another Chronicle
- */
 use GetOpt\{
     GetOpt,
     Option
 };
-use ParagonIE\EasyDB\{
-    EasyDB,
-    Factory
-};
+use ParagonIE\EasyDB\Factory;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 
@@ -25,36 +18,46 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
-/** @var array<string, string> $settings */
+/** @var array $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
-/** @var EasyDB $db */
+
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
     $settings['database']['password'] ?? '',
     $settings['database']['options'] ?? []
 );
+
+// Pass database instance to Chronicle
 Chronicle::setDatabase($db);
 
 /**
  * This defines the Command Line options.
+ *
+ * These two are equivalent:
+ *     php add-mirror.php -u chronicle.example.com -p foo
+ *     php add-mirror.php --url chronicle.example.com --publickey=foo
  */
-$getopt = new GetOpt([
-    new Option(null, 'id', Getopt::REQUIRED_ARGUMENT),
-    new Option(null, 'publickey', Getopt::REQUIRED_ARGUMENT),
+$getopt = new Getopt([
+    new Option('p', 'publickey', Getopt::REQUIRED_ARGUMENT),
+    new Option('u', 'url', Getopt::REQUIRED_ARGUMENT),
+    new Option('c', 'comment', Getopt::OPTIONAL_ARGUMENT),
+    new Option('s', 'sort', Getopt::OPTIONAL_ARGUMENT),
     new Option('i', 'instance', Getopt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->process();
 
-/** @var string $id */
-$id = $getopt->getOption('id');
+/** @var string $url */
+$url = $getopt->getOption('url');
 /** @var string $publicKey */
 $publicKey = $getopt->getOption('publickey');
-/** @var string $instance */
-$instance = $getopt->getOption('instance') ?? '';
+/** @var string|null $comment */
+$comment = $getopt->getOption('comment');
+$sort = (int) ($getopt->getOption('sort') ?? 0);
+$instance = (string) $getopt->getOption('instance');
 
 try {
     if (!empty($instance)) {
@@ -70,31 +73,29 @@ try {
     exit(1);
 }
 
-if (!isset($id, $publicKey)) {
-    echo "Not enough data. Please specify:\n",
-    "\t--id\n",
-    "\t--publickey\n",
+if (empty($publicKey)) {
+    echo 'Usage:', PHP_EOL, "\t",
+    'php add-mirror.php -u url -p publickeygoeshere [-c comment]', PHP_EOL, PHP_EOL;
     exit(1);
 }
 
-if (!$db->exists(
-    'SELECT count(*) FROM ' .
-    Chronicle::getTableName('replication_sources') .
-    ' WHERE uniqueid = ?', $id)) {
-    echo 'Replica not found!', PHP_EOL;
-    exit(1);
-}
+$isSQLite = strpos($settings['database']['dsn'] ?? '', 'sqlite:') !== false;
 
 $db->beginTransaction();
-$db->update(
-    Chronicle::getTableNameUnquoted('replication_sources'),
+$db->insert(
+    Chronicle::getTableNameUnquoted('mirrors', $isSQLite),
     [
-        'publickey' => $publicKey
-    ],
-    [
-        'uniqueid' => $id
+        'url' => $url,
+        'publickey' => $publicKey,
+        'comment' => $comment,
+        'sortpriority' => $sort
     ]
 );
-if ($db->commit()) {
-    echo 'Updated successfully!', PHP_EOL;
+if (!$db->commit()) {
+    $db->rollBack();
+    /** @var array<int, string> $errorInfo */
+    $errorInfo = $db->errorInfo();
+    echo $errorInfo[0], PHP_EOL;
+    exit(1);
 }
+echo 'Mirror added successfully!', PHP_EOL;

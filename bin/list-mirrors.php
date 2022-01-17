@@ -1,18 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
-/**
- * This script sets up replication of another Chronicle
- */
 use GetOpt\{
     GetOpt,
     Option
 };
-use ParagonIE\EasyDB\{
-    EasyDB,
-    Factory
-};
+use ParagonIE\EasyDB\Factory;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 
@@ -25,37 +18,33 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
-/** @var array<string, string> $settings */
+/** @var array $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
-/** @var EasyDB $db */
+
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
     $settings['database']['password'] ?? '',
     $settings['database']['options'] ?? []
 );
+
+// Pass database instance to Chronicle
 Chronicle::setDatabase($db);
 
 /**
  * This defines the Command Line options.
+ *
+ * The only parameter supported is the instance.
  */
-$getopt = new GetOpt([
-    new Option(null, 'id', Getopt::REQUIRED_ARGUMENT),
-    new Option(null, 'publickey', Getopt::REQUIRED_ARGUMENT),
+$getopt = new Getopt([
     new Option('i', 'instance', Getopt::OPTIONAL_ARGUMENT),
 ]);
 $getopt->process();
 
-/** @var string $id */
-$id = $getopt->getOption('id');
-/** @var string $publicKey */
-$publicKey = $getopt->getOption('publickey');
-/** @var string $instance */
-$instance = $getopt->getOption('instance') ?? '';
-
+$instance = (string) $getopt->getOption('instance');
 try {
     if (!empty($instance)) {
         if (!\array_key_exists($instance, $settings['instances'])) {
@@ -70,31 +59,18 @@ try {
     exit(1);
 }
 
-if (!isset($id, $publicKey)) {
-    echo "Not enough data. Please specify:\n",
-    "\t--id\n",
-    "\t--publickey\n",
-    exit(1);
-}
-
-if (!$db->exists(
-    'SELECT count(*) FROM ' .
-    Chronicle::getTableName('replication_sources') .
-    ' WHERE uniqueid = ?', $id)) {
-    echo 'Replica not found!', PHP_EOL;
-    exit(1);
-}
+$isSQLite = strpos($settings['database']['dsn'] ?? '', 'sqlite:') !== false;
 
 $db->beginTransaction();
-$db->update(
-    Chronicle::getTableNameUnquoted('replication_sources'),
-    [
-        'publickey' => $publicKey
-    ],
-    [
-        'uniqueid' => $id
-    ]
+/** @var array<array<string, string|int|bool>> $mirrors */
+$mirrors = $db->run(
+    "SELECT * FROM " .
+        Chronicle::getTableNameUnquoted('clients', $isSQLite) .
+    " ORDER BY sortpriority ASC"
 );
-if ($db->commit()) {
-    echo 'Updated successfully!', PHP_EOL;
-}
+
+echo json_encode([
+    'count' => count($mirrors),
+    'mirrors' => $mirrors
+], JSON_PRETTY_PRINT), PHP_EOL;
+exit(0);

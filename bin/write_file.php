@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\EasyDB\{
     EasyDB,
     Factory
@@ -22,11 +23,9 @@ if ($argc < 2) {
     exit(1);
 }
 
-/** @var string $filePath */
-$filePath = (string) $v[1];
-/** @var string $keyFilePath */
-$keyFilePath = (string) ($argc > 2
-    ? (string) $v[2]
+$filePath = $v[1];
+$keyFilePath = ($argc > 2
+    ? $v[2]
     : $root . '/local/client.key'
 );
 
@@ -41,14 +40,13 @@ $settings = \json_decode(
     true
 );
 
-/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
     $settings['database']['password'] ?? '',
     $settings['database']['options'] ?? []
 );
-\ParagonIE\Chronicle\Chronicle::setDatabase($db);
+Chronicle::setDatabase($db);
 
 if (!\is_readable($filePath)) {
     echo 'File not readable (or doesn\'t exist): ', $filePath, PHP_EOL;
@@ -68,13 +66,12 @@ $keyFile = \json_decode(
     true
 );
 
-/** @var string $signature */
 $signature = \sodium_crypto_sign_detached(
     $fileContents,
     Base64UrlSafe::decode($keyFile['secret-key'])
 );
 
-\ParagonIE\Chronicle\Chronicle::extendBlakechain(
+Chronicle::extendBlakechain(
     $fileContents,
     Base64UrlSafe::encode($signature),
     new SigningPublicKey(Base64UrlSafe::decode($keyFile['public-key']))

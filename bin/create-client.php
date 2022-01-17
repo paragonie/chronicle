@@ -46,7 +46,7 @@ Chronicle::setDatabase($db);
  *
  * These two are equivalent:
  *     php create-client.php -p foo
- *     php create-client php --public=key=foo
+ *     php create-client.php --publickey=foo
  */
 $getopt = new Getopt([
     new Option('p', 'publickey', Getopt::REQUIRED_ARGUMENT),

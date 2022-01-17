@@ -8,10 +8,9 @@ $root = \dirname(__DIR__);
 require_once $root . '/cli-autoload.php';
 
 /* This generates a new secret key from your kernel's CSPRNG */
-/** @var SigningSecretKey $signingSecretKey */
 $signingSecretKey = SigningSecretKey::generate();
 
-echo (string) json_encode(
+echo json_encode(
     [
         'secret-key' => $signingSecretKey->getString(),
         'public-key' => $signingSecretKey->getPublicKey()->getString()

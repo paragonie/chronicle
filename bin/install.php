@@ -7,13 +7,11 @@ use GetOpt\{
 };
 use ParagonIE\Sapient\CryptographyKeys\SigningSecretKey;
 
-/** @var string $root */
 $root = \dirname(__DIR__);
 /** @psalm-suppress UnresolvableInclude */
 require_once $root . '/cli-autoload.php';
 
 // Generate a signing key.
-/** @var SigningSecretKey $signingKey */
 $signingKey = SigningSecretKey::generate();
 
 // Store the signing key:
@@ -23,8 +21,6 @@ $signingKey = SigningSecretKey::generate();
 );
 
 /**
- * @var Getopt $getopt
- *
  * This defines the Command Line options.
  *
  * These are many examples:

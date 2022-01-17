@@ -14,13 +14,11 @@ trait Pagination
      */
     protected function getOffset(string $page = ''): int
     {
-        /** @var int $p */
         $p = (int) $page;
         if ($p < 1) {
             $p = 1;
         }
 
-        /** @var int $pageSize */
         $pageSize = Chronicle::getPageSize();
         return (int) (($p - 1) * $pageSize);
     }

@@ -5,6 +5,7 @@ use GetOpt\{
     GetOpt,
     Option
 };
+use Slim\App;
 use ParagonIE\Chronicle\Chronicle;
 use ParagonIE\Chronicle\Exception\InstanceNotFoundException;
 
@@ -16,9 +17,8 @@ require_once $root . '/src/settings.php';
 
 /**
  * @var array $settings
- * @var \Slim\App $app
  */
-$app = new \Slim\App($settings);
+$app = new App($settings);
 
 if (!isset($app)) {
     throw new Error('Variable $app is not defined');
@@ -54,7 +54,6 @@ if (empty($settings['database'])) {
     exit(1);
 }
 
-/** @var \ParagonIE\EasyDB\EasyDB $db */
 $db = ParagonIE\EasyDB\Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? null,

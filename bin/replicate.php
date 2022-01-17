@@ -27,12 +27,11 @@ if (!\is_readable($root . '/local/settings.json')) {
     exit(1);
 }
 
-/** @var array<string, string> $settings */
+/** @var array<string, string|string[]> $settings */
 $settings = \json_decode(
     (string) \file_get_contents($root . '/local/settings.json'),
     true
 );
-/** @var EasyDB $db */
 $db = Factory::create(
     $settings['database']['dsn'],
     $settings['database']['username'] ?? '',
@@ -42,8 +41,6 @@ $db = Factory::create(
 Chronicle::setDatabase($db);
 
 /**
- * @var Getopt
- *
  * This defines the Command Line options.
  */
 $getopt = new GetOpt([
