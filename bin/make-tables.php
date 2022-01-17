@@ -97,7 +97,7 @@ try {
 $scripts = [];
 foreach (\glob($root . '/sql/' . $db->getDriver() . '/*.sql') as $file) {
     if (!empty($desiredFile)) {
-        if (strpos($desiredFile, $file) === false) {
+        if (strpos($file, $desiredFile) === false) {
             continue;
         }
     }
