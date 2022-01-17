@@ -54,7 +54,7 @@ class Chronicle
     const CLIENT_IDENTIFIER_HEADER = 'Chronicle-Client-Key-ID';
 
     /* This constant denotes the Chronicle version running, server-side */
-    const VERSION = '1.2.x';
+    const VERSION = '1.3.x';
 
     /**
      * @return ResponseCache|null
